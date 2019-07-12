@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store';
+import Home from '../views/Home';
+import Login from '../views/Login.vue';
+
 // import { getUserFromCookie } from '../utils/cookies.js';
 import noticeView from '../views/noticeView.vue';
-import main from '../components/main.vue';
-
+import mainView from '../views/mainView.vue';
 
 Vue.use(Router)
 
@@ -12,12 +14,40 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'home',
+      component: Home,
+      beforeEnter(to, from, next) {
+        store.getters['isLoggedIn'] ? next() : next('/login');
+      },
+    },
+
+    {
+      path: '/main',
       name: 'main',
-      component: main,
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-    }
+      component: mainView,
+      },
+
+
+    {
+      path: '/calander',
+      name: 'calander',
+      component: Home,
+      },
+
+
+    {
+      path: '/login',
+      name: 'login',
+      component: Login,
+      beforeEnter(to, from, next) {
+        store.getters['isLoggedIn'] ? next('/') : next();
+      },
+    },
+    {
+      path: '/notice',
+      name: 'notice',
+      component: noticeView,
+      },
   ]
 })
 /*

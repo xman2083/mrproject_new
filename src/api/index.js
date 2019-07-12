@@ -1,0 +1,116 @@
+import axios from 'axios';
+import store from '../store/index.js';
+import { getAuthFromCookie } from '../utils/cookies.js';
+
+// basic config for axios
+const APP_URL = 'https://bjey314qaa.execute-api.ap-northeast-2.amazonaws.com/inner_seat/';
+
+// instance & interceptor
+function create(url, options) {
+  const instance = axios.create(Object.assign({ baseURL: url }, options));
+  return instance;
+}
+
+function createWithAuth(url, options) {
+  const instance = axios.create(Object.assign({ baseURL: url }, options));
+  instance.interceptors.request.use(config => {
+    config.headers.Authorization = store.getters['userToken'] || getAuthFromCookie();
+    return config;
+  }, error => {
+    return Promise.reject(error.response);
+  });
+  instance.interceptors.response.use(config => {
+    return config;
+  }, error => {
+    return Promise.reject(error.response);
+  });
+  return instance;
+}
+
+const auth = create(APP_URL);
+const posts = createWithAuth(`${APP_URL}posts/`);
+
+function sendOtp(data) {
+  try {
+    return auth.post('sendotp', JSON.stringify(data));
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+// users
+function loginUser(data) {
+  try {
+    return auth.post('login', JSON.stringify(data));
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+function signupUser(data) {
+  try {
+    return auth.post('signup', data);
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+// posts
+function createNewPost(data) {
+  try {
+    return posts.post('/', data);
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+function fetchPosts() {
+  try {
+    return posts.get('/');
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+function fetchPostById(id) {
+  try {
+    return posts.get(id);
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+function editPostById(id, data) {
+  try {
+    return posts.put(id, data);
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+function deletePostById(id) {
+  try {
+    return posts.delete(id);
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+export {
+  loginUser,
+  sendOtp,
+  signupUser,
+  createNewPost,
+  fetchPosts,
+  fetchPostById,
+  editPostById,
+  deletePostById,
+}

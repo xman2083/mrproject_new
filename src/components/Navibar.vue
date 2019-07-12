@@ -1,13 +1,5 @@
 <template>
-  <v-app>
-    <Navibar />
-    <v-content>
-      <router-view>
-
-      </router-view>
-    </v-content>
-  </v-app>
-    <!-- <nav>
+    <nav>
         <v-toolbar flat app>
             <v-toolbar-side-icon @click="drawer = !drawer" class="blue--text" v-show="isLoggedIn"></v-toolbar-side-icon>
             <v-toolbar-title class="text-uppercase blue--text">
@@ -47,36 +39,36 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-   
-    <v-content>
-            <router-view></router-view>
-          </v-content>
+  
     </nav>
- -->
+
 
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import Navibar from './components/Navibar.vue';
+
 
 export default {
-  name: 'App',
-  components: { Navibar },
   data () {
     return {
-
+      drawer : false,
+      items: [
+        {title:'Home', icon: 'home',route:'/main'},
+        {title:'회의실예약',icon: 'event',route:'/calander'},
+        {title: '공지사항', icon:'info',route:'/notice'}
+      ]
     }
   },
-  // computed: {
-  //   ...mapGetters(['isLoggedIn']),
-  // },
-  // methods: {
-  //   logout() {
-  //     this.$store.commit('LOGOUT');
-  //     this.$router.push('/login');
-  //   },
-  // }
-}
+   computed: {
+    ...mapGetters(['isLoggedIn']),
+  },
+  methods: {
+    logout() {
+      this.$store.commit('LOGOUT');
+      this.$router.push('/login');
+    },
+  }
 
+}
 </script>
