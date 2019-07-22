@@ -1,39 +1,37 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store';
-import Home from '../views/Home';
+import MeetingRoomBtn from '../views/MeetingRoomBtn';
 import Login from '../views/Login.vue';
 
 // import { getUserFromCookie } from '../utils/cookies.js';
 import noticeView from '../views/noticeView.vue';
 import mainView from '../views/mainView.vue';
 
+
 Vue.use(Router)
 
 export default new Router({
+  mode:'history',
   routes: [
+    
     {
       path: '/',
-      name: 'home',
-      component: Home,
+      name: 'main',
+      component: mainView,
       beforeEnter(to, from, next) {
         store.getters['isLoggedIn'] ? next() : next('/login');
       },
     },
 
-    {
-      path: '/main',
-      name: 'main',
-      component: mainView,
+      {
+        path: '/meetingroombtn',
+        name: 'meetingroombtn',
+        component: MeetingRoomBtn,
+        beforeEnter(to, from, next) {
+          store.getters['isLoggedIn'] ? next() : next('/login');
+        },
       },
-
-
-    {
-      path: '/calander',
-      name: 'calander',
-      component: Home,
-      },
-
 
     {
       path: '/login',
@@ -47,7 +45,10 @@ export default new Router({
       path: '/notice',
       name: 'notice',
       component: noticeView,
+      beforeEnter(to, from, next) {
+        store.getters['isLoggedIn'] ? next() : next('/login');
       },
+    },
   ]
 })
 /*

@@ -1,5 +1,5 @@
 <template>
-  <meeting-room-btn></meeting-room-btn>
+  <meeting-room-btn />
 </template>
 
 <script>
@@ -7,7 +7,7 @@
 
   export default {
     components: {
-      MeetingRoomBtn
+      MeetingRoomBtn,
     }
   }
 </script>

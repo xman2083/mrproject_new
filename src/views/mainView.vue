@@ -1,17 +1,16 @@
 <template>
-<div class="main">
-    <h1>main</h1>
+<div>
+   <main-page></main-page>
 </div>
 </template>
 
 <script>
-import main from '../components/main.vue';
+import MainPage from '../components/MainPage.vue';
 
 export default {
 
   components : {
-      main
-  },
-
-};
+      MainPage
+  }
+}
 </script>

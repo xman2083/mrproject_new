@@ -54,8 +54,8 @@ export default {
     return {
       drawer : false,
       items: [
-        {title:'Home', icon: 'home',route:'/main'},
-        {title:'회의실예약',icon: 'event',route:'/calander'},
+        {title:'Home', icon: 'home',route:'/'},
+        {title:'회의실예약',icon: 'event',route:'/meetingroombtn'},
         {title: '공지사항', icon:'info',route:'/notice'}
       ]
     }
