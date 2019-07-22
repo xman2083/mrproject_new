@@ -17,6 +17,7 @@ export default new Vuex.Store({
     userToken(state) {
       return state.token;
     },
+
   },
   mutations: {
     SET_USER(state, user) {

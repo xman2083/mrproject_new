@@ -52,7 +52,8 @@
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th><button type="button" class="btn btn-info btn-block">회의실명</button></th>
+                  <th><button type="button" class="btn btn-info btn-block">회의실</button></th>
+              
                   <th><button type="button" class="btn btn-info btn-block">시간</button></th>
                 </tr>
               </thead>
@@ -109,6 +110,10 @@
               <v-flex xs12>
                 <v-text-field label="Email*" required></v-text-field>
               </v-flex> -->
+              <v-flex>
+                <div> 예약자번호:{{this.$store.state.user}} </div>
+              </v-flex>
+              
               <v-flex xs12>
                 <v-text-field label="이용시간" type="date" required></v-text-field>
               </v-flex>
