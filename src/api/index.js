@@ -104,6 +104,7 @@ function deletePostById(id) {
   }
 }
 
+
 export {
   loginUser,
   sendOtp,
@@ -113,4 +114,5 @@ export {
   fetchPostById,
   editPostById,
   deletePostById,
+
 }

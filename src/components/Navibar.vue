@@ -8,7 +8,7 @@
             </v-toolbar-title>
             <v-spacer></v-spacer>
              <v-btn flat color="blue"
-                    v-if="!isLoggedIn">
+                    v-if="!isLoggedIn">login
             <router-link to="/login">
             </router-link>
             </v-btn>

@@ -111,7 +111,7 @@
                 <v-text-field label="Email*" required></v-text-field>
               </v-flex> -->
               <v-flex>
-                <div> 예약자번호:{{this.$store.state.user}} </div>
+                <v-text-field label="예약자번호" readonly v-model="this.$store.state.user.username"></v-text-field>
               </v-flex>
               
               <v-flex xs12>

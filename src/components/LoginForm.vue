@@ -66,7 +66,7 @@
             alert(response.data.message);
             if (response.data.statusCode == 200) {
               bus.$emit('show:toast', response.data.message);
-              this.$router.push('/');
+              this.$router.push('/meetingroombtn');
               this.initForm();
             }
           }

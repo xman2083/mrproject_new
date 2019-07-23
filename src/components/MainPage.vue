@@ -6,6 +6,7 @@
 
 
 <script>
+import bus from '../utils/bus.js';
 
 export default {
     data() {
