@@ -111,7 +111,8 @@
                 <v-text-field label="Email*" required></v-text-field>
               </v-flex> -->
               <v-flex>
-                <v-text-field label="예약자번호" readonly v-model="this.$store.state.user.username"></v-text-field>
+                <div>예약자명: {{this.$store.state.user.user_name}}</div>
+                <div>예약자번호: {{this.$store.state.user.tel_num}} </div>
               </v-flex>
               
               <v-flex xs12>
@@ -150,6 +151,7 @@
 <script>
   // import ConstantValues from '../utils/constant-values.js'
   export default {
+    
     data () {
       return {
         date: new Date().toISOString().substr(0, 10),
@@ -307,6 +309,8 @@
       }
     },
     created() {
+   
+
       for(var i=0; i<this.room_src.length; i++) {
         this.rooms.push(this.room_src[i][1].map(e => ({
           name: e,
@@ -319,6 +323,7 @@
           }))
         })));
       }
+
     }
   }
   /*

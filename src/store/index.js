@@ -1,8 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { loginUser, sendOtp } from '../api';
-import { saveAuthToCookie, saveUserTelNumToCookie, saveUserIdToCookie,
-  saveUserNameToCookie, getUserFromCookie, deleteCookie } from '../utils/cookies.js';
+import { saveAuthToCookie, saveUserToCookie,getUserFromCookie, deleteCookie } from '../utils/cookies.js';
 
 Vue.use(Vuex)
 
@@ -18,10 +17,8 @@ export default new Vuex.Store({
     userToken(state) {
       return state.token;
     },
-    userInfo(state) {
-      if (state.token) 
-        return state.token;
-      else return getUserFromCookie();
+    userData(state) {
+      return state.user;
     },
   },
   mutations: {
@@ -44,9 +41,7 @@ export default new Vuex.Store({
       if (response.data.statusCode == 200) {
         commit('SET_USER', response.data.user);
         commit('SET_TOKEN', response.data.token);
-        saveUserTelNumToCookie(response.data.user.tel_num);
-        saveUserIdToCookie(response.data.user.user_id);
-        saveUserNameToCookie(response.data.user.user_name);
+        saveUserToCookie(JSON.stringify(response.data.user));
         saveAuthToCookie(response.data.token);
       }
       return response;

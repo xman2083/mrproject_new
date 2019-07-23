@@ -47,7 +47,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-
+import { getUserFromCookie, getAuthFromCookie} from '../utils/cookies.js'
 
 export default {
   data () {
@@ -68,7 +68,12 @@ export default {
       this.$store.commit('LOGOUT');
       this.$router.push('/login');
     },
+  },
+  created() {
+    this.$store.commit('SET_USER', JSON.parse(getUserFromCookie()));
+    this.$store.commit('SET_TOKEN', getAuthFromCookie());
   }
+
 
 }
 </script>
