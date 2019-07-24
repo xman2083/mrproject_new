@@ -51,8 +51,12 @@
                   <td>
                     <div class="btn-group btn-group-justified flex-wrap">
                       <div class="btn-group" v-for="hour in room.hours">
-                        <!-- reserved
-                        0: 빈칸 / 1: ??? / 2,3: 예약완료 / 4: 예약 불가-->
+                        <!-- seleted 
+                        0: 예약 안됨
+                        1: 반만 예약됨
+                        2: 내가 예약
+                        3: 내가 반만 예약
+                        4: 남이 예약-->
                         <button
                           type="button"
                           class="btn btn-block pl-1 pr-1"
@@ -75,11 +79,7 @@
         </div>
       </div>
     </div>
-    <!-- <v-flex>
-                <div>예약자명: {{this.$store.state.user.user_name}}</div>
-                <div>예약자번호: {{this.$store.state.user.tel_num}} </div>
-    </v-flex>-->
-
+    <!-- 회의실 예약 팝업, dialog가 true 일 경우만 노출 -->
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
         <v-card-title>
@@ -225,14 +225,14 @@ export default {
         this.dialog = true;
         return;
       }
-
+      // 첫 셀에 대한 정보가 없을 경우 수행하는 조건문
       if (this.stCell === "") {
         this.stCell = [room, hour];
         this.stCell[1].selected = true;
       } else if (this.edCell === "") {
         this.edCell = [room, hour];
         if (
-          // 첫 셀, 끝 셀 이름이 동일하고 시간이 동일할 경우 (1시간 예약)
+          // 첫 셀, 끝 셀 이름이 동일하고 시간이 동일할 경우 (1시간만 예약)
           this.stCell[0].name === this.edCell[0].name &&
           this.stCell[1].index === this.edCell[1].index
         ) {
@@ -245,16 +245,17 @@ export default {
           // this.stCell = "";
           // this.edCell = "";
         } else if (
-          // 클릭 시 첫 셀의 방과 끝 셀의 방이 다른 경우 (두번째 클릭 시 초기화)
+          // 클릭 시 첫 셀이 소속된 방과 끝 셀의 방이 다른 경우 (두번째 클릭 시 초기화)
           this.rooms[this.room_indx].indexOf(this.stCell[0]) !=
           this.rooms[this.room_indx].indexOf(this.edCell[0])
         ) {
-          // 끝 셀의 시간을 selected하고 첫 셀로 치환
+          // 끝 셀의 시간을 selected하고 첫 셀의 값으로 치환
           this.stCell[1].selected = false;
           this.edCell[1].selected = true;
           this.stCell = this.edCell;
           this.edCell = "";
         } else {
+          // 정상적으로 첫 셀, 끝 셀이 선택된 경우
           // 예약 시작, 종료 시간 선언
           let stHour =
             this.edCell[1].index > this.stCell[1].index
@@ -272,12 +273,15 @@ export default {
               e.selected = true;
             }
           });
+          // 현재 예약 정보를 data에 저장
           this.rsvData.room = this.stCell[0].name;
           this.rsvData.stHour = stHour;
           this.rsvData.edHour = edHour;
           this.dialog = true;
         }
       } else {
+        // 첫 셀, 끝 셀이 모두 선택된 경우 실행하는 조건문
+        // 시작 시간, 종료 시간 선언
         let stHour =
           this.edCell[1].index > this.stCell[1].index
             ? this.stCell[1].index
@@ -286,7 +290,7 @@ export default {
           this.edCell[1].index > this.stCell[1].index
             ? this.edCell[1].index
             : this.stCell[1].index;
-
+        // 선택된 셀 모두 초기화 (예약 팝업으로 진입하지 않은 경우)
         this.stCell[0].hours.forEach(e => {
           if (e.index >= stHour && e.index <= edHour) {
             e.selected = false;
@@ -297,13 +301,14 @@ export default {
         this.stCell = [room, hour];
         this.stCell[1].selected = true;
 
-        this.rsvData.room = this.stCell[0].name;
-        this.rsvData.stHour = stHour;
-        this.rsvData.edHour = edHour;
+        // this.rsvData.room = this.stCell[0].name;
+        // this.rsvData.stHour = stHour;
+        // this.rsvData.edHour = edHour;
       }
       // hour.selected = !hour.selected
     },
     makeReservation() {
+      //예약 API 호출
       //this.currCell.selected = 2;
       let stHour =
         this.edCell[1].index > this.stCell[1].index
@@ -313,8 +318,6 @@ export default {
         this.edCell[1].index > this.stCell[1].index
           ? this.edCell[1].index
           : this.stCell[1].index;
-      //예약 API 호출
-
       this.stCell[0].hours.forEach(e => {
         if (e.index >= stHour && e.index <= edHour) {
           e.reserved = 2;
@@ -382,6 +385,7 @@ export default {
     }
   },
   created() {
+    // 회의실 시간 테이블 정보 생성
     for (var i = 0; i < this.room_src.length; i++) {
       this.rooms.push(
         this.room_src[i][1].map(e => ({
