@@ -43,7 +43,7 @@
                 <tr>
                   <th>
                     <!-- <button type="button" class="btn btn-success btn-block" disabled>회의실</button> -->
-                    <v-btn small outline color="indigo">회의실</v-btn>
+                    <v-btn small outline color="indigo" disabled>회의실</v-btn>
                   </th>
 
                   <th>
@@ -91,6 +91,7 @@
                           <button
                             type="button"
                             class="btn btn-block"
+                            :style="roomColors(index)"
                             :class="{ 'btn-secondary': (hour.reserved ===4 ),
                                     'btn-bookedCell': (hour.reserved === 2 || hour.reserved === 3),
                                     'btn-info': (hour.reserved === 1),
@@ -105,6 +106,7 @@
                           <button
                             type="button"
                             class="btn btn-block"
+                            :style="roomColors(index)"
                             :class="{ 'btn-secondary': (hour.reserved ===4 ),
                                     'btn-bookedCell': (hour.reserved === 2 || hour.reserved === 3),
                                     'btn-info': (hour.reserved === 1),
@@ -441,6 +443,11 @@ export default {
       let today = this.dateConverted;
       today.setDate(today.getDate() + 1);
       this.date = today.toISOString().substr(0, 10);
+    },
+    roomColors(index) {
+      return {
+        "--room-color-set": this.roomColorSet[index]
+      };
     }
   },
   created() {
@@ -461,7 +468,8 @@ export default {
         }))
       );
     }
-  }
+  },
+  computed: {}
 };
 /*
     seleted
@@ -562,8 +570,8 @@ export default {
 .btn-bookedCell {
   color: #fff;
   border-radius: 0px;
-  background-color: #64A8F2;
-  border-color: #5882FA;
+  background-color: var(--room-color-set);
+  border-color: var(--room-color-set);
 }
 
 .btn-bookedCell:focus {
