@@ -17,11 +17,18 @@
         min-width="290px"
       >
         <template v-slot:activator="{ on }">
-          <v-text-field v-model="date" label="날짜선택" prepend-icon="event" readonly v-on="on"></v-text-field>
-          <div>
-            <v-btn small depressed color="grey" v-on:click="dateDecrement">이전일</v-btn>
-            <v-btn small depressed color="grey" v-on:click="dateIncrement">다음일</v-btn>
-          </div>
+          <v-layout align-center>
+            <v-flex xs6 sm6 md6>
+              <v-text-field v-model="date" label="날짜선택" prepend-icon="event" readonly v-on="on"></v-text-field>
+            </v-flex>
+
+            <v-flex xs4 sm4 md4>
+              <v-btn small outline color="#BDBDBD" v-on:click="dateDecrement">이전일</v-btn>
+            </v-flex>
+            <v-flex xs4 sm4 md4>
+              <v-btn small outline color="#BDBDBD" v-on:click="dateIncrement">다음일</v-btn>
+            </v-flex>
+          </v-layout>
         </template>
         <v-date-picker v-model="date" @input="menu = false" locale="ko-kr"></v-date-picker>
       </v-menu>
@@ -35,18 +42,29 @@
               <thead>
                 <tr>
                   <th>
-                    <button type="button" class="btn btn-info btn-block">회의실</button>
+                    <!-- <button type="button" class="btn btn-success btn-block" disabled>회의실</button> -->
+                    <v-btn small outline color="indigo">회의실</v-btn>
                   </th>
 
                   <th>
-                    <button type="button" class="btn btn-info btn-block">시간</button>
+                    <div class="btn-group btn-group-justified flex-wrap">
+                      <div class="btn-group" v-for="time in timeTable">
+                        <button type="button" class="btn btn-primary btn-block" disabled>
+                          <span
+                            style="font-size: smaller; text-align: center; font-style:italic;"
+                          >{{time}}</span>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- <button type="button" class="btn btn-info btn-block">시간</button> -->
                   </th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="room in rooms[room_indx]">
+                <tr v-for="room,index in rooms[room_indx]">
                   <td>
-                    <button type="button" class="btn btn-warning btn-block">{{room.name}}</button>
+                    <!-- <button type="button" class="btn btn-success btn-block">{{room.name}}</button> -->
+                    <v-btn small outline :color="roomColorSet[index]">{{room.name}}</v-btn>
                   </td>
                   <td>
                     <div class="btn-group btn-group-justified flex-wrap">
@@ -57,18 +75,46 @@
                         2: 내가 예약
                         3: 내가 반만 예약
                         4: 남이 예약-->
-                        <button
-                          type="button"
-                          class="btn btn-block pl-1 pr-1"
-                          :class="{ 'btn-secondary': (hour.reserved ===4 ),
+                        <div v-if="Math.floor(hour.index) % 2 === 0">
+                          <!-- <button
+                            type="button"
+                            class="btn btn-block"
+                            :class="{ 'btn-secondary': (hour.reserved ===4 ),
                                     'btn-bookedCell': (hour.reserved === 2 || hour.reserved === 3),
                                     'btn-info': (hour.reserved === 1),
                                     'btn-emptyCell': (hour.reserved === 0),
                                     'btn-clickedCell': (hour.selected) }"
-                          v-on:click="cellClick(room, hour)"
-                        >
-                          <span style="font-size: smaller; text-align: center;">{{hour.index}}</span>
-                        </button>
+                            v-on:click="cellClick(room, hour)"
+                          >
+                            <span style="font-size: smaller; text-align: center;">&nbsp;</span>
+                          </button>-->
+                          <button
+                            type="button"
+                            class="btn btn-block"
+                            :class="{ 'btn-secondary': (hour.reserved ===4 ),
+                                    'btn-bookedCell': (hour.reserved === 2 || hour.reserved === 3),
+                                    'btn-info': (hour.reserved === 1),
+                                    'btn-emptyCell': (hour.reserved === 0),
+                                    'btn-clickedCell': (hour.selected) }"
+                            v-on:click="cellClick(room, hour)"
+                          >
+                            <span style="font-size: smaller; text-align: center;">&nbsp;</span>
+                          </button>
+                        </div>
+                        <div v-else>
+                          <button
+                            type="button"
+                            class="btn btn-block"
+                            :class="{ 'btn-secondary': (hour.reserved ===4 ),
+                                    'btn-bookedCell': (hour.reserved === 2 || hour.reserved === 3),
+                                    'btn-info': (hour.reserved === 1),
+                                    'btn-emptyCell-second': (hour.reserved === 0),
+                                    'btn-clickedCell': (hour.selected) }"
+                            v-on:click="cellClick(room, hour)"
+                          >
+                            <span style="font-size: smaller; text-align: center;">&nbsp;</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -138,7 +184,7 @@ export default {
       dateConverted: new Date(),
       menu: false,
       modal: false,
-
+      timeTable: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
       dialog: false,
       room_src: [
         [
@@ -196,15 +242,28 @@ export default {
 
       rsvData: {
         name: "",
+        telNum: "",
         room: "",
         title: "",
         content: "",
-        telNum: "",
         stHour: "",
         edHour: ""
-      }
+      },
+
+      roomColorSet: [
+        "#FE2EC8",
+        "#FF4000",
+        "#0101DF",
+        "#FFBF00",
+        "#B8982F",
+        "#3CD0BA",
+        "#1DEB4E",
+        "#7269DF",
+        "#9D69D1"
+      ]
     };
   },
+
   methods: {
     cellClick(room, hour) {
       this.rsvData.name = this.$store.state.user.user_name;
@@ -390,10 +449,10 @@ export default {
       this.rooms.push(
         this.room_src[i][1].map(e => ({
           name: e,
-          hours: Array(12)
+          hours: Array(24)
             .fill(0)
             .map((e, i) => ({
-              index: i + 8,
+              index: i * 0.5 + 8,
               selected: false,
               reserved: 0,
               st_index: 0,
@@ -417,73 +476,113 @@ export default {
 
 <style lang="stylus" scoped>
 .btn-emptyCell {
-  color: #BDBDBD;
+  color: #fff;
+  border-radius: 0px;
   background-color: #fff;
-  border-color: #FAFAFA;
+  border-color: #D8D8D8;
 }
 
 .btn-emptyCell:focus {
   color: #BDBDBD;
+  border-radius: 0px;
   background-color: #E6E6E6;
   border-color: #E6E6E6;
 }
 
 .btn-emptyCell:hover {
   color: #BDBDBD;
+  border-radius: 0px;
   background-color: #e6e6e6;
   border-color: #e6e6e6;
 }
 
 .btn-emptyCell:active {
   color: #BDBDBD;
+  border-radius: 0px;
+  background-color: #E0F2F7;
+  border-color: #e6e6e6;
+}
+
+.btn-emptyCell-second {
+  color: #FAFAFA;
+  border-radius: 0px;
+  background-color: #FAFAFA;
+  border-color: #D8D8D8;
+}
+
+.btn-emptyCell-second:focus {
+  color: #BDBDBD;
+  border-radius: 0px;
+  background-color: #E6E6E6;
+  border-color: #E6E6E6;
+}
+
+.btn-emptyCell-second:hover {
+  color: #BDBDBD;
+  border-radius: 0px;
+  background-color: #e6e6e6;
+  border-color: #e6e6e6;
+}
+
+.btn-emptyCell-second:active {
+  color: #BDBDBD;
+  border-radius: 0px;
   background-color: #E0F2F7;
   border-color: #e6e6e6;
 }
 
 .btn-clickedCell {
   color: #BDBDBD;
+  border-radius: 0px;
   background-color: #F5F6CE;
-  border-color: #F5F6CE;
+  border-color: #D7DF01;
 }
 
 .btn-clickedCell:focus {
   color: #BDBDBD;
+  border-radius: 0px;
   background-color: #F5F6CE;
   border-color: #F5F6CE;
 }
 
 .btn-clickedCell:hover {
   color: #BDBDBD;
+  border-radius: 0px;
   background-color: #F3F781;
   border-color: #F3F781;
 }
 
 .btn-clickedCell:active {
   color: #BDBDBD;
+  border-radius: 0px;
   background-color: #F3F781;
   border-color: #F3F781;
 }
 
 .btn-bookedCell {
   color: #fff;
+  border-radius: 0px;
   background-color: #64A8F2;
-  border-color: #64A8F2;
+  border-color: #5882FA;
 }
 
 .btn-bookedCell:focus {
   color: #fff;
+  border-radius: 0px;
   background-color: #64A8F2;
   border-color: #64A8F2;
 }
 
 .btn-bookedCell:hover {
   color: #fff;
+  border-radius: 0px;
   background-color: #4071A4;
   border-color: #4071A4;
 }
 
 .btn-bookedCell:active {
   color: #fff;
+  border-radius: 0px;
   background-color: #4071A4;
   border-color: #4071A4;
 }
