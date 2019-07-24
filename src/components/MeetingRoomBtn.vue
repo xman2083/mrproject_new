@@ -89,13 +89,13 @@
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs4>
-                <v-text-field label="회의실명" v-model="this.reservationInfo.name" readonly disabled></v-text-field>
+                <v-text-field label="회의실명" v-model="this.rsvData.room" readonly disabled></v-text-field>
               </v-flex>
               <v-flex xs4>
-                <v-text-field label="시작시간" v-model="this.reservationInfo.stHour" readonly disabled></v-text-field>
+                <v-text-field label="시작시간" v-model="this.rsvData.stHour" readonly disabled></v-text-field>
               </v-flex>
               <v-flex xs4>
-                <v-text-field label="종료시간" v-model="this.reservationInfo.edHour" readonly disabled></v-text-field>
+                <v-text-field label="종료시간" v-model="this.rsvData.edHour" readonly disabled></v-text-field>
               </v-flex>
               <v-flex xs6 sm6 md6>
                 <v-text-field label="예약자 성명*" v-model="this.rsvData.name" required></v-text-field>
@@ -193,22 +193,22 @@ export default {
       // })),
 
       active: null,
-      reservationInfo: {
-        name: "",
-        stHour: "",
-        edHour: ""
-      },
+
       rsvData: {
         name: "",
+        room: "",
         title: "",
         content: "",
-        telNum: ""
+        telNum: "",
+        stHour: "",
+        edHour: ""
       }
     };
   },
   methods: {
     cellClick(room, hour) {
-      // this.rsvData.telNum = getUserFromCookie();
+      this.rsvData.name = this.$store.state.user.user_name;
+      this.rsvData.telNum = this.$store.state.user.tel_num;
       //if hour.reserved
       console.log(
         this.room_indx,
@@ -236,9 +236,9 @@ export default {
           this.stCell[0].name === this.edCell[0].name &&
           this.stCell[1].index === this.edCell[1].index
         ) {
-          this.reservationInfo.name = this.stCell[0].name;
-          this.reservationInfo.stHour = this.stCell[1].index;
-          this.reservationInfo.edHour = this.stCell[1].index;
+          this.rsvData.room = this.stCell[0].name;
+          this.rsvData.stHour = this.stCell[1].index;
+          this.rsvData.edHour = this.stCell[1].index;
 
           this.dialog = true;
           this.stCell[1].selected = true;
@@ -272,9 +272,9 @@ export default {
               e.selected = true;
             }
           });
-          this.reservationInfo.name = this.stCell[0].name;
-          this.reservationInfo.stHour = stHour;
-          this.reservationInfo.edHour = edHour;
+          this.rsvData.room = this.stCell[0].name;
+          this.rsvData.stHour = stHour;
+          this.rsvData.edHour = edHour;
           this.dialog = true;
         }
       } else {
@@ -297,9 +297,9 @@ export default {
         this.stCell = [room, hour];
         this.stCell[1].selected = true;
 
-        this.reservationInfo.name = this.stCell[0].name;
-        this.reservationInfo.stHour = stHour;
-        this.reservationInfo.edHour = edHour;
+        this.rsvData.room = this.stCell[0].name;
+        this.rsvData.stHour = stHour;
+        this.rsvData.edHour = edHour;
       }
       // hour.selected = !hour.selected
     },
