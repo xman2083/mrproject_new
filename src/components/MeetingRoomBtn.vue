@@ -42,16 +42,25 @@
               <thead>
                 <tr>
                   <th>
-                    <!-- <button type="button" class="btn btn-success btn-block" disabled>회의실</button> -->
-                    <v-btn small outline color="indigo" disabled>회의실</v-btn>
+                    <button
+                      type="button"
+                      class="btn btn-primary btn-block"
+                      style="background-color:grey;border-style:solid;border-width:2px;border-color:#fff;box-shadow: 0px 0px 0px #fff;  padding:0px !important; border-round: 0px !important"
+                      disabled
+                    >회의실</button>
                   </th>
 
                   <th>
                     <div class="btn-group btn-group-justified flex-wrap">
-                      <div class="btn-group" v-for="time in timeTable">
-                        <button type="button" class="btn btn-primary btn-block" disabled>
+                      <div class="btn-group mr-2" role="group" v-for="time in timeTable">
+                        <button
+                          type="button"
+                          class="btn btn-primary"
+                          style="background-color:grey;border-style:solid;border-width:2px;border-color:#fff;box-shadow: 0px 0px 0px #fff; padding:0px !important; border-round: 0px !important"
+                          disabled
+                        >
                           <span
-                            style="font-size: smaller; text-align: center; font-style:italic;"
+                            style="font-size: smaller; text-align: center; font-style:italic; padding:-2px 0px;"
                           >{{time}}</span>
                         </button>
                       </div>
@@ -66,7 +75,7 @@
                     <!-- <button type="button" class="btn btn-success btn-block">{{room.name}}</button> -->
                     <v-btn small outline :color="roomColorSet[index]">{{room.name}}</v-btn>
                   </td>
-                  <td>
+                  <td style="vertical-align:middle !important">
                     <div class="btn-group btn-group-justified flex-wrap">
                       <div class="btn-group" v-for="hour in room.hours">
                         <!-- seleted 
@@ -76,18 +85,6 @@
                         3: 내가 반만 예약
                         4: 남이 예약-->
                         <div v-if="Math.floor(hour.index) % 2 === 0">
-                          <!-- <button
-                            type="button"
-                            class="btn btn-block"
-                            :class="{ 'btn-secondary': (hour.reserved ===4 ),
-                                    'btn-bookedCell': (hour.reserved === 2 || hour.reserved === 3),
-                                    'btn-info': (hour.reserved === 1),
-                                    'btn-emptyCell': (hour.reserved === 0),
-                                    'btn-clickedCell': (hour.selected) }"
-                            v-on:click="cellClick(room, hour)"
-                          >
-                            <span style="font-size: smaller; text-align: center;">&nbsp;</span>
-                          </button>-->
                           <button
                             type="button"
                             class="btn btn-block"
@@ -483,7 +480,15 @@ export default {
 
 
 <style lang="stylus" scoped>
+.custom {
+  width: 8px !important;
+}
+
 .btn-emptyCell {
+  padding: 0px;
+  height: 30px;
+  border-left: 1px dotted #f00;
+  border-right: 1px dotted #f00;
   color: #fff;
   border-radius: 0px;
   background-color: #fff;
@@ -491,6 +496,8 @@ export default {
 }
 
 .btn-emptyCell:focus {
+  padding: 0px;
+  height: 30px;
   color: #BDBDBD;
   border-radius: 0px;
   background-color: #E6E6E6;
@@ -498,6 +505,8 @@ export default {
 }
 
 .btn-emptyCell:hover {
+  padding: 0px;
+  height: 30px;
   color: #BDBDBD;
   border-radius: 0px;
   background-color: #e6e6e6;
@@ -505,6 +514,8 @@ export default {
 }
 
 .btn-emptyCell:active {
+  padding: 0px;
+  height: 30px;
   color: #BDBDBD;
   border-radius: 0px;
   background-color: #E0F2F7;
@@ -512,6 +523,10 @@ export default {
 }
 
 .btn-emptyCell-second {
+  padding: 0px;
+  height: 30px;
+  border-left: 1px dotted #f00;
+  border-right: 1px dotted #f00;
   color: #FAFAFA;
   border-radius: 0px;
   background-color: #FAFAFA;
@@ -519,6 +534,8 @@ export default {
 }
 
 .btn-emptyCell-second:focus {
+  padding: 0px;
+  height: 30px;
   color: #BDBDBD;
   border-radius: 0px;
   background-color: #E6E6E6;
@@ -526,6 +543,8 @@ export default {
 }
 
 .btn-emptyCell-second:hover {
+  padding: 0px;
+  height: 30px;
   color: #BDBDBD;
   border-radius: 0px;
   background-color: #e6e6e6;
@@ -533,6 +552,8 @@ export default {
 }
 
 .btn-emptyCell-second:active {
+  padding: 0px;
+  height: 30px;
   color: #BDBDBD;
   border-radius: 0px;
   background-color: #E0F2F7;
@@ -540,6 +561,8 @@ export default {
 }
 
 .btn-clickedCell {
+  padding: 0px;
+  height: 30px;
   color: #BDBDBD;
   border-radius: 0px;
   background-color: #F5F6CE;
@@ -547,6 +570,8 @@ export default {
 }
 
 .btn-clickedCell:focus {
+  padding: 0px;
+  height: 30px;
   color: #BDBDBD;
   border-radius: 0px;
   background-color: #F5F6CE;
@@ -554,6 +579,8 @@ export default {
 }
 
 .btn-clickedCell:hover {
+  padding: 0px;
+  height: 30px;
   color: #BDBDBD;
   border-radius: 0px;
   background-color: #F3F781;
@@ -561,6 +588,8 @@ export default {
 }
 
 .btn-clickedCell:active {
+  padding: 0px;
+  height: 30px;
   color: #BDBDBD;
   border-radius: 0px;
   background-color: #F3F781;
@@ -568,6 +597,8 @@ export default {
 }
 
 .btn-bookedCell {
+  padding: 0px;
+  height: 30px;
   color: #fff;
   border-radius: 0px;
   background-color: var(--room-color-set);
@@ -575,6 +606,8 @@ export default {
 }
 
 .btn-bookedCell:focus {
+  padding: 0px;
+  height: 30px;
   color: #fff;
   border-radius: 0px;
   background-color: #64A8F2;
@@ -582,6 +615,8 @@ export default {
 }
 
 .btn-bookedCell:hover {
+  padding: 0px;
+  height: 30px;
   color: #fff;
   border-radius: 0px;
   background-color: #4071A4;
@@ -589,6 +624,8 @@ export default {
 }
 
 .btn-bookedCell:active {
+  padding: 0px;
+  height: 30px;
   color: #fff;
   border-radius: 0px;
   background-color: #4071A4;
