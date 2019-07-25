@@ -157,14 +157,14 @@
                   <v-icon
                     dark
                     v-on:click="rsvData.stHour-=0.5"
-                    :disabled="rsvData.stHour<8?true:false"
+                    :disabled="rsvData.stHour<=8?true:false"
                   >remove</v-icon>
                 </v-btn>
                 <v-btn class="mx-2" fab dark depressed style="height:40px;width:40px;" color="grey">
                   <v-icon
                     dark
                     v-on:click="rsvData.stHour+=0.5"
-                    :disabled="rsvData.stHour>19?true:false"
+                    :disabled="rsvData.stHour>19 || rsvData.stHour >= rsvData.edHour?true:false"
                   >add</v-icon>
                 </v-btn>
               </v-flex>
@@ -183,14 +183,14 @@
                   <v-icon
                     dark
                     v-on:click="rsvData.edHour-=0.5"
-                    :disabled="rsvData.edHour<=8?true:false"
+                    :disabled="rsvData.edHour<=8 || rsvData.edHour <= rsvData.stHour?true:false"
                   >remove</v-icon>
                 </v-btn>
                 <v-btn class="mx-2" fab dark depressed style="height:40px;width:40px;" color="grey">
                   <v-icon
                     dark
                     v-on:click="rsvData.edHour+=0.5"
-                    :disabled="rsvData.edHour>=20?true:false"
+                    :disabled="rsvData.edHour>19?true:false"
                   >add</v-icon>
                 </v-btn>
               </v-flex>
@@ -425,32 +425,12 @@ export default {
       }
     },
     makeReservation() {
-      //예약 API 호출
-      //this.currCell.selected = 2;
-      // let stHour =
-      //   this.edCell[1].index > this.stCell[1].index
-      //     ? this.stCell[1].index
-      //     : this.edCell[1].index;
-      // let edHour =
-      //   this.edCell[1].index > this.stCell[1].index
-      //     ? this.edCell[1].index
-      //     : this.stCell[1].index;
-      // this.stCell[0].hours.forEach(e => {
-      //   if (e.index >= stHour && e.index <= edHour) {
-      //     e.reserved = 2;
-      //     e.selected = false;
-      //     e.st_index = stHour;
-      //     e.ed_index = edHour;
-      //   }
-      // });
-      // this.stCell = "";
-      // this.edCell = "";
-      // this.dialog = false;
-
+      // 예약 API 호출
       let stHour =
         this.rsvData.edHour > this.rsvData.stHour
           ? this.rsvData.stHour
           : this.rsvData.edHour;
+      // console.log(stHour);
       let edHour =
         this.rsvData.edHour > this.rsvData.stHour
           ? this.rsvData.edHour
