@@ -163,17 +163,16 @@
                 <v-text-field
                   autofocus
                   label="예약자 성명*"
-                  v-model="this.rsvData.name"
+                  v-model="this.rsvData.user_name"
                   required
                   clearable
                 ></v-text-field>
               </v-flex>
               <v-flex xs6 sm6 md6>
-<<<<<<< HEAD
-                <v-text-field label="휴대폰 번호" v-model="this.rsvData.telNum" clearable></v-text-field>
-=======
-                <v-text-field label="휴대폰 번호" v-model="this.rsvData.telNum"></v-text-field><a :href="`tel:+${ this.rsvData.telNum }`"> <v-icon>phone</v-icon></a>
->>>>>>> 2d761594cf45ea165cc7289b3f7985bd91992334
+                <v-text-field label="휴대폰 번호" v-model="this.rsvData.telNum"></v-text-field>
+                <a :href="`tel:+${ this.rsvData.telNum }`">
+                  <v-icon>phone</v-icon>
+                </a>
               </v-flex>
 
               <v-flex xs12 sm12 md12>
@@ -268,10 +267,9 @@ export default {
       active: null,
 
       rsvData: {
-        name: "",
+        user_name: "",
         telNum: "",
-        room: "",
-        floor: "",
+        room_name: "",
         title: "",
         content: "",
         stHour: {
@@ -302,7 +300,7 @@ export default {
 
   methods: {
     cellClick(room, hour) {
-      this.rsvData.name = this.$store.state.user.user_name;
+      this.rsvData.user_name = this.$store.state.user.user_name;
       this.rsvData.telNum = this.$store.state.user.tel_num;
       //if hour.reserved
       console.log(
