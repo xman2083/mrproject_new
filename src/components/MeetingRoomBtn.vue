@@ -18,15 +18,13 @@
       >
         <template v-slot:activator="{ on }">
           <v-layout align-center>
-            <v-flex xs6 sm6 md6>
+            <v-flex xs4 sm4 md4>
               <v-text-field v-model="date" label="날짜선택" prepend-icon="event" readonly v-on="on"></v-text-field>
             </v-flex>
 
-            <v-flex xs4 sm4 md4>
-              <v-btn small outline color="#BDBDBD" v-on:click="dateDecrement">이전일</v-btn>
-            </v-flex>
-            <v-flex xs4 sm4 md4>
-              <v-btn small outline color="#BDBDBD" v-on:click="dateIncrement">다음일</v-btn>
+            <v-flex xs8 sm8 md8>
+              <v-btn small outline color="#BDBDBD" v-on:click="dateDecrement">< 이전일</v-btn>
+              <v-btn small outline color="#BDBDBD" v-on:click="dateIncrement">다음일 ></v-btn>
             </v-flex>
           </v-layout>
         </template>
@@ -601,7 +599,7 @@ export default {
   height: 30px;
   color: #fff;
   border-radius: 0px;
-  background-color: var(--room-color-set);
+  background: linear-gradient(180deg, white, var(--room-color-set));
   border-color: var(--room-color-set);
 }
 
