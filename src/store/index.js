@@ -1,7 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { loginUser, sendOtp } from '../api';
-import { saveAuthToCookie, saveUserToCookie,getUserFromCookie, deleteCookie } from '../utils/cookies.js';
+import {
+  loginUser,
+  sendOtp
+} from '../api';
+import {
+  saveAuthToCookie,
+  saveUserToCookie,
+  getUserFromCookie,
+  deleteCookie
+} from '../utils/cookies.js';
 
 Vue.use(Vuex)
 
@@ -9,6 +17,7 @@ export default new Vuex.Store({
   state: {
     user: {},
     token: '',
+    rsvdata: {}
   },
   getters: {
     isLoggedIn(state) {
@@ -34,9 +43,15 @@ export default new Vuex.Store({
       deleteCookie('til_auth');
       deleteCookie('til_user');
     },
+    ADD_RSVDATA(state, payload) {
+      state.rsvdata[payload.rsvdata.user] = payload.rsvdata
+    }
+
   },
   actions: {
-    async LOGIN({ commit }, data) {
+    async LOGIN({
+      commit
+    }, data) {
       const response = await loginUser(data);
       if (response.data.statusCode == 200) {
         commit('SET_USER', response.data.user);
@@ -46,9 +61,33 @@ export default new Vuex.Store({
       }
       return response;
     },
-    async SENDOTP({ commit }, data) {
+    async SENDOTP({
+      commit
+    }, data) {
       const response = await sendOtp(data);
       return response;
+    },
+    addRsvData({
+      commit
+    }, data) {
+      commit('ADD_RSVDATA', {
+        rsvdata: data
+      });
+    },
+    updateRsvData({
+      commit
+    }, data) {
+      commit('UPDATE_RSVDATA', {
+        rsvdata: data
+      });
+    },
+
+    deleteRsvData({
+      commit
+    }, data) {
+      commit('DELETE_RSVDATA', {
+        rsvdata: data
+      });
     },
   },
 })

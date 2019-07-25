@@ -5,7 +5,7 @@
       <v-tab-item v-for="room in room_src" :key="room[2]"></v-tab-item>
     </v-tabs>
 
-    <v-flex xs12 sm6 md4>
+    <v-flex xs12 sm12 md12>
       <v-menu
         v-model="menu"
         :close-on-content-click="false"
@@ -18,13 +18,13 @@
       >
         <template v-slot:activator="{ on }">
           <v-layout align-center>
-            <v-flex xs4 sm4 md4>
+            <v-flex xs4 sm4 md2 lg2>
               <v-text-field v-model="date" label="날짜선택" prepend-icon="event" readonly v-on="on"></v-text-field>
             </v-flex>
 
-            <v-flex xs8 sm8 md8>
-              <v-btn small outline color="#BDBDBD" v-on:click="dateDecrement">< 이전일</v-btn>
-              <v-btn small outline color="#BDBDBD" v-on:click="dateIncrement">다음일 ></v-btn>
+            <v-flex xs8 sm8 md10 lg10>
+              <v-btn small outline color="#BDBDBD" v-on:click="dateDecrement">◀ 이전일</v-btn>
+              <v-btn small outline color="#BDBDBD" v-on:click="dateIncrement">다음일 ▶</v-btn>
             </v-flex>
           </v-layout>
         </template>
@@ -126,31 +126,56 @@
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
         <v-card-title>
-          <span class="headline">{{this.date}} 회의실 예약하기</span>
+          <v-avatar color="indigo" size="36">
+            <span class="white--text" style="font-size:smaller;">{{this.room_src[room_indx][0]}}</span>
+          </v-avatar>
+          <span class="headline" style="color:grey !important;">&nbsp;&nbsp;회의실 예약하기&nbsp;&nbsp;</span>
+          <span class="grey--text subtitle-1">{{this.date}}</span>
         </v-card-title>
         <v-card-text>
           <v-container grid-list-md>
             <v-layout wrap>
-              <v-flex xs4>
-                <v-text-field label="회의실명" v-model="this.rsvData.room" readonly disabled></v-text-field>
+              <v-flex xs2>
+                <v-text-field dark solo value="회의실" style="font-size:smaller;"></v-text-field>
               </v-flex>
-              <v-flex xs4>
-                <v-text-field label="시작시간" v-model="this.rsvData.stHour" readonly disabled></v-text-field>
+              <v-flex xs10>
+                <v-text-field v-model="this.rsvData.room" readonly solo></v-text-field>
               </v-flex>
-              <v-flex xs4>
-                <v-text-field label="종료시간" v-model="this.rsvData.edHour" readonly disabled></v-text-field>
+              <v-flex xs2>
+                <v-text-field style="font-size:smaller;" value="시작" readonly solo dark></v-text-field>
+              </v-flex>
+              <v-flex xs2>
+                <v-text-field suffix="시" v-model="this.rsvData.stHour.hour" solo></v-text-field>
+              </v-flex>
+              <v-flex xs2>
+                <v-text-field suffix="분" v-model="this.rsvData.stHour.half" solo></v-text-field>
+              </v-flex>
+              <v-flex xs2>
+                <v-text-field value="종료" readonly solo dark></v-text-field>
+              </v-flex>
+              <v-flex xs2>
+                <v-text-field suffix="시" v-model="this.rsvData.edHour.hour" solo></v-text-field>
+              </v-flex>
+              <v-flex xs2>
+                <v-text-field suffix="분" v-model="this.rsvData.edHour.half" solo></v-text-field>
               </v-flex>
               <v-flex xs6 sm6 md6>
-                <v-text-field label="예약자 성명*" v-model="this.rsvData.name" required></v-text-field>
+                <v-text-field
+                  autofocus
+                  label="예약자 성명*"
+                  v-model="this.rsvData.name"
+                  required
+                  clearable
+                ></v-text-field>
               </v-flex>
               <v-flex xs6 sm6 md6>
-                <v-text-field label="휴대폰 번호" v-model="this.rsvData.telNum"></v-text-field>
+                <v-text-field label="휴대폰 번호" v-model="this.rsvData.telNum" clearable></v-text-field>
               </v-flex>
               <v-flex xs12 sm12 md12>
-                <v-text-field label="회의 주제*" v-model="this.rsvData.title" required></v-text-field>
+                <v-text-field label="회의 주제*" v-model="this.rsvData.title" required clearable></v-text-field>
               </v-flex>
               <v-flex xs12 sm12 md12>
-                <v-text-field label="회의 내용" v-model="this.rsvData.content"></v-text-field>
+                <v-text-field label="회의 내용" v-model="this.rsvData.content" clearable></v-text-field>
               </v-flex>
               <small>*필수 입력 사항 입니다.</small>
             </v-layout>
@@ -241,10 +266,19 @@ export default {
         name: "",
         telNum: "",
         room: "",
+        floor: "",
         title: "",
         content: "",
-        stHour: "",
-        edHour: ""
+        stHour: {
+          index: 0,
+          hour: 0,
+          half: 0
+        },
+        edHour: {
+          index: 0,
+          hour: 0,
+          half: 0
+        }
       },
 
       roomColorSet: [
@@ -293,8 +327,8 @@ export default {
           this.stCell[1].index === this.edCell[1].index
         ) {
           this.rsvData.room = this.stCell[0].name;
-          this.rsvData.stHour = this.stCell[1].index;
-          this.rsvData.edHour = this.stCell[1].index;
+          this.rsvData.stHour.index = this.stCell[1].index;
+          this.rsvData.edHour.index = this.stCell[1].index;
 
           this.dialog = true;
           this.stCell[1].selected = true;
@@ -331,8 +365,8 @@ export default {
           });
           // 현재 예약 정보를 data에 저장
           this.rsvData.room = this.stCell[0].name;
-          this.rsvData.stHour = stHour;
-          this.rsvData.edHour = edHour;
+          this.rsvData.stHour.index = stHour;
+          this.rsvData.edHour.index = edHour;
           this.dialog = true;
         }
       } else {
@@ -356,12 +390,24 @@ export default {
         this.edCell = "";
         this.stCell = [room, hour];
         this.stCell[1].selected = true;
-
-        // this.rsvData.room = this.stCell[0].name;
-        // this.rsvData.stHour = stHour;
-        // this.rsvData.edHour = edHour;
       }
-      // hour.selected = !hour.selected
+      // 예약 팝업 호출 시 현재 예약 시간 정보(index)를 시간/분 단위로 rsvData에 저장
+      if (this.dialog === true) {
+        this.rsvData.stHour.hour = parseInt(this.rsvData.stHour.index / 1);
+        if (this.rsvData.stHour.index % 1 === 0) {
+          this.rsvData.stHour.half = 0;
+        } else {
+          this.rsvData.stHour.half = 30;
+        }
+
+        this.rsvData.edHour.hour = parseInt(this.rsvData.edHour.index / 1);
+        if (this.rsvData.edHour.index % 1 === 0) {
+          this.rsvData.edHour.half += 30;
+        } else {
+          this.rsvData.edHour.half = 0;
+          this.rsvData.edHour.hour += 1;
+        }
+      }
     },
     makeReservation() {
       //예약 API 호출
@@ -480,6 +526,18 @@ export default {
 <style lang="stylus" scoped>
 .custom {
   width: 8px !important;
+}
+
+.v-text-field input {
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  line-height: 20px;
+  padding: 8px 0 8px;
+  max-width: 100%;
+  min-width: 0px;
+  width: 100%;
+  text-align: center;
 }
 
 .btn-emptyCell {
