@@ -144,11 +144,9 @@
                 <v-text-field label="예약자 성명*" v-model="this.rsvData.name" required></v-text-field>
               </v-flex>
               <v-flex xs6 sm6 md6>
-                <v-text-field label="휴대폰 번호" v-model="this.rsvData.telNum"></v-text-field>
+                <v-text-field label="휴대폰 번호" v-model="this.rsvData.telNum"></v-text-field><a :href="`tel:+${ this.rsvData.telNum }`"> <v-icon>phone</v-icon></a>
               </v-flex>
-              <v-flex>
-                <a :href="`tel:+${ this.rsvData.telNum }`">전화</a>
-              </v-flex>
+
               <v-flex xs12 sm12 md12>
                 <v-text-field label="회의 주제*" v-model="this.rsvData.title" required></v-text-field>
               </v-flex>
