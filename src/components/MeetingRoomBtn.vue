@@ -132,7 +132,7 @@
           </v-avatar>
           <span class="headline" style="color:grey !important;">&nbsp;&nbsp;회의실 예약하기&nbsp;&nbsp;</span>
           <span class="grey--text subtitle-1">{{this.date}}</span>
-          <span>&nbsp;st: {{this.rsvData.stHour}} / ed: {{this.rsvData.edHour}}</span>
+          <!-- <span>&nbsp;st: {{this.rsvData.stHour}} / ed: {{this.rsvData.edHour}}</span> -->
         </v-card-title>
         <v-divider style="margin:0px;"></v-divider>
         <v-card-text>
@@ -306,6 +306,7 @@ export default {
 
       rsvData: {
         user_name: "",
+        date: "",
         telNum: "",
         room_name: "",
         title: "",
@@ -445,10 +446,22 @@ export default {
           e.st_index = stHour;
           e.ed_index = edHour;
         }
+        this.rsvData.date = this.date 
       });
+
+       //rsvData Post
+      this.$http.post("https://jsonplaceholder.typicode.com/posts", {
+        title: this.rsvData.date,
+        body: this.rsvData.user_name,
+        userID : 1
+      }).then(function(data){
+        console.log(data);
+      });
+
       this.stCell = "";
       this.edCell = "";
       this.dialog = false;
+
     },
     cnclReservation() {
       //예약 취소 API 호출

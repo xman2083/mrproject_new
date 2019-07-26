@@ -5,13 +5,15 @@ import router from './routes'
 import store from './store'
 import './registerServiceWorker'
 import localforage from 'localforage'
-
+import VueResource from 'vue-resource'
 
 Vue.config.productionTip = false
 
 localforage.config({
   name: 'budgeterbium'
 });
+
+Vue.use(VueResource)
 
 new Vue({
   router,
