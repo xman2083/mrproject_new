@@ -5,7 +5,7 @@ import router from './routes'
 import store from './store'
 import './registerServiceWorker'
 import localforage from 'localforage'
-
+require('localforage-startswith');
 
 Vue.config.productionTip = false
 

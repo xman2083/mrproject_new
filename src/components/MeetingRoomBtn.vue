@@ -123,6 +123,11 @@
         </div>
       </div>
     </div>
+    <v-btn color="indigo" dark v-on:click="clearAllData">예약DB삭제</v-btn>
+    <v-btn color="grey" dark v-on:click="CLEAR_STOREDATA">스토어 삭제</v-btn>
+    <v-btn color="warning" dark v-on:click="fetchRsvData">fetch</v-btn>
+    <div>{{this.$store.state.rsvdata}}</div>
+
     <!-- 회의실 예약 팝업, dialog가 true 일 경우만 노출 -->
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
@@ -239,6 +244,9 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+import { mapMutations } from "vuex";
+import { clearAllData } from "../api";
 // import ConstantValues from '../utils/constant-values.js'
 export default {
   data() {
@@ -292,6 +300,7 @@ export default {
       stCell: "",
       edCell: "",
       rooms: [],
+      newroom: [],
       // curr_rooms.map(e => ({
       //   name: e,
       //   hours: Array(12).fill(0).map((e, i) => ({
@@ -327,7 +336,21 @@ export default {
     };
   },
 
+  mounted() {
+    this.loadRsvData();
+  },
+
   methods: {
+    clearAllData,
+
+    ...mapActions([
+      "addRsvData",
+      "updateRsvData",
+      "removeRsvData",
+      "loadRsvData"
+    ]),
+    ...mapMutations(["CLEAR_STOREDATA"]),
+
     cellClick(room, hour) {
       this.rsvData.user_name = this.$store.state.user.user_name;
       this.rsvData.telNum = this.$store.state.user.tel_num;
@@ -358,7 +381,7 @@ export default {
           this.stCell[0].name === this.edCell[0].name &&
           this.stCell[1].index === this.edCell[1].index
         ) {
-          this.rsvData.room = this.stCell[0].name;
+          this.rsvData.room_name = this.stCell[0].name;
           this.rsvData.stHour = this.stCell[1].index;
           this.rsvData.edHour = this.stCell[1].index;
 
@@ -396,7 +419,7 @@ export default {
             }
           });
           // 현재 예약 정보를 data에 저장
-          this.rsvData.room = this.stCell[0].name;
+          this.rsvData.room_name = this.stCell[0].name;
           this.rsvData.stHour = stHour;
           this.rsvData.edHour = edHour;
           this.dialog = true;
@@ -448,6 +471,7 @@ export default {
       this.stCell = "";
       this.edCell = "";
       this.dialog = false;
+      this.addRsvData(this.rsvData);
     },
     cnclReservation() {
       //예약 취소 API 호출
@@ -507,6 +531,12 @@ export default {
         "--room-border-left": left,
         "--room-border-right": right
       };
+    },
+    fetchRsvData() {
+      this.loadRsvData();
+      for (var i = 0; i < this.$store.state.rsvdata; i++) {
+        alert(this.$store.state.rsvdata[i][1].room_name);
+      }
     }
   },
   created() {
