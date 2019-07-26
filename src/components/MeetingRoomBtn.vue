@@ -86,7 +86,7 @@
                           <button
                             type="button"
                             class="btn btn-block"
-                            :style="roomColors(index)"
+                            :style="roomColors(index,hour.border_left,hour.border_right)"
                             :class="{ 'btn-secondary': (hour.reserved ===4 ),
                                     'btn-bookedCell': (hour.reserved === 2 || hour.reserved === 3),
                                     'btn-info': (hour.reserved === 1),
@@ -97,11 +97,12 @@
                             <span style="font-size: smaller; text-align: center;">&nbsp;</span>
                           </button>
                         </div>
+                        <!-- 짝수 시간대 배경색을 다르게 주는 코드 -->
                         <div v-else>
                           <button
                             type="button"
                             class="btn btn-block"
-                            :style="roomColors(index)"
+                            :style="roomColors(index,hour.border_left,hour.border_right)"
                             :class="{ 'btn-secondary': (hour.reserved ===4 ),
                                     'btn-bookedCell': (hour.reserved === 2 || hour.reserved === 3),
                                     'btn-info': (hour.reserved === 1),
@@ -170,7 +171,7 @@
               </v-flex>
 
               <v-flex xs2>
-                <v-text-field value="종료" readonly solo dark></v-text-field>
+                <v-text-field value="종료" style="font-size:smaller;" readonly solo dark></v-text-field>
               </v-flex>
               <v-flex xs2>
                 <v-text-field suffix="시" :value="parseInt(rsvData.edHour+0.5)" solo></v-text-field>
@@ -195,13 +196,7 @@
                 </v-btn>
               </v-flex>
               <v-flex xs6 sm6 md6>
-                <v-text-field
-                  autofocus
-                  label="예약자 성명*"
-                  v-model="rsvData.user_name"
-                  required
-                  clearable
-                ></v-text-field>
+                <v-text-field label="예약자 성명*" v-model="rsvData.user_name" required clearable></v-text-field>
               </v-flex>
               <v-flex xs4 sm4 md4>
                 <v-text-field label="휴대폰 번호" v-model="rsvData.telNum"></v-text-field>
@@ -213,7 +208,13 @@
               </v-flex>
 
               <v-flex xs12 sm12 md12>
-                <v-text-field label="회의 주제*" v-model="rsvData.title" required clearable></v-text-field>
+                <v-text-field
+                  v-if="dialog"
+                  autofocus
+                  required
+                  label="회의 주제*"
+                  v-model="rsvData.title"
+                ></v-text-field>
               </v-flex>
               <v-flex xs12 sm12 md12>
                 <v-text-field label="회의 내용" v-model="rsvData.content" clearable></v-text-field>
@@ -435,6 +436,8 @@ export default {
         this.rsvData.edHour > this.rsvData.stHour
           ? this.rsvData.edHour
           : this.rsvData.stHour;
+      this.stCell[1].border_left = "1px solid";
+      this.edCell[1].border_right = "1px solid";
       this.stCell[0].hours.forEach(e => {
         if (e.index >= stHour && e.index <= edHour) {
           e.reserved = 2;
@@ -498,9 +501,11 @@ export default {
       today.setDate(today.getDate() + 1);
       this.date = today.toISOString().substr(0, 10);
     },
-    roomColors(index) {
+    roomColors(index, left, right) {
       return {
-        "--room-color-set": this.roomColorSet[index]
+        "--room-color-set": this.roomColorSet[index],
+        "--room-border-left": left,
+        "--room-border-right": right
       };
     }
   },
@@ -517,7 +522,9 @@ export default {
               selected: false,
               reserved: 0,
               st_index: 0,
-              ed_index: 0
+              ed_index: 0,
+              border_right: false,
+              border_left: false
             }))
         }))
       );
@@ -670,6 +677,8 @@ export default {
   height: 30px;
   color: #fff;
   border-radius: 0px;
+  border-left: var(--room-border-left);
+  border-right: var(--room-border-right);
   background: linear-gradient(180deg, white, var(--room-color-set));
   border-color: var(--room-color-set);
 }
