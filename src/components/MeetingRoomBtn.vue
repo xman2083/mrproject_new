@@ -43,7 +43,7 @@
                     <button
                       type="button"
                       class="btn btn-primary btn-block"
-                      style="background-color:grey;border-style:solid;border-width:2px;border-color:#fff;box-shadow: 0px 0px 0px #fff;  padding:0px !important; border-round: 0px !important"
+                      style="background-color:grey;border-style:solid;border-color:#fff;box-shadow: 0px 0px 0px #fff;  padding:0px !important; border-round: 0px !important;"
                       disabled
                     >회의실</button>
                   </th>
@@ -132,7 +132,7 @@
           </v-avatar>
           <span class="headline" style="color:grey !important;">&nbsp;&nbsp;회의실 예약하기&nbsp;&nbsp;</span>
           <span class="grey--text subtitle-1">{{this.date}}</span>
-          <span>&nbsp;st: {{this.rsvData.stHour}} / ed: {{this.rsvData.edHour}}</span>
+          <span>&nbsp;stHour: {{this.rsvData.stHour}} / edHour: {{this.rsvData.edHour}}</span>
         </v-card-title>
         <v-divider style="margin:0px;"></v-divider>
         <v-card-text>
@@ -147,21 +147,21 @@
               <v-flex xs2>
                 <v-text-field style="font-size:smaller;" value="시작" readonly solo dark></v-text-field>
               </v-flex>
-              <v-flex xs2>
+              <v-flex xs3>
                 <v-text-field suffix="시" :value="parseInt(rsvData.stHour)" solo readonly></v-text-field>
               </v-flex>
-              <v-flex xs2>
+              <v-flex xs3>
                 <v-text-field suffix="분" :value="rsvData.stHour%1*60" solo readonly></v-text-field>
               </v-flex>
-              <v-flex xs6>
-                <v-btn class="mx-2" fab dark depressed style="height:40px;width:40px;" color="grey">
+              <v-flex xs4>
+                <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
                   <v-icon
                     dark
                     v-on:click="rsvData.stHour-=0.5"
                     :disabled="rsvData.stHour<=8?true:false"
                   >remove</v-icon>
                 </v-btn>
-                <v-btn class="mx-2" fab dark depressed style="height:40px;width:40px;" color="grey">
+                <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
                   <v-icon
                     dark
                     v-on:click="rsvData.stHour+=0.5"
@@ -169,25 +169,24 @@
                   >add</v-icon>
                 </v-btn>
               </v-flex>
-
               <v-flex xs2>
                 <v-text-field value="종료" style="font-size:smaller;" readonly solo dark></v-text-field>
               </v-flex>
-              <v-flex xs2>
+              <v-flex xs3>
                 <v-text-field suffix="시" :value="parseInt(rsvData.edHour+0.5)" solo></v-text-field>
               </v-flex>
-              <v-flex xs2>
+              <v-flex xs3>
                 <v-text-field suffix="분" :value="(rsvData.edHour+0.5)%1*60" solo></v-text-field>
               </v-flex>
-              <v-flex xs6>
-                <v-btn class="mx-2" fab dark depressed style="height:40px;width:40px;" color="grey">
+              <v-flex xs4>
+                <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
                   <v-icon
                     dark
                     v-on:click="rsvData.edHour-=0.5"
                     :disabled="rsvData.edHour<=8 || rsvData.edHour <= rsvData.stHour?true:false"
                   >remove</v-icon>
                 </v-btn>
-                <v-btn class="mx-2" fab dark depressed style="height:40px;width:40px;" color="grey">
+                <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
                   <v-icon
                     dark
                     v-on:click="rsvData.edHour+=0.5"
@@ -501,6 +500,7 @@ export default {
       today.setDate(today.getDate() + 1);
       this.date = today.toISOString().substr(0, 10);
     },
+    // 예약된 시간대 색상을 커스텀 설정하는 메소드로 css에 해당 값을 전달 함
     roomColors(index, left, right) {
       return {
         "--room-color-set": this.roomColorSet[index],
@@ -564,7 +564,7 @@ export default {
   padding: 0px;
   height: 30px;
   border-left: 1px dotted #f00;
-  border-right: 1px dotted #f00;
+  border-right: 0px dotted #f00;
   color: #fff;
   border-radius: 0px;
   background-color: #fff;
@@ -602,7 +602,7 @@ export default {
   padding: 0px;
   height: 30px;
   border-left: 1px dotted #f00;
-  border-right: 1px dotted #f00;
+  border-right: 0px dotted #f00;
   color: #FAFAFA;
   border-radius: 0px;
   background-color: #FAFAFA;

@@ -10,6 +10,7 @@ import {
   getUserFromCookie,
   deleteCookie
 } from '../utils/cookies.js';
+import guid from '../utils'
 
 Vue.use(Vuex)
 
@@ -44,8 +45,14 @@ export default new Vuex.Store({
       deleteCookie('til_user');
     },
     ADD_RSVDATA(state, payload) {
-      state.rsvdata[payload.rsvdata.user] = payload.rsvdata
-    }
+      state.rsvdata[payload.rsvdata.telNum] = payload.rsvdata
+    },
+    UPDATE_RSVDATA(state, payload) {
+      state.rsvdata[payload.rsvdata.telNum] = payload.rsvdata
+    },
+    REMOVE_RSVDATA(state, payload) {
+      Vue.delete(state.rsvdate, payload.rsvdata)
+    },
 
   },
   actions: {
@@ -82,7 +89,7 @@ export default new Vuex.Store({
       });
     },
 
-    deleteRsvData({
+    removeRsvData({
       commit
     }, data) {
       commit('DELETE_RSVDATA', {
