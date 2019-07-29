@@ -37,6 +37,9 @@ export default new Vuex.Store({
     userData(state) {
       return state.user;
     },
+    getRsvData(state) {
+      return state.rsvdata;
+    }
   },
   mutations: {
     SET_USER(state, user) {

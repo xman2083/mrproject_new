@@ -35,7 +35,7 @@ function createWithAuth(url, options) {
 }
 
 const auth = create(APP_URL);
-const posts = createWithAuth(`${APP_URL}posts/`);
+const posts = createWithAuth(`${APP_URL}/`);
 
 function sendOtp(data) {
   try {
@@ -78,6 +78,15 @@ function createNewPost(data) {
 function fetchPosts() {
   try {
     return posts.get('/');
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+function getRsvData(data) {
+  try {
+    return posts.post('getrsvdata', JSON.stringify(data));
   } catch (error) {
     console.log(error);
     return error;
