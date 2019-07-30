@@ -212,14 +212,13 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="dialog = false">닫기</v-btn>
+          <v-btn color="disabled" @click="dialog = false">닫기</v-btn>
           <v-btn
-            color="blue darken-1"
-            flat
+            color="warning"
             v-if="currCell !== '' && (currCell[1].reserved === 2 || currCell[1].reserved === 3)"
             v-on:click="cnclReservation"
           >예약취소</v-btn>
-          <v-btn color="blue darken-1" flat v-on:click="makeReservation">예약</v-btn>
+          <v-btn color="primary" v-on:click="makeReservation">예약</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -528,25 +527,24 @@ export default {
       console.log("Fetched");
       // console.log(this.getRsvData)
       for (var key in this.getRsvData) {
+        console.log(key);
         let room_name = this.getRsvData[key].room_name;
         let user_name = this.getRsvData[key].user_name;
         let stHour = this.getRsvData[key].stHour;
         let edHour = this.getRsvData[key].edHour;
 
-        //   this.room.hours.forEach(e => {
-        //     if (e.index >= stHour && e.index <= edHour) {
-        //       e.selected = true;
-        //     }
-        //   });
-        // }
-
-        // 선택된 셀 모두 초기화 (예약 팝업으로 진입하지 않은 경우)
-
-        // for (var i = stHour; i < edHour; i += 0.5) {
-        //   if (room_name === this.rooms[this.room_indx].name) {
-        //     console.log("ok");
-        //     // this.rooms[this.room_indx].
-        //   }
+        for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
+          this.rooms[this.room_indx][i].hours.forEach(e => {
+            if (
+              e.index >= stHour &&
+              e.index <= edHour &&
+              this.rooms[this.room_indx][i].name === room_name
+            ) {
+              e.reserved = 2;
+              e.name = user_name;
+            }
+          });
+        }
       }
     }
   },
@@ -564,6 +562,7 @@ export default {
               reserved: 0,
               st_index: 0,
               ed_index: 0,
+              name: "",
               border_right: false,
               border_left: false
             }))
