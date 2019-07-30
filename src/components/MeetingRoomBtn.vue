@@ -230,6 +230,9 @@
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import { clearAllData } from "../api";
 // import ConstantValues from '../utils/constant-values.js'
+import { getRoomData } from '../api/index.js';
+
+
 export default {
   data() {
     return {
@@ -456,15 +459,24 @@ export default {
         this.rsvData.date = this.date 
       });
 
-       //rsvData Post <<-ing
-      this.$http.post("https://jsonplaceholder.typicode.com/posts", {
-        title: this.rsvData.date,
-        body: this.rsvData.user_name,
-        userID : 1
-      }).then(function(data){
-        console.log(data);
-      });
+      //  //rsvData Post <<-ing
+      // this.$http.post("https://jsonplaceholder.typicode.com/posts", {
+      //   title: this.rsvData.date,
+      //   body: this.rsvData.user_name,
+      //   userID : 1
+      // }).then(function(data){
+      //   console.log(data);
+      // });
     
+    //  회의실 정보 post
+    getRoomData({})
+          .then((response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
       
       this.stCell = "";
       this.edCell = "";
