@@ -456,16 +456,14 @@ export default {
       });
 
        //rsvData Post <<-ing
-      this.$http.post("https://bjey314qaa.execute-api.ap-northeast-2.amazonaws.com/inner_seat/getrsvdata", {
-        headers: 'hi',
+      this.$http.post("https://jsonplaceholder.typicode.com/posts", {
         title: this.rsvData.date,
         body: this.rsvData.user_name,
         userID : 1
       }).then(function(data){
         console.log(data);
       });
-     
-
+    
       
       this.stCell = "";
       this.edCell = "";
@@ -477,17 +475,19 @@ export default {
       //예약 취소 API 호출
       let stHour = this.currCell[1].st_index;
       let edHour = this.currCell[1].ed_index;
-
+      
       this.currCell[0].hours.forEach(e => {
         if (e.index >= stHour && e.index <= edHour) {
           e.reserved = 0;
           e.selected = false;
           e.st_index = 0;
           e.ed_index = 0;
+        
         }
       });
       this.currCell = "";
       this.dialog = false;
+      
     },
     closeReservation() {},
     swipeHandler(direction) {
