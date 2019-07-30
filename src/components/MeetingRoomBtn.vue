@@ -120,10 +120,7 @@
           </v-avatar>
           <span class="headline" style="color:grey !important;">&nbsp;&nbsp;회의실 예약하기&nbsp;&nbsp;</span>
           <span class="grey--text subtitle-1">{{this.date}}</span>
-          <<<<<<< HEAD
-          =======
           <!-- <span>&nbsp;st: {{this.rsvData.stHour}} / ed: {{this.rsvData.edHour}}</span> -->
-          >>>>>>> 18bae91cf8866282c1e79ff6c2797e5e46420b97
           <span>&nbsp;stHour: {{this.rsvData.stHour}} / edHour: {{this.rsvData.edHour}}</span>
         </v-card-title>
         <v-divider style="margin:0px;"></v-divider>
