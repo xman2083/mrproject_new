@@ -86,7 +86,7 @@
                           type="button"
                           class="btn btn-block"
                           :style="roomColors(index,hour.border_left,hour.border_right,hour.index)"
-                          :class="{ 'btn-secondary': (hour.reserved ===4 ),
+                          :class="{ 'btn-bookedOthers': (hour.reserved ===4 ),
                                     'btn-bookedCell': (hour.reserved === 2 || hour.reserved === 3),
                                     'btn-info': (hour.reserved === 1),
                                     'btn-emptyCell': (hour.reserved === 0),
@@ -281,7 +281,6 @@ export default {
       stCell: "",
       edCell: "",
       rooms: [],
-      newroom: [],
       // curr_rooms.map(e => ({
       //   name: e,
       //   hours: Array(12).fill(0).map((e, i) => ({
@@ -294,9 +293,12 @@ export default {
       active: null,
 
       rsvData: {
+        Id: "",
+        date: "",
+        user_Id: "",
         user_name: "",
         telNum: "",
-        room_name: "",
+        room_Id: "",
         title: "",
         content: "",
         stHour: 0,
@@ -343,7 +345,7 @@ export default {
       //   hour.index,
       //   hour.selected
       // );
-      console.log(window.innerWidth);
+      // console.log(window.innerWidth);
 
       this.currCell = [room, hour];
 
@@ -540,6 +542,12 @@ export default {
               e.index <= edHour &&
               this.rooms[this.room_indx][i].name === room_name
             ) {
+              if (e.index === stHour) {
+                e.border_left = "1px solid";
+              }
+              if (e.index === edHour) {
+                e.border_right = "1px solid";
+              }
               e.reserved = 2;
               e.name = user_name;
             }
@@ -562,7 +570,7 @@ export default {
               reserved: 0,
               st_index: 0,
               ed_index: 0,
-              name: "",
+              user_name: "",
               border_right: false,
               border_left: false
             }))
@@ -703,6 +711,44 @@ export default {
 }
 
 .btn-bookedCell:active {
+  padding: 0px;
+  height: 30px;
+  color: #fff;
+  border-radius: 0px;
+  background-color: #4071A4;
+  border-color: #4071A4;
+}
+
+.btn-bookedOthers {
+  padding: 0px;
+  height: 30px;
+  color: #fff;
+  border-radius: 0px;
+  border-left: var(--room-border-left);
+  border-right: var(--room-border-right);
+  background: linear-gradient(180deg, white, #665B5B);
+  border-color: #665B5B;
+}
+
+.btn-bookedOthers:focus {
+  padding: 0px;
+  height: 30px;
+  color: #fff;
+  border-radius: 0px;
+  background-color: #64A8F2;
+  border-color: #64A8F2;
+}
+
+.btn-bookedOthers:hover {
+  padding: 0px;
+  height: 30px;
+  color: #fff;
+  border-radius: 0px;
+  background-color: #4071A4;
+  border-color: #4071A4;
+}
+
+.btn-bookedOthers:active {
   padding: 0px;
   height: 30px;
   color: #fff;
