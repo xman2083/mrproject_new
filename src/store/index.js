@@ -10,6 +10,14 @@ import {
   getUserFromCookie,
   deleteCookie
 } from '../utils/cookies.js';
+import {
+  guid
+} from '../utils'
+import {
+  removeRsvData,
+  saveRsvData,
+  fetchRsvData,
+} from '../api';
 
 Vue.use(Vuex)
 
@@ -29,6 +37,9 @@ export default new Vuex.Store({
     userData(state) {
       return state.user;
     },
+    getRsvData(state) {
+      return state.rsvdata;
+    }
   },
   mutations: {
     SET_USER(state, user) {
@@ -44,8 +55,20 @@ export default new Vuex.Store({
       deleteCookie('til_user');
     },
     ADD_RSVDATA(state, payload) {
-      state.rsvdata[payload.rsvdata.user] = payload.rsvdata
-    }
+      state.rsvdata[payload.rsvdata.id] = payload.rsvdata;
+    },
+    UPDATE_RSVDATA(state, payload) {
+      state.rsvdata[payload.rsvdata.id] = payload.rsvdata;
+    },
+    REMOVE_RSVDATA(state, payload) {
+      Vue.delete(state.rsvdata, payload.rsvdata.id);
+    },
+    LOAD_RSVDATA(state, payload) {
+      state.rsvdata = payload;
+    },
+    CLEAR_STOREDATA(state) {
+      state.rsvdata = {}
+    },
 
   },
   actions: {
@@ -67,19 +90,29 @@ export default new Vuex.Store({
       const response = await sendOtp(data);
       return response;
     },
+
     addRsvData({
       commit
     }, data) {
+      let id = guid();
+      let rsvdata = Object.assign({
+        id: id
+      }, data); // copy the data into a new object with the generated ID
       commit('ADD_RSVDATA', {
-        rsvdata: data
+        rsvdata: rsvdata
+      });
+      saveRsvData(rsvdata).then((value) => {
+        // we've saved the account, what now?
       });
     },
+
     updateRsvData({
       commit
     }, data) {
       commit('UPDATE_RSVDATA', {
         rsvdata: data
       });
+      saveRsvData(data);
     },
 
     deleteRsvData({
@@ -88,6 +121,21 @@ export default new Vuex.Store({
       commit('DELETE_RSVDATA', {
         rsvdata: data
       });
+      removeRsvData(data);
     },
+
+    async loadRsvData(state) {
+      // 로딩 되어 있지 않은 경우만 실행
+      if (!state.rsvdata || Object.keys(state.rsvdata).length === 0) {
+        return fetchRsvData().then((res) => {
+          let rsvdata = {};
+          Object.keys(res).forEach((key) => {
+            rsvdata[res[key].id] = res[key];
+          });
+          state.commit('LOAD_RSVDATA', rsvdata);
+        });
+      }
+    },
+
   },
 })

@@ -43,7 +43,7 @@
                     <button
                       type="button"
                       class="btn btn-primary btn-block"
-                      style="background-color:grey;border-style:solid;border-width:2px;border-color:#fff;box-shadow: 0px 0px 0px #fff;  padding:0px !important; border-round: 0px !important"
+                      style="width:80px;background-color:grey;border-style:solid;border-color:#fff;box-shadow: 0px 0px 0px #fff;  padding:0px !important; border-round: 0px !important;"
                       disabled
                     >회의실</button>
                   </th>
@@ -69,9 +69,9 @@
               </thead>
               <tbody>
                 <tr v-for="room,index in rooms[room_indx]">
-                  <td>
+                  <td style="padding:2px;">
                     <!-- <button type="button" class="btn btn-success btn-block">{{room.name}}</button> -->
-                    <v-btn small outline :color="roomColorSet[index]">{{room.name}}</v-btn>
+                    <v-btn outline style="font-size:8px;" :color="roomColorSet[index]">{{room.name}}</v-btn>
                   </td>
                   <td style="vertical-align:middle !important">
                     <div class="btn-group btn-group-justified flex-wrap">
@@ -82,37 +82,19 @@
                         2: 내가 예약
                         3: 내가 반만 예약
                         4: 남이 예약-->
-                        <div v-if="Math.floor(hour.index) % 2 === 0">
-                          <button
-                            type="button"
-                            class="btn btn-block"
-                            :style="roomColors(index,hour.border_left,hour.border_right)"
-                            :class="{ 'btn-secondary': (hour.reserved ===4 ),
+                        <button
+                          type="button"
+                          class="btn btn-block"
+                          :style="roomColors(index,hour.border_left,hour.border_right,hour.index)"
+                          :class="{ 'btn-secondary': (hour.reserved ===4 ),
                                     'btn-bookedCell': (hour.reserved === 2 || hour.reserved === 3),
                                     'btn-info': (hour.reserved === 1),
                                     'btn-emptyCell': (hour.reserved === 0),
                                     'btn-clickedCell': (hour.selected) }"
-                            v-on:click="cellClick(room, hour)"
-                          >
-                            <span style="font-size: smaller; text-align: center;">&nbsp;</span>
-                          </button>
-                        </div>
-                        <!-- 짝수 시간대 배경색을 다르게 주는 코드 -->
-                        <div v-else>
-                          <button
-                            type="button"
-                            class="btn btn-block"
-                            :style="roomColors(index,hour.border_left,hour.border_right)"
-                            :class="{ 'btn-secondary': (hour.reserved ===4 ),
-                                    'btn-bookedCell': (hour.reserved === 2 || hour.reserved === 3),
-                                    'btn-info': (hour.reserved === 1),
-                                    'btn-emptyCell-second': (hour.reserved === 0),
-                                    'btn-clickedCell': (hour.selected) }"
-                            v-on:click="cellClick(room, hour)"
-                          >
-                            <span style="font-size: smaller; text-align: center;">&nbsp;</span>
-                          </button>
-                        </div>
+                          v-on:click="cellClick(room, hour)"
+                        >
+                          <span style="font-size: smaller; text-align: center;">&nbsp;</span>
+                        </button>
                       </div>
                     </div>
                   </td>
@@ -123,6 +105,12 @@
         </div>
       </div>
     </div>
+    <!-- DB 테스트 부분 -->
+    <v-btn color="indigo" dark v-on:click="clearAllData">예약DB삭제</v-btn>
+    <v-btn color="grey" dark v-on:click="CLEAR_STOREDATA">스토어 삭제</v-btn>
+    <v-btn color="warning" dark v-on:click="fetchRsvData">fetch</v-btn>
+    <div>{{this.$store.state.rsvdata}}</div>
+
     <!-- 회의실 예약 팝업, dialog가 true 일 경우만 노출 -->
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
@@ -132,36 +120,40 @@
           </v-avatar>
           <span class="headline" style="color:grey !important;">&nbsp;&nbsp;회의실 예약하기&nbsp;&nbsp;</span>
           <span class="grey--text subtitle-1">{{this.date}}</span>
+<<<<<<< HEAD
           <!-- <span>&nbsp;st: {{this.rsvData.stHour}} / ed: {{this.rsvData.edHour}}</span> -->
+=======
+          <span>&nbsp;stHour: {{this.rsvData.stHour}} / edHour: {{this.rsvData.edHour}}</span>
+>>>>>>> 55b63233d292d01a43ef8b43feec32ac4ab9cab5
         </v-card-title>
         <v-divider style="margin:0px;"></v-divider>
-        <v-card-text>
+        <v-card-text style="padding:0;">
           <v-container grid-list-md>
             <v-layout wrap>
-              <v-flex xs2>
+              <v-flex xs3>
                 <v-text-field dark solo value="회의실" style="font-size:smaller;"></v-text-field>
               </v-flex>
-              <v-flex xs10>
-                <v-text-field v-model="rsvData.room" readonly solo></v-text-field>
+              <v-flex xs9>
+                <v-text-field v-model="rsvData.room_name" readonly solo></v-text-field>
               </v-flex>
-              <v-flex xs2>
+              <v-flex xs3>
                 <v-text-field style="font-size:smaller;" value="시작" readonly solo dark></v-text-field>
               </v-flex>
-              <v-flex xs2>
+              <v-flex xs3>
                 <v-text-field suffix="시" :value="parseInt(rsvData.stHour)" solo readonly></v-text-field>
               </v-flex>
-              <v-flex xs2>
+              <v-flex xs3>
                 <v-text-field suffix="분" :value="rsvData.stHour%1*60" solo readonly></v-text-field>
               </v-flex>
-              <v-flex xs6>
-                <v-btn class="mx-2" fab dark depressed style="height:40px;width:40px;" color="grey">
+              <v-flex xs3>
+                <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
                   <v-icon
                     dark
                     v-on:click="rsvData.stHour-=0.5"
                     :disabled="rsvData.stHour<=8?true:false"
                   >remove</v-icon>
                 </v-btn>
-                <v-btn class="mx-2" fab dark depressed style="height:40px;width:40px;" color="grey">
+                <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
                   <v-icon
                     dark
                     v-on:click="rsvData.stHour+=0.5"
@@ -169,25 +161,24 @@
                   >add</v-icon>
                 </v-btn>
               </v-flex>
-
-              <v-flex xs2>
+              <v-flex xs3>
                 <v-text-field value="종료" style="font-size:smaller;" readonly solo dark></v-text-field>
               </v-flex>
-              <v-flex xs2>
+              <v-flex xs3>
                 <v-text-field suffix="시" :value="parseInt(rsvData.edHour+0.5)" solo></v-text-field>
               </v-flex>
-              <v-flex xs2>
+              <v-flex xs3>
                 <v-text-field suffix="분" :value="(rsvData.edHour+0.5)%1*60" solo></v-text-field>
               </v-flex>
-              <v-flex xs6>
-                <v-btn class="mx-2" fab dark depressed style="height:40px;width:40px;" color="grey">
+              <v-flex xs3>
+                <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
                   <v-icon
                     dark
                     v-on:click="rsvData.edHour-=0.5"
                     :disabled="rsvData.edHour<=8 || rsvData.edHour <= rsvData.stHour?true:false"
                   >remove</v-icon>
                 </v-btn>
-                <v-btn class="mx-2" fab dark depressed style="height:40px;width:40px;" color="grey">
+                <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
                   <v-icon
                     dark
                     v-on:click="rsvData.edHour+=0.5"
@@ -198,14 +189,14 @@
               <v-flex xs6 sm6 md6>
                 <v-text-field label="예약자 성명*" v-model="rsvData.user_name" required clearable></v-text-field>
               </v-flex>
-              <v-flex xs4 sm4 md4>
+              <v-flex xs6 sm6 md6>
                 <v-text-field label="휴대폰 번호" v-model="rsvData.telNum"></v-text-field>
               </v-flex>
-              <v-flex xs2 sm2 md2>
+              <!-- <v-flex xs2 sm2 md2>
                 <a :href="`tel:+${ rsvData.telNum }`">
                   <v-icon color="red" x-large>phone</v-icon>
                 </a>
-              </v-flex>
+              </v-flex>-->
 
               <v-flex xs12 sm12 md12>
                 <v-text-field
@@ -225,14 +216,13 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="dialog = false">닫기</v-btn>
+          <v-btn color="disabled" @click="dialog = false">닫기</v-btn>
           <v-btn
-            color="blue darken-1"
-            flat
+            color="warning"
             v-if="currCell !== '' && (currCell[1].reserved === 2 || currCell[1].reserved === 3)"
             v-on:click="cnclReservation"
           >예약취소</v-btn>
-          <v-btn color="blue darken-1" flat v-on:click="makeReservation">예약</v-btn>
+          <v-btn color="primary" v-on:click="makeReservation">예약</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -240,6 +230,8 @@
 </template>
 
 <script>
+import { mapGetters, mapActions, mapMutations } from "vuex";
+import { clearAllData } from "../api";
 // import ConstantValues from '../utils/constant-values.js'
 export default {
   data() {
@@ -293,6 +285,7 @@ export default {
       stCell: "",
       edCell: "",
       rooms: [],
+      newroom: [],
       // curr_rooms.map(e => ({
       //   name: e,
       //   hours: Array(12).fill(0).map((e, i) => ({
@@ -329,18 +322,32 @@ export default {
     };
   },
 
+  mounted() {
+    this.loadRsvData();
+  },
+
   methods: {
+    clearAllData,
+
+    ...mapActions([
+      "addRsvData",
+      "updateRsvData",
+      "removeRsvData",
+      "loadRsvData"
+    ]),
+    ...mapMutations(["CLEAR_STOREDATA"]),
+
     cellClick(room, hour) {
       this.rsvData.user_name = this.$store.state.user.user_name;
       this.rsvData.telNum = this.$store.state.user.tel_num;
       //if hour.reserved
-      console.log(
-        this.room_indx,
-        room.name,
-        this.rooms[this.room_indx].indexOf(room),
-        hour.index,
-        hour.selected
-      );
+      // console.log(
+      //   this.room_indx,
+      //   room.name,
+      //   this.roomsrooms[this.room_indx].indexOf(room),
+      //   hour.index,
+      //   hour.selected
+      // );
       console.log(window.innerWidth);
 
       this.currCell = [room, hour];
@@ -360,7 +367,7 @@ export default {
           this.stCell[0].name === this.edCell[0].name &&
           this.stCell[1].index === this.edCell[1].index
         ) {
-          this.rsvData.room = this.stCell[0].name;
+          this.rsvData.room_name = this.stCell[0].name;
           this.rsvData.stHour = this.stCell[1].index;
           this.rsvData.edHour = this.stCell[1].index;
 
@@ -398,7 +405,7 @@ export default {
             }
           });
           // 현재 예약 정보를 data에 저장
-          this.rsvData.room = this.stCell[0].name;
+          this.rsvData.room_name = this.stCell[0].name;
           this.rsvData.stHour = stHour;
           this.rsvData.edHour = edHour;
           this.dialog = true;
@@ -461,7 +468,11 @@ export default {
       this.stCell = "";
       this.edCell = "";
       this.dialog = false;
+<<<<<<< HEAD
 
+=======
+      this.addRsvData(this.rsvData);
+>>>>>>> 55b63233d292d01a43ef8b43feec32ac4ab9cab5
     },
     cnclReservation() {
       //예약 취소 API 호출
@@ -514,12 +525,47 @@ export default {
       today.setDate(today.getDate() + 1);
       this.date = today.toISOString().substr(0, 10);
     },
-    roomColors(index, left, right) {
+    // 예약된 시간대 색상을 커스텀 설정하는 메소드로 css에 해당 값을 전달 함
+    // 회의실 마다 고유 색상 지정 & 홀수 시간대 예약 셀 바탕 색 지정
+    roomColors(index, left, right, hour) {
+      let color;
+      if (Math.floor(hour) % 2 === 0) {
+        color = "#fff";
+      } else {
+        color = "#F2F2F2";
+      }
+
       return {
         "--room-color-set": this.roomColorSet[index],
         "--room-border-left": left,
-        "--room-border-right": right
+        "--room-border-right": right,
+        "--empty-cell-color": color
       };
+    },
+    fetchRsvData() {
+      this.loadRsvData();
+      console.log("Fetched");
+      // console.log(this.getRsvData)
+      for (var key in this.getRsvData) {
+        console.log(key);
+        let room_name = this.getRsvData[key].room_name;
+        let user_name = this.getRsvData[key].user_name;
+        let stHour = this.getRsvData[key].stHour;
+        let edHour = this.getRsvData[key].edHour;
+
+        for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
+          this.rooms[this.room_indx][i].hours.forEach(e => {
+            if (
+              e.index >= stHour &&
+              e.index <= edHour &&
+              this.rooms[this.room_indx][i].name === room_name
+            ) {
+              e.reserved = 2;
+              e.name = user_name;
+            }
+          });
+        }
+      }
     }
   },
   created() {
@@ -536,6 +582,7 @@ export default {
               reserved: 0,
               st_index: 0,
               ed_index: 0,
+              name: "",
               border_right: false,
               border_left: false
             }))
@@ -543,7 +590,9 @@ export default {
       );
     }
   },
-  computed: {}
+  computed: {
+    ...mapGetters(["getRsvData"])
+  }
 };
 /*
     seleted
@@ -561,26 +610,23 @@ export default {
   width: 8px !important;
 }
 
-.v-text-field input {
-  -webkit-box-flex: 1;
-  -ms-flex: 1 1 auto;
-  flex: 1 1 auto;
-  line-height: 20px;
-  padding: 8px 0 8px;
-  max-width: 100%;
-  min-width: 0px;
-  width: 100%;
-  text-align: center;
+.v-input {
+  font-size: 1em;
+}
+
+.v-text-field {
+  padding-top: 0px;
+  margin-top: 0px;
 }
 
 .btn-emptyCell {
   padding: 0px;
   height: 30px;
   border-left: 1px dotted #f00;
-  border-right: 1px dotted #f00;
+  border-right: 0px dotted #f00;
   color: #fff;
   border-radius: 0px;
-  background-color: #fff;
+  background-color: var(--empty-cell-color);
   border-color: #D8D8D8;
 }
 
@@ -603,44 +649,6 @@ export default {
 }
 
 .btn-emptyCell:active {
-  padding: 0px;
-  height: 30px;
-  color: #BDBDBD;
-  border-radius: 0px;
-  background-color: #E0F2F7;
-  border-color: #e6e6e6;
-}
-
-.btn-emptyCell-second {
-  padding: 0px;
-  height: 30px;
-  border-left: 1px dotted #f00;
-  border-right: 1px dotted #f00;
-  color: #FAFAFA;
-  border-radius: 0px;
-  background-color: #FAFAFA;
-  border-color: #D8D8D8;
-}
-
-.btn-emptyCell-second:focus {
-  padding: 0px;
-  height: 30px;
-  color: #BDBDBD;
-  border-radius: 0px;
-  background-color: #E6E6E6;
-  border-color: #E6E6E6;
-}
-
-.btn-emptyCell-second:hover {
-  padding: 0px;
-  height: 30px;
-  color: #BDBDBD;
-  border-radius: 0px;
-  background-color: #e6e6e6;
-  border-color: #e6e6e6;
-}
-
-.btn-emptyCell-second:active {
   padding: 0px;
   height: 30px;
   color: #BDBDBD;
