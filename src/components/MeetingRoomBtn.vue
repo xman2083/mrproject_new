@@ -306,6 +306,7 @@ export default {
         stHour: 0,
         edHour: 0
       },
+
       // 회의실 색상 코드
       roomColorSet: [
         "#FE2EC8",
