@@ -294,13 +294,13 @@ export default {
       active: null,
 
       rsvData: {
-        Id: "",
+        id: "",
         date: "",
-        user_Id: "",
+        user_id: "",
         user_name: "",
         date: "",
         telNum: "",
-        room_Id: "",
+        room_id: "",
         title: "",
         content: "",
         stHour: 0,
