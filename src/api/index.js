@@ -93,6 +93,7 @@ function getRsvData(data) {
   }
 }
 
+
 function fetchPostById(id) {
   try {
     return posts.get(id);

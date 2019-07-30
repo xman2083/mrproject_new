@@ -120,6 +120,10 @@
           </v-avatar>
           <span class="headline" style="color:grey !important;">&nbsp;&nbsp;회의실 예약하기&nbsp;&nbsp;</span>
           <span class="grey--text subtitle-1">{{this.date}}</span>
+          <<<<<<< HEAD
+          =======
+          <!-- <span>&nbsp;st: {{this.rsvData.stHour}} / ed: {{this.rsvData.edHour}}</span> -->
+          >>>>>>> 18bae91cf8866282c1e79ff6c2797e5e46420b97
           <span>&nbsp;stHour: {{this.rsvData.stHour}} / edHour: {{this.rsvData.edHour}}</span>
         </v-card-title>
         <v-divider style="margin:0px;"></v-divider>
@@ -454,13 +458,17 @@ export default {
         this.rsvData.date = this.date;
       });
 
-      //rsvData Post
+      //rsvData Post <<-ing
       this.$http
-        .post("https://jsonplaceholder.typicode.com/posts", {
-          title: this.rsvData.date,
-          body: this.rsvData.user_name,
-          userID: 1
-        })
+        .post(
+          "https://bjey314qaa.execute-api.ap-northeast-2.amazonaws.com/inner_seat/getrsvdata",
+          {
+            headers: "hi",
+            title: this.rsvData.date,
+            body: this.rsvData.user_name,
+            userID: 1
+          }
+        )
         .then(function(data) {
           console.log(data);
         });
