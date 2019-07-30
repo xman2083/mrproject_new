@@ -120,11 +120,8 @@
           </v-avatar>
           <span class="headline" style="color:grey !important;">&nbsp;&nbsp;회의실 예약하기&nbsp;&nbsp;</span>
           <span class="grey--text subtitle-1">{{this.date}}</span>
-<<<<<<< HEAD
           <!-- <span>&nbsp;st: {{this.rsvData.stHour}} / ed: {{this.rsvData.edHour}}</span> -->
-=======
           <span>&nbsp;stHour: {{this.rsvData.stHour}} / edHour: {{this.rsvData.edHour}}</span>
->>>>>>> 55b63233d292d01a43ef8b43feec32ac4ab9cab5
         </v-card-title>
         <v-divider style="margin:0px;"></v-divider>
         <v-card-text style="padding:0;">
@@ -456,23 +453,23 @@ export default {
         this.rsvData.date = this.date 
       });
 
-       //rsvData Post
-      this.$http.post("https://jsonplaceholder.typicode.com/posts", {
+       //rsvData Post <<-ing
+      this.$http.post("https://bjey314qaa.execute-api.ap-northeast-2.amazonaws.com/inner_seat/getrsvdata", {
+        headers: 'hi',
         title: this.rsvData.date,
         body: this.rsvData.user_name,
         userID : 1
       }).then(function(data){
         console.log(data);
       });
+     
 
+      
       this.stCell = "";
       this.edCell = "";
       this.dialog = false;
-<<<<<<< HEAD
 
-=======
       this.addRsvData(this.rsvData);
->>>>>>> 55b63233d292d01a43ef8b43feec32ac4ab9cab5
     },
     cnclReservation() {
       //예약 취소 API 호출
