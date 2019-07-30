@@ -294,13 +294,12 @@ export default {
       active: null,
 
       rsvData: {
-        Id: "",
+        id: "",
         date: "",
-        user_Id: "",
+        user_id: "",
         user_name: "",
-        date: "",
         telNum: "",
-        room_Id: "",
+        room_id: "",
         title: "",
         content: "",
         stHour: 0,
@@ -548,11 +547,10 @@ export default {
       console.log("Fetched");
       // console.log(this.getRsvData)
       for (var key in this.getRsvData) {
-        console.log(key);
-        let room_name = this.getRsvData[key].room_name;
-        let user_name = this.getRsvData[key].user_name;
-        let stHour = this.getRsvData[key].stHour;
-        let edHour = this.getRsvData[key].edHour;
+        let room_name = this.getRsvData[key].room_name,
+          user_name = this.getRsvData[key].user_name,
+          stHour = this.getRsvData[key].stHour,
+          edHour = this.getRsvData[key].edHour;
 
         for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
           this.rooms[this.room_indx][i].hours.forEach(e => {
@@ -573,7 +571,8 @@ export default {
           });
         }
       }
-    }
+    },
+
   },
   created() {
     // 회의실 시간 테이블 정보 생성
@@ -588,10 +587,7 @@ export default {
               selected: false,
               reserved: 0,
               st_index: 0,
-              ed_index: 0,
-              user_name: "",
-              border_right: false,
-              border_left: false
+              ed_index: 0
             }))
         }))
       );
