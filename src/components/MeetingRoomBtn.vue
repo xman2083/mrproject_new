@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-tabs v-on:change="tabChanged" v-model="active" color="cyan" dark slider-color="yellow">
+    <v-tabs @change="tabChanged" v-model="active" color="cyan" dark slider-color="yellow">
       <v-tab v-for="room in this.$store.state.room_src" :key="room[2]" ripple>{{ room[0] }}</v-tab>
       <v-tab-item v-for="room in this.$store.state.room_src" :key="room[2]"></v-tab-item>
     </v-tabs>
@@ -23,8 +23,8 @@
             </v-flex>
 
             <v-flex xs8 sm8 md10 lg10>
-              <v-btn small outline color="#BDBDBD" v-on:click="dateDecrement">◀ 이전일</v-btn>
-              <v-btn small outline color="#BDBDBD" v-on:click="dateIncrement">다음일 ▶</v-btn>
+              <v-btn small outline color="#BDBDBD" @click="dateDecrement">◀ 이전일</v-btn>
+              <v-btn small outline color="#BDBDBD" @click="dateIncrement">다음일 ▶</v-btn>
             </v-flex>
           </v-layout>
         </template>
@@ -91,7 +91,7 @@
                                     'btn-info': (hour.reserved === 1),
                                     'btn-emptyCell': (hour.reserved === 0),
                                     'btn-clickedCell': (hour.selected) }"
-                          v-on:click="cellClick(room, hour)"
+                          @click="cellClick(room, hour)"
                         >
                           <span style="font-size: smaller; text-align: center;">&nbsp;</span>
                         </button>
@@ -106,22 +106,22 @@
       </div>
     </div>
     <!-- DB 테스트 부분 -->
-    <v-btn color="indigo" dark v-on:click="clearAllData">예약DB삭제</v-btn>
-    <v-btn color="grey" dark v-on:click="CLEAR_STOREDATA">스토어 삭제</v-btn>
-    <v-btn color="warning" dark v-on:click="fetchRsvData">fetch</v-btn>
+    <v-btn color="indigo" dark @click="clearAllData">예약DB삭제</v-btn>
+    <v-btn color="grey" dark @click="CLEAR_STOREDATA">스토어 삭제</v-btn>
+    <v-btn color="warning" dark @click="fetchRsvData">fetch</v-btn>
     <div>{{this.$store.state.rsvdata}}</div>
 
     <!-- 회의실 예약 팝업, dialog가 true 일 경우만 노출 -->
     <v-dialog v-model="dialog" persistent max-width="600px">
       <rsv-popup-form
-        v-bind:rsvInput="rsvInput"
-        v-bind:room_indx="room_indx"
-        v-bind:date="date"
-        v-bind:dialog="dialog"
-        v-bind:currCell="currCell"
-        v-on:dialogChange="dialogChange"
-        v-on:makeReservation="makeReservation"
-        v-on:cnclReservation="cnclReservation"
+        :rsvInput="rsvInput"
+        :room_indx="room_indx"
+        :date="date"
+        :dialog="dialog"
+        :currCell="currCell"
+        @dialogChange="dialogChange"
+        @makeReservation="makeReservation"
+        @cnclReservation="cnclReservation"
       ></rsv-popup-form>
     </v-dialog>
   </div>
@@ -256,7 +256,6 @@ export default {
           this.edCell[1].selected = true;
           this.stCell = this.edCell;
           this.edCell = "";
-          ß;
         } else {
           // 정상적으로 첫 셀, 끝 셀이 선택된 경우
           // 예약 시작, 종료 시간 선언
@@ -307,24 +306,23 @@ export default {
     },
     makeReservation() {
       // 예약 API 호출
-      let stHour =
-        this.rsvInput.edHour > this.rsvInput.stHour
-          ? this.rsvInput.stHour
-          : this.rsvInput.edHour;
-      // console.log(stHour);
-      let edHour =
-        this.rsvInput.edHour > this.rsvInput.stHour
-          ? this.rsvInput.edHour
-          : this.rsvInput.stHour;
-      this.stCell[0].hours.forEach(e => {
-        if (e.index >= stHour && e.index <= edHour) {
-          e.reserved = 2;
-          e.selected = false;
-          e.st_index = stHour;
-          e.ed_index = edHour;
-        }
-        this.rsvInput.date = this.date;
-      });
+      // let stHour =
+      //   this.rsvInput.edHour > this.rsvInput.stHour
+      //     ? this.rsvInput.stHour
+      //     : this.rsvInput.edHour;
+      // // console.log(stHour);
+      // let edHour =
+      //   this.rsvInput.edHour > this.rsvInput.stHour
+      //     ? this.rsvInput.edHour
+      //     : this.rsvInput.stHour;
+      // this.stCell[0].hours.forEach(e => {
+      //   if (e.index >= stHour && e.index <= edHour) {
+      //     e.reserved = 2;
+      //     e.selected = false;
+      //     e.st_index = stHour;
+      //     e.ed_index = edHour;
+      //   }
+      // });
 
       //  //rsvData Post <<-ing
       // this.$http.post("https://jsonplaceholder.typicode.com/posts", {
@@ -335,6 +333,7 @@ export default {
       //   console.log(data);
       // });
 
+      this.rsvInput.date = this.date;
       //  회의실 정보 post
       getRoomData({})
         .then(response => {
@@ -349,6 +348,7 @@ export default {
       this.dialog = false;
 
       this.addRsvData(this.rsvInput);
+      this.fetchRsvData();
     },
     cnclReservation() {
       //예약 취소 API 호출
@@ -424,7 +424,7 @@ export default {
     fetchRsvData() {
       this.loadRsvData();
       console.log("Fetched");
-      // console.log(this.getRsvData)
+      // console.log(this.geRsvData)
       for (var key in this.getRsvData) {
         console.log(key);
         let room_name = this.getRsvData[key].room_name;

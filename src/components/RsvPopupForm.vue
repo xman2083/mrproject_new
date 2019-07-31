@@ -100,9 +100,9 @@
       <v-btn
         color="warning"
         v-if="currCell !== '' && (currCell[1].reserved === 2 || currCell[1].reserved === 3)"
-        v-on:click="cnclReservation"
+        @click="cnclReservation"
       >예약취소</v-btn>
-      <v-btn color="primary" v-on:click="makeReservation">예약</v-btn>
+      <v-btn color="primary" @click="makeReservation">예약</v-btn>
     </v-card-actions>
   </v-card>
 </template>
