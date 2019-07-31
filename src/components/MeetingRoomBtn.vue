@@ -146,7 +146,7 @@ import { clearAllData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 // import ConstantValues from '../utils/constant-values.js'
-import { getRoomData } from "../api/index.js";
+import { getRsvData } from "../api/index.js";
 
 export default {
   components: {
@@ -349,7 +349,7 @@ export default {
 
       this.rsvInput.date = this.date;
       //  회의실 정보 post
-      getRoomData({})
+      getRsvData({})
         .then(response => {
           console.log(response);
         })
