@@ -71,7 +71,12 @@
                 <tr v-for="room,index in rooms[room_indx]">
                   <td style="padding:2px;">
                     <!-- <button type="button" class="btn btn-success btn-block">{{room.name}}</button> -->
-                    <v-btn outline style="font-size:8px;" :color="roomColorSet[index]">{{room.name}}</v-btn>
+                    <v-btn
+                      @click="meetingroom_info=true, currRoom=room.name"
+                      outline
+                      style="font-size:8px;"
+                      :color="roomColorSet[index]"
+                    >{{room.name}}</v-btn>
                   </td>
                   <td style="vertical-align:middle !important">
                     <div class="btn-group btn-group-justified flex-wrap">
@@ -124,6 +129,14 @@
         @cnclReservation="cnclReservation"
       ></rsv-popup-form>
     </v-dialog>
+    <v-dialog v-model="meetingroom_info" persistent max-width="600px">
+      <meeting-room-info
+        :rsvInput="rsvInput"
+        :room_indx="room_indx"
+        :currRoom="currRoom"
+        @closeMrPopup="closeMrPopup"
+      ></meeting-room-info>
+    </v-dialog>
   </div>
 </template>
 
@@ -131,12 +144,14 @@
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import { clearAllData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
+import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 // import ConstantValues from '../utils/constant-values.js'
 import { getRoomData } from "../api/index.js";
 
 export default {
   components: {
-    RsvPopupForm
+    RsvPopupForm,
+    MeetingRoomInfo
   },
   data() {
     return {
@@ -146,7 +161,8 @@ export default {
       modal: false,
       timeTable: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
       dialog: false,
-
+      meetingroom_info: false,
+      currRoom: "",
       currCell: "",
       stCell: "",
       edCell: "",
@@ -418,6 +434,9 @@ export default {
     },
     dialogChange() {
       this.dialog = false;
+    },
+    closeMrPopup() {
+      this.meetingroom_info = false;
     },
     fetchRsvData() {
       this.loadRsvData();
