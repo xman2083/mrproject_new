@@ -132,6 +132,8 @@ import { mapGetters, mapActions, mapMutations } from "vuex";
 import { clearAllData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 // import ConstantValues from '../utils/constant-values.js'
+import { getRoomData } from "../api/index.js";
+
 export default {
   components: {
     RsvPopupForm
@@ -324,15 +326,22 @@ export default {
         this.rsvInput.date = this.date;
       });
 
-      //rsvInput Post <<-ing
-      this.$http
-        .post("https://jsonplaceholder.typicode.com/posts", {
-          title: this.rsvInput.date,
-          body: this.rsvInput.user_name,
-          userID: 1
+      //  //rsvData Post <<-ing
+      // this.$http.post("https://jsonplaceholder.typicode.com/posts", {
+      //   title: this.rsvData.date,
+      //   body: this.rsvData.user_name,
+      //   userID : 1
+      // }).then(function(data){
+      //   console.log(data);
+      // });
+
+      //  회의실 정보 post
+      getRoomData({})
+        .then(response => {
+          console.log(response);
         })
-        .then(function(data) {
-          console.log(data);
+        .catch(error => {
+          console.log(error);
         });
 
       this.stCell = "";

@@ -35,7 +35,7 @@ function createWithAuth(url, options) {
 }
 
 const auth = create(APP_URL);
-const posts = createWithAuth(`${APP_URL}/`);
+const rsv = createWithAuth(APP_URL);
 
 function sendOtp(data) {
   try {
@@ -65,61 +65,71 @@ function signupUser(data) {
   }
 }
 
-// posts
-function createNewPost(data) {
-  try {
-    return posts.post('/', data);
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-}
+// // posts
+// function createNewPost(data) {
+//   try {
+//     return posts.post('/', data);
+//   } catch (error) {
+//     console.log(error);
+//     return error;
+//   }
+// }
 
-function fetchPosts() {
-  try {
-    return posts.get('/');
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-}
+// function fetchPosts() {
+//   try {
+//     return posts.get('/');
+//   } catch (error) {
+//     console.log(error);
+//     return error;
+//   }
+// }
 
 function getRsvData(data) {
   try {
-    return posts.post('getrsvdata', JSON.stringify(data));
+    return rsv.post('getrsvdata', JSON.stringify(data));
   } catch (error) {
     console.log(error);
     return error;
   }
 }
 
-
-function fetchPostById(id) {
+//회의실 정보
+function getRoomData(data) {
   try {
-    return posts.get(id);
+    return rsv.post('getroomdata', JSON.stringify(data));
   } catch (error) {
     console.log(error);
     return error;
   }
 }
 
-function editPostById(id, data) {
-  try {
-    return posts.put(id, data);
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-}
 
-function deletePostById(id) {
-  try {
-    return posts.delete(id);
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-}
+// function fetchPostById(id) {
+//   try {
+//     return posts.get(id);
+//   } catch (error) {
+//     console.log(error);
+//     return error;
+//   }
+// }
+
+// function editPostById(id, data) {
+//   try {
+//     return posts.put(id, data);
+//   } catch (error) {
+//     console.log(error);
+//     return error;
+//   }
+// }
+
+// function deletePostById(id) {
+//   try {
+//     return posts.delete(id);
+//   } catch (error) {
+//     console.log(error);
+//     return error;
+//   }
+// }
 
 const RSVDATA_NAMESPACE = 'RSV-';
 
@@ -163,14 +173,16 @@ export {
   loginUser,
   sendOtp,
   signupUser,
-  createNewPost,
-  fetchPosts,
-  fetchPostById,
-  editPostById,
-  deletePostById,
+  // createNewPost,
+  // fetchPosts,
+  // fetchPostById,
+  // editPostById,
+  // deletePostById,
   fetchRsvData,
   saveRsvData,
   removeRsvData,
   clearAllData,
+  getRsvData,
+  getRoomData
 
 }
