@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-tabs v-on:change="tabChanged" v-model="active" color="cyan" dark slider-color="yellow">
-      <v-tab v-for="room in room_src" :key="room[2]" ripple>{{ room[0] }}</v-tab>
-      <v-tab-item v-for="room in room_src" :key="room[2]"></v-tab-item>
+      <v-tab v-for="room in this.$store.state.room_src" :key="room[2]" ripple>{{ room[0] }}</v-tab>
+      <v-tab-item v-for="room in this.$store.state.room_src" :key="room[2]"></v-tab-item>
     </v-tabs>
 
     <v-flex xs12 sm12 md12>
@@ -19,7 +19,7 @@
         <template v-slot:activator="{ on }">
           <v-layout align-center>
             <v-flex xs4 sm4 md2 lg2>
-              <v-text-field v-model="date" label="날짜선택" prepend-icon="event" readonly v-on="on"></v-text-field>
+              <v-text-field v-model="date" prepend-icon="event" readonly v-on="on"></v-text-field>
             </v-flex>
 
             <v-flex xs8 sm8 md10 lg10>
@@ -113,115 +113,16 @@
 
     <!-- 회의실 예약 팝업, dialog가 true 일 경우만 노출 -->
     <v-dialog v-model="dialog" persistent max-width="600px">
-      <v-card>
-        <v-card-title>
-          <v-avatar color="indigo" size="36">
-            <span class="white--text" style="font-size:smaller;">{{this.room_src[room_indx][0]}}</span>
-          </v-avatar>
-          <span class="headline" style="color:grey !important;">&nbsp;&nbsp;회의실 예약하기&nbsp;&nbsp;</span>
-          <span class="grey--text subtitle-1">{{this.date}}</span>
-          <!-- <span>&nbsp;st: {{this.rsvData.stHour}} / ed: {{this.rsvData.edHour}}</span> -->
-          <span>&nbsp;stHour: {{this.rsvData.stHour}} / edHour: {{this.rsvData.edHour}}</span>
-        </v-card-title>
-        <v-divider style="margin:0px;"></v-divider>
-        <v-card-text style="padding:0;">
-          <v-container grid-list-md>
-            <v-layout wrap>
-              <v-flex xs3>
-                <v-text-field dark solo value="회의실" style="font-size:smaller;"></v-text-field>
-              </v-flex>
-              <v-flex xs9>
-                <v-text-field v-model="rsvData.room_name" readonly solo></v-text-field>
-              </v-flex>
-              <v-flex xs3>
-                <v-text-field style="font-size:smaller;" value="시작" readonly solo dark></v-text-field>
-              </v-flex>
-              <v-flex xs3>
-                <v-text-field suffix="시" :value="parseInt(rsvData.stHour)" solo readonly></v-text-field>
-              </v-flex>
-              <v-flex xs3>
-                <v-text-field suffix="분" :value="rsvData.stHour%1*60" solo readonly></v-text-field>
-              </v-flex>
-              <v-flex xs3>
-                <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
-                  <v-icon
-                    dark
-                    v-on:click="rsvData.stHour-=0.5"
-                    :disabled="rsvData.stHour<=8?true:false"
-                  >remove</v-icon>
-                </v-btn>
-                <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
-                  <v-icon
-                    dark
-                    v-on:click="rsvData.stHour+=0.5"
-                    :disabled="rsvData.stHour>19 || rsvData.stHour >= rsvData.edHour?true:false"
-                  >add</v-icon>
-                </v-btn>
-              </v-flex>
-              <v-flex xs3>
-                <v-text-field value="종료" style="font-size:smaller;" readonly solo dark></v-text-field>
-              </v-flex>
-              <v-flex xs3>
-                <v-text-field suffix="시" :value="parseInt(rsvData.edHour+0.5)" solo></v-text-field>
-              </v-flex>
-              <v-flex xs3>
-                <v-text-field suffix="분" :value="(rsvData.edHour+0.5)%1*60" solo></v-text-field>
-              </v-flex>
-              <v-flex xs3>
-                <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
-                  <v-icon
-                    dark
-                    v-on:click="rsvData.edHour-=0.5"
-                    :disabled="rsvData.edHour<=8 || rsvData.edHour <= rsvData.stHour?true:false"
-                  >remove</v-icon>
-                </v-btn>
-                <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
-                  <v-icon
-                    dark
-                    v-on:click="rsvData.edHour+=0.5"
-                    :disabled="rsvData.edHour>19?true:false"
-                  >add</v-icon>
-                </v-btn>
-              </v-flex>
-              <v-flex xs6 sm6 md6>
-                <v-text-field label="예약자 성명*" v-model="rsvData.user_name" required clearable></v-text-field>
-              </v-flex>
-              <v-flex xs6 sm6 md6>
-                <v-text-field label="휴대폰 번호" v-model="rsvData.telNum"></v-text-field>
-              </v-flex>
-              <!-- <v-flex xs2 sm2 md2>
-                <a :href="`tel:+${ rsvData.telNum }`">
-                  <v-icon color="red" x-large>phone</v-icon>
-                </a>
-              </v-flex>-->
-
-              <v-flex xs12 sm12 md12>
-                <v-text-field
-                  v-if="dialog"
-                  autofocus
-                  required
-                  label="회의 주제*"
-                  v-model="rsvData.title"
-                ></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-text-field label="회의 내용" v-model="rsvData.content" clearable></v-text-field>
-              </v-flex>
-              <small>*필수 입력 사항 입니다.</small>
-            </v-layout>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="disabled" @click="dialog = false">닫기</v-btn>
-          <v-btn
-            color="warning"
-            v-if="currCell !== '' && (currCell[1].reserved === 2 || currCell[1].reserved === 3)"
-            v-on:click="cnclReservation"
-          >예약취소</v-btn>
-          <v-btn color="primary" v-on:click="makeReservation">예약</v-btn>
-        </v-card-actions>
-      </v-card>
+      <rsv-popup-form
+        v-bind:rsvInput="rsvInput"
+        v-bind:room_indx="room_indx"
+        v-bind:date="date"
+        v-bind:dialog="dialog"
+        v-bind:currCell="currCell"
+        v-on:dialogChange="dialogChange"
+        v-on:makeReservation="makeReservation"
+        v-on:cnclReservation="cnclReservation"
+      ></rsv-popup-form>
     </v-dialog>
   </div>
 </template>
@@ -229,8 +130,12 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import { clearAllData } from "../api";
+import RsvPopupForm from "./RsvPopupForm.vue";
 // import ConstantValues from '../utils/constant-values.js'
 export default {
+  components: {
+    RsvPopupForm
+  },
   data() {
     return {
       date: new Date().toISOString().substr(0, 10),
@@ -239,44 +144,6 @@ export default {
       modal: false,
       timeTable: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
       dialog: false,
-      room_src: [
-        [
-          "16층",
-          [
-            "몽블랑",
-            "킬리만자로",
-            "남산",
-            "티티카카",
-            "아차산",
-            "한라산",
-            "A",
-            "B"
-          ],
-          0
-        ],
-        [
-          "17층",
-          ["1회의실", "2회의실", "3회의실", "4회의실", "5회의실", "6회의실"],
-          1
-        ],
-        ["2층", ["접견실"], 2],
-        ["보라매", ["하와이", "발리", "몰디브", "8층 회의실", "개발실"], 3],
-        [
-          "빔-남산",
-          [
-            "빔1",
-            "빔2",
-            "빔3",
-            "무선 MIC1",
-            "무선 MIC2",
-            "무선 Pin MIC",
-            "Class Cam"
-          ],
-          4
-        ],
-        ["빔-보라매", ["빔1", "빔2"], 5]
-      ],
-      room_indx: 0,
 
       currCell: "",
       stCell: "",
@@ -293,7 +160,9 @@ export default {
 
       active: null,
 
-      rsvData: {
+      room_indx: 0,
+
+      rsvInput: {
         id: "",
         date: "",
         user_id: "",
@@ -338,8 +207,8 @@ export default {
     ...mapMutations(["CLEAR_STOREDATA"]),
 
     cellClick(room, hour) {
-      this.rsvData.user_name = this.$store.state.user.user_name;
-      this.rsvData.telNum = this.$store.state.user.tel_num;
+      this.rsvInput.user_name = this.$store.state.user.user_name;
+      this.rsvInput.telNum = this.$store.state.user.tel_num;
       //if hour.reserved
       // console.log(
       //   this.room_indx,
@@ -367,9 +236,9 @@ export default {
           this.stCell[0].name === this.edCell[0].name &&
           this.stCell[1].index === this.edCell[1].index
         ) {
-          this.rsvData.room_name = this.stCell[0].name;
-          this.rsvData.stHour = this.stCell[1].index;
-          this.rsvData.edHour = this.stCell[1].index;
+          this.rsvInput.room_name = this.stCell[0].name;
+          this.rsvInput.stHour = this.stCell[1].index;
+          this.rsvInput.edHour = this.stCell[1].index;
 
           this.dialog = true;
           this.stCell[1].selected = true;
@@ -385,6 +254,7 @@ export default {
           this.edCell[1].selected = true;
           this.stCell = this.edCell;
           this.edCell = "";
+          ß;
         } else {
           // 정상적으로 첫 셀, 끝 셀이 선택된 경우
           // 예약 시작, 종료 시간 선언
@@ -405,9 +275,9 @@ export default {
             }
           });
           // 현재 예약 정보를 data에 저장
-          this.rsvData.room_name = this.stCell[0].name;
-          this.rsvData.stHour = stHour;
-          this.rsvData.edHour = edHour;
+          this.rsvInput.room_name = this.stCell[0].name;
+          this.rsvInput.stHour = stHour;
+          this.rsvInput.edHour = edHour;
           this.dialog = true;
         }
       } else {
@@ -436,16 +306,14 @@ export default {
     makeReservation() {
       // 예약 API 호출
       let stHour =
-        this.rsvData.edHour > this.rsvData.stHour
-          ? this.rsvData.stHour
-          : this.rsvData.edHour;
+        this.rsvInput.edHour > this.rsvInput.stHour
+          ? this.rsvInput.stHour
+          : this.rsvInput.edHour;
       // console.log(stHour);
       let edHour =
-        this.rsvData.edHour > this.rsvData.stHour
-          ? this.rsvData.edHour
-          : this.rsvData.stHour;
-      this.stCell[1].border_left = "1px solid";
-      this.edCell[1].border_right = "1px solid";
+        this.rsvInput.edHour > this.rsvInput.stHour
+          ? this.rsvInput.edHour
+          : this.rsvInput.stHour;
       this.stCell[0].hours.forEach(e => {
         if (e.index >= stHour && e.index <= edHour) {
           e.reserved = 2;
@@ -453,42 +321,41 @@ export default {
           e.st_index = stHour;
           e.ed_index = edHour;
         }
-        this.rsvData.date = this.date 
+        this.rsvInput.date = this.date;
       });
 
-       //rsvData Post <<-ing
-      this.$http.post("https://jsonplaceholder.typicode.com/posts", {
-        title: this.rsvData.date,
-        body: this.rsvData.user_name,
-        userID : 1
-      }).then(function(data){
-        console.log(data);
-      });
-    
-      
+      //rsvInput Post <<-ing
+      this.$http
+        .post("https://jsonplaceholder.typicode.com/posts", {
+          title: this.rsvInput.date,
+          body: this.rsvInput.user_name,
+          userID: 1
+        })
+        .then(function(data) {
+          console.log(data);
+        });
+
       this.stCell = "";
       this.edCell = "";
       this.dialog = false;
 
-      this.addRsvData(this.rsvData);
+      this.addRsvData(this.rsvInput);
     },
     cnclReservation() {
       //예약 취소 API 호출
       let stHour = this.currCell[1].st_index;
       let edHour = this.currCell[1].ed_index;
-      
+
       this.currCell[0].hours.forEach(e => {
         if (e.index >= stHour && e.index <= edHour) {
           e.reserved = 0;
           e.selected = false;
           e.st_index = 0;
           e.ed_index = 0;
-        
         }
       });
       this.currCell = "";
       this.dialog = false;
-      
     },
     closeReservation() {},
     swipeHandler(direction) {
@@ -542,6 +409,9 @@ export default {
         "--empty-cell-color": color
       };
     },
+    dialogChange() {
+      this.dialog = false;
+    },
     fetchRsvData() {
       this.loadRsvData();
       console.log("Fetched");
@@ -576,9 +446,9 @@ export default {
   },
   created() {
     // 회의실 시간 테이블 정보 생성
-    for (var i = 0; i < this.room_src.length; i++) {
+    for (var i = 0; i < this.$store.state.room_src.length; i++) {
       this.rooms.push(
-        this.room_src[i][1].map(e => ({
+        this.$store.state.room_src[i][1].map(e => ({
           name: e,
           hours: Array(24)
             .fill(0)
