@@ -165,11 +165,9 @@ export default {
       room_indx: 0,
 
       rsvInput: {
-        id: "",
         date: "",
         user_id: "",
         user_name: "",
-        date: "",
         telNum: "",
         room_id: "",
         title: "",
