@@ -147,6 +147,8 @@ import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 // import ConstantValues from '../utils/constant-values.js'
 import { getRsvData } from "../api/index.js";
+import { getRoomData } from "../api/index.js";
+
 
 export default {
   components: {
@@ -490,7 +492,16 @@ export default {
             }))
         }))
       );
-    }
+    };
+
+     getRoomData({})
+        .then(response => {
+          console.log(response);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
   },
   computed: {
     ...mapGetters(["getRsvData"])
