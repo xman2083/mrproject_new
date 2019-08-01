@@ -142,11 +142,10 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import { clearAllData } from "../api";
+import { clearAllData, getRoomData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 // import ConstantValues from '../utils/constant-values.js'
-import { getRoomData } from "../api/index.js";
 
 export default {
   components: {
@@ -209,6 +208,7 @@ export default {
 
   mounted() {
     this.loadRsvData();
+    // this.loadRoomSrc();
   },
 
   methods: {
@@ -218,7 +218,8 @@ export default {
       "addRsvData",
       "updateRsvData",
       "removeRsvData",
-      "loadRsvData"
+      "loadRsvData",
+      "loadRoomSrc"
     ]),
     ...mapMutations(["CLEAR_STOREDATA"]),
 
@@ -319,25 +320,6 @@ export default {
       }
     },
     makeReservation() {
-      // 예약 API 호출
-      // let stHour =
-      //   this.rsvInput.edHour > this.rsvInput.stHour
-      //     ? this.rsvInput.stHour
-      //     : this.rsvInput.edHour;
-      // // console.log(stHour);
-      // let edHour =
-      //   this.rsvInput.edHour > this.rsvInput.stHour
-      //     ? this.rsvInput.edHour
-      //     : this.rsvInput.stHour;
-      // this.stCell[0].hours.forEach(e => {
-      //   if (e.index >= stHour && e.index <= edHour) {
-      //     e.reserved = 2;
-      //     e.selected = false;
-      //     e.st_index = stHour;
-      //     e.ed_index = edHour;
-      //   }
-      // });
-
       //  //rsvData Post <<-ing
       // this.$http.post("https://jsonplaceholder.typicode.com/posts", {
       //   title: this.rsvData.date,
@@ -349,21 +331,25 @@ export default {
 
       this.rsvInput.date = this.date;
       //  회의실 정보 post
-      getRoomData({})
-        .then(response => {
-          console.log(response);
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      // getRoomData({})
+      //   .then(response => {
+      //     console.log(response);
+      //   })
+      //   .catch(error => {
+      //     console.log(error);
+      //   });
 
       this.stCell = "";
       this.edCell = "";
       this.dialog = false;
 
       this.addRsvData(this.rsvInput);
+      this.clearSelection();
       this.fetchRsvData();
+      console.log("Reservation complete");
+      // this.fetchRsvData();
     },
+
     cnclReservation() {
       //예약 취소 API 호출
       let stHour = this.currCell[1].st_index;
@@ -381,6 +367,14 @@ export default {
       this.dialog = false;
     },
     closeReservation() {},
+    clearSelection() {
+      for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
+        this.rooms[this.room_indx][i].hours.forEach(e => {
+          e.selected = false;
+        });
+      }
+    },
+
     swipeHandler(direction) {
       console.log(direction);
       if (direction == "left") {
