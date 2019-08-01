@@ -143,11 +143,10 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import { clearAllData, getRoomData, getRsvdata } from "../api";
+import { clearAllData, getRoomData, getRsvData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 // import ConstantValues from '../utils/constant-values.js'
-<<<<<<< HEAD
 
 
 
@@ -490,16 +489,19 @@ export default {
       );
     };
 
-     getRoomData({})
+     getRoomData({tel_num: this.$store.state.user.tel_num, token:this.$store.state.token})
         .then(response => {
           console.log(response);
+          if(response.data.success) {
+            console.log("success");
+          }
         })
         .catch(error => {
           console.log(error);
         });
 
   },
-
+ 
   computed: {
     ...mapGetters(["getRsvData"])
   },
