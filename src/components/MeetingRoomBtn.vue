@@ -330,14 +330,7 @@ export default {
       // });
 
       this.rsvInput.date = this.date;
-      //  회의실 정보 post
-      getRsvData({})
-        .then(response => {
-          console.log(response);
-        })
-        .catch(error => {
-          console.log(error);
-        });
+    
 
       this.stCell = "";
       this.edCell = "";
@@ -347,6 +340,14 @@ export default {
       this.clearSelection();
       this.fetchRsvData();
       console.log("Reservation complete...");
+        //  회의실 정보 post
+      getRsvData({tel_num: this.$store.state.user.tel_num, token:this.$store.state.token, rsvdata : this.rsvInput})
+        .then(response => {
+          console.log(response);
+        })
+        .catch(error => {
+          console.log(error);
+        });
       // this.fetchRsvData();
     },
 
