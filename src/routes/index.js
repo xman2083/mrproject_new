@@ -7,6 +7,7 @@ import Login from '../views/Login.vue';
 // import { getUserFromCookie } from '../utils/cookies.js';
 import noticeView from '../views/noticeView.vue';
 import mainView from '../views/mainView.vue';
+import RstrMenuView from '../views/RstrMenuView.vue';
 
 
 Vue.use(Router)
@@ -44,6 +45,14 @@ export default new Router({
       path: '/notice',
       name: 'notice',
       component: noticeView,
+      beforeEnter(to, from, next) {
+        store.getters['isLoggedIn'] ? next() : next('/login');
+      },
+    },
+    {
+      path: '/rstrmenu',
+      name: 'rstrmenu',
+      component: RstrMenuView,
       beforeEnter(to, from, next) {
         store.getters['isLoggedIn'] ? next() : next('/login');
       },
