@@ -72,7 +72,7 @@
                   <td style="padding:2px;">
                     <!-- <button type="button" class="btn btn-success btn-block">{{room.name}}</button> -->
                     <v-btn
-                      @click="meetingroom_info=true, currRoom=room"
+                      @click="meetingroom_info=true"
                       outline
                       style="font-size:8px;"
                       :color="roomColorSet[index]"
@@ -96,7 +96,7 @@
                                     'btn-info': (hour.reserved === 1),
                                     'btn-emptyCell': (hour.reserved === 0),
                                     'btn-clickedCell': (hour.selected) }"
-                          @click="cellClick(room, hour)"
+                          @click="currRoom = room, cellClick(room, hour)"
                         >
                           <span style="font-size: smaller; text-align: center;">&nbsp;</span>
                         </button>
@@ -234,6 +234,7 @@ export default {
       // console.log(window.innerWidth);
 
       this.currCell = [room, hour];
+      // console.log(room[1].rsv_key);
 
       if (hour.reserved === 2 || hour.reserved === 3) {
         this.dialog = true;
@@ -328,13 +329,13 @@ export default {
 
       this.rsvInput.date = this.date;
       //  회의실 정보 post
-      getRsvData({})
-        .then(response => {
-          console.log(response);
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      // getRsvData({})
+      //   .then(response => {
+      //     console.log(response);
+      //   })
+      //   .catch(error => {
+      //     console.log(error);
+      //   });
 
       this.stCell = "";
       this.edCell = "";

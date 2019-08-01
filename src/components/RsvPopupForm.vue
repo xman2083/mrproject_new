@@ -10,22 +10,17 @@
       <span
         class="headline"
         style="color:grey !important;"
-      >&nbsp;&nbsp;{{this.rsvInput.room_name}}&nbsp;&nbsp;</span>
-      <span v-if="reserved">{{ this.getRsvData[currCell[0].rsv_key] }}</span>
+      >&nbsp;&nbsp;{{this.currRoom.name}}&nbsp;&nbsp;</span>
+      <span v-if="reserved">reserved</span>
+      <span v-else>(test)not reserved</span>
+      <span v-if="owner" style="color:red">(owner)</span>
       <span class="grey--text subtitle-1">{{this.date}}</span>
-      <!-- <span>&nbsp;st: {{this.rsvInput.stHour}} / ed: {{this.rsvInput.edHour}}</span> -->
-      <!-- <span>&nbsp;stHour: {{this.rsvInput.stHour}} / edHour: {{this.rsvInput.edHour}}</span> -->
     </v-card-title>
     <v-divider style="margin:0px;"></v-divider>
     <v-card-text style="padding:0;">
       <v-container grid-list-md>
-        <v-layout wrap>
-          <!-- <v-flex xs3>
-            <v-text-field dark solo value="회의실" style="font-size:smaller;"></v-text-field>
-          </v-flex>
-          <v-flex xs9>
-            <v-text-field v-model="rsvInput.room_name" readonly solo></v-text-field>
-          </v-flex>-->
+        <!-- 해당 시간에 예약이 안되어 있는 경우 -->
+        <v-layout v-if="reserved === false" wrap>
           <v-flex xs3>
             <v-text-field style="font-size:smaller;" value="시작" readonly solo dark></v-text-field>
           </v-flex>
@@ -55,10 +50,10 @@
             <v-text-field value="종료" style="font-size:smaller;" readonly solo dark></v-text-field>
           </v-flex>
           <v-flex xs3>
-            <v-text-field suffix="시" :value="parseInt(rsvInput.edHour+0.5)" solo></v-text-field>
+            <v-text-field suffix="시" :value="parseInt(rsvInput.edHour+0.5)" solo readonly></v-text-field>
           </v-flex>
           <v-flex xs3>
-            <v-text-field suffix="분" :value="(rsvInput.edHour+0.5)%1*60" solo></v-text-field>
+            <v-text-field suffix="분" :value="(rsvInput.edHour+0.5)%1*60" solo readonly></v-text-field>
           </v-flex>
           <v-flex xs3>
             <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
@@ -80,13 +75,127 @@
             <v-text-field label="예약자 성명*" v-model="rsvInput.user_name" required clearable></v-text-field>
           </v-flex>
           <v-flex xs6 sm6 md6>
-            <v-text-field label="휴대폰 번호" v-model="rsvInput.telNum"></v-text-field>
+            <v-text-field label="휴대폰 번호" v-model="rsvInput.telNum" required clearable></v-text-field>
           </v-flex>
-          <!-- <v-flex xs2 sm2 md2>
-                <a :href="`tel:+${ rsvInput.telNum }`">
-                  <v-icon color="red" x-large>phone</v-icon>
-                </a>
-          </v-flex>-->
+
+          <v-flex xs12 sm12 md12>
+            <v-text-field v-if="dialog" autofocus required label="회의 주제*" v-model="rsvInput.title"></v-text-field>
+          </v-flex>
+          <v-flex xs12 sm12 md12>
+            <v-text-field label="회의 내용" v-model="rsvInput.content" clearable></v-text-field>
+          </v-flex>
+          <small>*필수 입력 사항 입니다.</small>
+        </v-layout>
+
+        <!-- 해당 시간에 예약이 되어 있는 경우 -->
+        <v-layout v-if="reserved === true" wrap>
+          <v-flex xs3>
+            <v-text-field style="font-size:smaller;" value="시작" readonly solo dark></v-text-field>
+          </v-flex>
+          <v-flex xs3>
+            <v-text-field suffix="시" :value="parseInt(rsvLoaded.stHour)" solo readonly></v-text-field>
+          </v-flex>
+          <v-flex xs3>
+            <v-text-field suffix="분" :value="rsvLoaded.stHour%1*60" solo readonly></v-text-field>
+          </v-flex>
+          <v-flex xs3>
+            <v-btn
+              v-if="owner"
+              class="mx-2"
+              fab
+              dark
+              depressed
+              style="height:30px;width:30px;"
+              color="grey"
+            >
+              <v-icon
+                dark
+                v-on:click="rsvLoaded.stHour-=0.5"
+                :disabled="rsvLoaded.stHour<=8?true:false"
+              >remove</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="owner"
+              class="mx-2"
+              fab
+              dark
+              depressed
+              style="height:30px;width:30px;"
+              color="grey"
+            >
+              <v-icon
+                dark
+                v-on:click="rsvLoaded.stHour+=0.5"
+                :disabled="rsvLoaded.stHour>19 || rsvLoaded.stHour >= rsvLoaded.edHour?true:false"
+              >add</v-icon>
+            </v-btn>
+          </v-flex>
+          <v-flex xs3>
+            <v-text-field value="종료" style="font-size:smaller;" readonly solo dark></v-text-field>
+          </v-flex>
+          <v-flex xs3>
+            <v-text-field
+              suffix="시"
+              :value="parseInt(rsvLoaded.edHour+0.5)"
+              solo
+              :readonly="!owner"
+            ></v-text-field>
+          </v-flex>
+          <v-flex xs3>
+            <v-text-field suffix="분" :value="(rsvLoaded.edHour+0.5)%1*60" solo :readonly="!owner"></v-text-field>
+          </v-flex>
+          <v-flex xs3>
+            <v-btn
+              v-if="owner"
+              class="mx-2"
+              fab
+              dark
+              depressed
+              style="height:30px;width:30px;"
+              color="grey"
+            >
+              <v-icon
+                dark
+                v-on:click="rsvLoaded.edHour-=0.5"
+                :disabled="rsvLoaded.edHour<=8 || rsvLoaded.edHour <= rsvLoaded.stHour?true:false"
+              >remove</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="owner"
+              class="mx-2"
+              fab
+              dark
+              depressed
+              style="height:30px;width:30px;"
+              color="grey"
+            >
+              <v-icon
+                dark
+                v-on:click="rsvLoaded.edHour+=0.5"
+                :disabled="rsvLoaded.edHour>19?true:false"
+              >add</v-icon>
+            </v-btn>
+          </v-flex>
+          <v-flex xs6 sm6 md4>
+            <v-text-field
+              label="예약자 성명*"
+              v-model="rsvLoaded.user_name"
+              required
+              :clearable="owner"
+              :readonly="!owner"
+            ></v-text-field>
+          </v-flex>
+          <v-flex xs6 sm6 md4>
+            <v-text-field
+              label="휴대폰 번호"
+              v-model="rsvLoaded.telNum"
+              :clearable="owner"
+              :readonly="!owner"
+            ></v-text-field>
+          </v-flex>
+          <v-flex md4>
+            <v-btn v-if="!owner" color="indigo" dark small>전화하기</v-btn>
+          </v-flex>
 
           <v-flex xs12 sm12 md12>
             <v-text-field
@@ -94,13 +203,20 @@
               autofocus
               required
               label="회의 주제*"
-              :v-model="{'rsvInput.title':(reserved === false),'getRsvData[currCell[1].rsv_key]':(reserved === true)}"
+              v-model="rsvLoaded.title"
+              :clearable="owner"
+              :readonly="!owner"
             ></v-text-field>
           </v-flex>
           <v-flex xs12 sm12 md12>
-            <v-text-field label="회의 내용" v-model="rsvInput.content" clearable></v-text-field>
+            <v-text-field
+              label="회의 내용"
+              v-model="rsvLoaded.content"
+              :clearable="owner"
+              :readonly="!owner"
+            ></v-text-field>
           </v-flex>
-          <small>*필수 입력 사항 입니다.</small>
+          <small v-if="owner">*필수 입력 사항 입니다.</small>
         </v-layout>
       </v-container>
     </v-card-text>
@@ -109,7 +225,7 @@
       <v-btn color="disabled" @click="dialogChange">닫기</v-btn>
       <v-btn
         color="warning"
-        v-if="currCell !== '' && (currCell[1].reserved === 2 || currCell[1].reserved === 3)"
+        v-if="currCell !== '' && (currCell[1].reserved === 2 || currCell[1].reserved === 3) && owner"
         @click="cnclReservation"
       >예약취소</v-btn>
       <v-btn color="primary" @click="makeReservation">예약</v-btn>
@@ -119,10 +235,23 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { getRsvData } from "../api";
 export default {
   data() {
     return {
-      reserved: false
+      reserved: false,
+      owner: false,
+      rsvLoaded: {
+        date: "",
+        user_id: "",
+        user_name: "",
+        telNum: "",
+        room_id: "",
+        title: "",
+        content: "",
+        stHour: 0,
+        edHour: 0
+      }
     };
   },
   props: ["rsvInput", "room_indx", "date", "dialog", "currCell", "currRoom"],
@@ -139,11 +268,22 @@ export default {
   },
   beforeUpdate() {
     console.log("RsvPopupForm >> beforeUpdate");
-    //   // console.log(this.currCell[0]);
-    //   if (this.currCell[1].rsv_key != "") {
-    //     this.reserved = true;
-    //     console.log(this.currCell[1].rsv_key);
-    //   }
+    if (this.currCell[1].rsv_key) {
+      console.log(this.currCell[1].rsv_key);
+      this.reserved = true;
+      this.rsvLoaded = this.getRsvDataStore[this.currCell[1].rsv_key];
+    } else {
+      this.reserved = false;
+      this.rsvLoaded = "";
+    }
+    if (this.rsvLoaded.telNum === this.$store.state.user.tel_num) {
+      this.owner = false;
+    }
+  },
+  mounted() {
+    // if (this.currCell[1]) {
+    //   console.log(this.currCell[1].rsv_key);
+    // }
   },
   computed: {
     ...mapGetters(["getRsvDataStore"])
