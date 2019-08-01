@@ -66,7 +66,7 @@ export default new Vuex.Store({
     userData(state) {
       return state.user;
     },
-    getRsvData(state) {
+    getRsvDataStore(state) {
       return state.rsvdata;
     },
   },
@@ -99,7 +99,11 @@ export default new Vuex.Store({
       state.rsvdata = {};
     },
     LOAD_ROOMDATA(state, payload) {
-      // state.room_src = payload;
+      // for (let i = 0; i < payload.length; i += 1) {
+      //   if (this.state.payload[i][2] === "16층") {
+      //     this.state.room_src[0][0] = "16층";
+      //   }
+      // }
     },
   },
   actions: {
