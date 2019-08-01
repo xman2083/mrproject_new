@@ -144,9 +144,10 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import { clearAllData, getRoomData, getRsvdata } from "../api";
+import { clearAllData, getRoomData, getRsvData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
+// import ConstantValues from '../utils/constant-values.js'
 
 export default {
   components: {
@@ -328,14 +329,6 @@ export default {
       // });
 
       this.rsvInput.date = this.date;
-      //  회의실 정보 post
-      // getRsvData({})
-      //   .then(response => {
-      //     console.log(response);
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   });
 
       this.stCell = "";
       this.edCell = "";
@@ -345,6 +338,18 @@ export default {
       this.clearSelection();
       this.fetchRsvData();
       console.log("Reservation complete...");
+      //  회의실 정보 post
+      getRsvData({
+        tel_num: this.$store.state.user.tel_num,
+        token: this.$store.state.token,
+        rsvdata: this.rsvInput
+      })
+        .then(response => {
+          console.log(response);
+        })
+        .catch(error => {
+          console.log(error);
+        });
       // this.fetchRsvData();
     },
 
@@ -490,9 +495,15 @@ export default {
       );
     }
 
-    getRoomData({})
+    getRoomData({
+      tel_num: this.$store.state.user.tel_num,
+      token: this.$store.state.token
+    })
       .then(response => {
         console.log(response);
+        if (response.data.success) {
+          console.log("success");
+        }
       })
       .catch(error => {
         console.log(error);
