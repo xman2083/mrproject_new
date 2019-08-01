@@ -7,21 +7,25 @@
           style="font-size:smaller;"
         >{{this.$store.state.room_src[room_indx][0]}}</span>
       </v-avatar>
-      <span class="headline" style="color:grey !important;">&nbsp;&nbsp;회의실 예약하기&nbsp;&nbsp;</span>
+      <span
+        class="headline"
+        style="color:grey !important;"
+      >&nbsp;&nbsp;{{this.rsvInput.room_name}}&nbsp;&nbsp;</span>
+      <span v-if="reserved">{{ this.getRsvData[currCell[0].rsv_key] }}</span>
       <span class="grey--text subtitle-1">{{this.date}}</span>
       <!-- <span>&nbsp;st: {{this.rsvInput.stHour}} / ed: {{this.rsvInput.edHour}}</span> -->
-      <span>&nbsp;stHour: {{this.rsvInput.stHour}} / edHour: {{this.rsvInput.edHour}}</span>
+      <!-- <span>&nbsp;stHour: {{this.rsvInput.stHour}} / edHour: {{this.rsvInput.edHour}}</span> -->
     </v-card-title>
     <v-divider style="margin:0px;"></v-divider>
     <v-card-text style="padding:0;">
       <v-container grid-list-md>
         <v-layout wrap>
-          <v-flex xs3>
+          <!-- <v-flex xs3>
             <v-text-field dark solo value="회의실" style="font-size:smaller;"></v-text-field>
           </v-flex>
           <v-flex xs9>
             <v-text-field v-model="rsvInput.room_name" readonly solo></v-text-field>
-          </v-flex>
+          </v-flex>-->
           <v-flex xs3>
             <v-text-field style="font-size:smaller;" value="시작" readonly solo dark></v-text-field>
           </v-flex>
@@ -85,7 +89,13 @@
           </v-flex>-->
 
           <v-flex xs12 sm12 md12>
-            <v-text-field v-if="dialog" autofocus required label="회의 주제*" v-model="rsvInput.title"></v-text-field>
+            <v-text-field
+              v-if="dialog"
+              autofocus
+              required
+              label="회의 주제*"
+              :v-model="{'rsvInput.title':(reserved === false),'getRsvData[currCell[1].rsv_key]':(reserved === true)}"
+            ></v-text-field>
           </v-flex>
           <v-flex xs12 sm12 md12>
             <v-text-field label="회의 내용" v-model="rsvInput.content" clearable></v-text-field>
@@ -108,8 +118,14 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
-  props: ["rsvInput", "room_indx", "date", "dialog", "currCell"],
+  data() {
+    return {
+      reserved: false
+    };
+  },
+  props: ["rsvInput", "room_indx", "date", "dialog", "currCell", "currRoom"],
   methods: {
     makeReservation() {
       this.$emit("makeReservation");
@@ -120,6 +136,17 @@ export default {
     dialogChange() {
       this.$emit("dialogChange");
     }
+  },
+  beforeUpdate() {
+    console.log("RsvPopupForm >> beforeUpdate");
+    //   // console.log(this.currCell[0]);
+    //   if (this.currCell[1].rsv_key != "") {
+    //     this.reserved = true;
+    //     console.log(this.currCell[1].rsv_key);
+    //   }
+  },
+  computed: {
+    ...mapGetters(["getRsvDataStore"])
   }
 };
 </script>

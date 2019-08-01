@@ -72,7 +72,7 @@
                   <td style="padding:2px;">
                     <!-- <button type="button" class="btn btn-success btn-block">{{room.name}}</button> -->
                     <v-btn
-                      @click="meetingroom_info=true, currRoom=room.name"
+                      @click="meetingroom_info=true, currRoom=room"
                       outline
                       style="font-size:8px;"
                       :color="roomColorSet[index]"
@@ -114,7 +114,7 @@
     <v-btn color="indigo" dark @click="clearAllData">예약DB삭제</v-btn>
     <v-btn color="grey" dark @click="CLEAR_STOREDATA">스토어 삭제</v-btn>
     <v-btn color="warning" dark @click="fetchRsvData">fetch</v-btn>
-    <v-btn color="info" dark @click="forceRerender">rerender</v-btn>
+    <v-btn color="info" dark @click="forceRerender">rerender:{{this.renderKey}}</v-btn>
     <div>{{this.$store.state.rsvdata}}</div>
 
     <!-- 회의실 예약 팝업, dialog가 true 일 경우만 노출 -->
@@ -125,6 +125,7 @@
         :date="date"
         :dialog="dialog"
         :currCell="currCell"
+        :currRoom="currRoom"
         @dialogChange="dialogChange"
         @makeReservation="makeReservation"
         @cnclReservation="cnclReservation"
@@ -143,12 +144,11 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import { clearAllData, getRoomData } from "../api";
+import { clearAllData, getRoomData, getRsvData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 // import ConstantValues from '../utils/constant-values.js'
-import { getRsvData } from "../api/index.js";
-//import { getRoomData } from "../api/index.js";
+
 
 
 export default {
@@ -346,7 +346,7 @@ export default {
       this.addRsvData(this.rsvInput);
       this.clearSelection();
       this.fetchRsvData();
-      console.log("Reservation complete");
+      console.log("Reservation complete...");
       // this.fetchRsvData();
     },
 
@@ -433,18 +433,18 @@ export default {
       this.meetingroom_info = false;
     },
     forceRerender() {
-      this.renderKey = +1;
+      this.renderKey += 1;
     },
     fetchRsvData() {
       // this.loadRsvData();
-      console.log("Fetched");
+      console.log("Fetching...");
       // console.log(this.geRsvData)
-      for (var key in this.getRsvData) {
-        console.log(key);
-        let room_name = this.getRsvData[key].room_name;
-        let user_name = this.getRsvData[key].user_name;
-        let stHour = this.getRsvData[key].stHour;
-        let edHour = this.getRsvData[key].edHour;
+      for (var key in this.getRsvDataStore) {
+        // console.log(key);
+        let room_name = this.getRsvDataStore[key].room_name;
+        let user_name = this.getRsvDataStore[key].user_name;
+        let stHour = this.getRsvDataStore[key].stHour;
+        let edHour = this.getRsvDataStore[key].edHour;
 
         for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
           this.rooms[this.room_indx][i].hours.forEach(e => {
@@ -461,6 +461,7 @@ export default {
               }
               e.reserved = 2;
               e.name = user_name;
+              e.rsv_key = key;
             }
           });
         }
@@ -484,31 +485,34 @@ export default {
               ed_index: 0,
               user_name: "",
               border_right: false,
-              border_left: false
+              border_left: false,
+              rsv_key: ""
             }))
         }))
       );
     };
 
-     getRoomData({})
+     getRoomData({tel_num: this.$store.state.user.tel_num, token:this.$store.state.token})
         .then(response => {
           console.log(response);
+          if(response.data.success) {
+            console.log("success");
+          }
         })
         .catch(error => {
           console.log(error);
         });
+    },
 
-  },
-
+ 
   computed: {
-    ...mapGetters(["getRsvData"])
+    ...mapGetters(["getRsvDataStore"])
   },
 
   mounted() {
-    console.log("moundted");
+    console.log("mounted");
     // this.loadRsvData();
-
-    this.fetchRsvData();
+    // this.fetchRsvData();
     // this.forceRerender();
     // alert(this.$store.state.rsvdata)
     // this.loadRoomSrc();
@@ -518,6 +522,12 @@ export default {
     console.log("beforeCreate");
     // this.$store.getters.getRsvData;
     this.$store.dispatch("loadRsvData");
+    console.log("loadRsvData...");
+  },
+  // 페이지 refresh 할 때 예약 데이터 화면 노출 위한 코드s
+  beforeUpdate() {
+    console.log("beforeUpadate");
+    this.fetchRsvData();
   }
 };
 /*
