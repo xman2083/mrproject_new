@@ -146,10 +146,7 @@ import { clearAllData, getRoomData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 // import ConstantValues from '../utils/constant-values.js'
-<<<<<<< HEAD
-=======
 import { getRsvData } from "../api/index.js";
->>>>>>> fe6236b1784f56cde16b391446436606c4a72587
 
 export default {
   components: {
