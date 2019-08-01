@@ -10,7 +10,7 @@
       <span
         class="headline"
         style="color:grey !important;"
-      >&nbsp;&nbsp;{{this.currRoom}} 회의실 정보 &nbsp;&nbsp;</span>
+      >&nbsp;&nbsp;{{this.currRoom.name}} 회의실 정보 &nbsp;&nbsp;</span>
       <!-- <span>&nbsp;st: {{this.rsvInput.stHour}} / ed: {{this.rsvInput.edHour}}</span> -->
     </v-card-title>
     <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"></v-img>
