@@ -208,7 +208,9 @@ export default {
   },
 
   mounted() {
-    this.loadRsvData();
+    // this.loadRsvData();
+    this.fetchRsvData();
+    // alert(this.$store.state.rsvdata)
     // this.loadRoomSrc();
   },
 
