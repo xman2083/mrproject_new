@@ -150,7 +150,7 @@ export default new Vuex.Store({
 
     async loadRsvData(state) {
       // 로딩 되어 있지 않은 경우만 실행
-      if (!state.rsv_data || Object.keys(state.rsv_data).length === 0) {
+      if (!state.rsvdata || Object.keys(state.rsvdata).length === 0) {
         return fetchRsvData().then(res => {
           let rsvdata = {};
           Object.keys(res).forEach(key => {
