@@ -8,7 +8,7 @@ import {
   deleteCookie,
 } from "../utils/cookies.js";
 import { guid } from "../utils";
-import { removeRsvData, saveRsvData, fetchRsvData } from "../api";
+import { removeRsvData, saveRsvData, fetchRsvData, getRoomData } from "../api";
 
 Vue.use(Vuex);
 
@@ -17,7 +17,7 @@ export default new Vuex.Store({
     user: {},
     token: "",
     rsvdata: {},
-    // room_src: {},
+    // room_src: [],
     room_src: [
       [
         "16층",
@@ -98,8 +98,8 @@ export default new Vuex.Store({
     CLEAR_STOREDATA(state) {
       state.rsvdata = {};
     },
-    LOAD_ROOMSRCDATA(state, payload) {
-      state.room_src = payload;
+    LOAD_ROOMDATA(state, payload) {
+      // state.room_src = payload;
     },
   },
   actions: {
@@ -160,9 +160,12 @@ export default new Vuex.Store({
         });
       }
     },
-    async loadRoomSrcData(state) {
-      if (!state.room_src || Object.keys(state.room_src).length === 0) {
-        return;
+    async loadRoomSrc(state) {
+      if (!state.roomsrc) {
+        return getRoomData().then(res => {
+          let roomsrc = res;
+          state.commit("LOAD_ROOMDATA", roomsrc);
+        });
       }
     },
   },

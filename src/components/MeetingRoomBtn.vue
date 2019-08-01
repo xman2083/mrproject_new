@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :key="renderKey">
     <v-tabs @change="tabChanged" v-model="active" color="cyan" dark slider-color="yellow">
       <v-tab v-for="room in this.$store.state.room_src" :key="room[2]" ripple>{{ room[0] }}</v-tab>
       <v-tab-item v-for="room in this.$store.state.room_src" :key="room[2]"></v-tab-item>
@@ -114,6 +114,7 @@
     <v-btn color="indigo" dark @click="clearAllData">예약DB삭제</v-btn>
     <v-btn color="grey" dark @click="CLEAR_STOREDATA">스토어 삭제</v-btn>
     <v-btn color="warning" dark @click="fetchRsvData">fetch</v-btn>
+    <v-btn color="info" dark @click="forceRerender">rerender</v-btn>
     <div>{{this.$store.state.rsvdata}}</div>
 
     <!-- 회의실 예약 팝업, dialog가 true 일 경우만 노출 -->
@@ -142,7 +143,7 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import { clearAllData } from "../api";
+import { clearAllData, getRoomData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 // import ConstantValues from '../utils/constant-values.js'
@@ -157,6 +158,7 @@ export default {
   },
   data() {
     return {
+      renderKey: 0,
       date: new Date().toISOString().substr(0, 10),
       dateConverted: new Date(),
       menu: false,
@@ -209,10 +211,6 @@ export default {
     };
   },
 
-  mounted() {
-    this.loadRsvData();
-  },
-
   methods: {
     clearAllData,
 
@@ -220,7 +218,8 @@ export default {
       "addRsvData",
       "updateRsvData",
       "removeRsvData",
-      "loadRsvData"
+      "loadRsvData",
+      "loadRoomSrc"
     ]),
     ...mapMutations(["CLEAR_STOREDATA"]),
 
@@ -321,25 +320,6 @@ export default {
       }
     },
     makeReservation() {
-      // 예약 API 호출
-      // let stHour =
-      //   this.rsvInput.edHour > this.rsvInput.stHour
-      //     ? this.rsvInput.stHour
-      //     : this.rsvInput.edHour;
-      // // console.log(stHour);
-      // let edHour =
-      //   this.rsvInput.edHour > this.rsvInput.stHour
-      //     ? this.rsvInput.edHour
-      //     : this.rsvInput.stHour;
-      // this.stCell[0].hours.forEach(e => {
-      //   if (e.index >= stHour && e.index <= edHour) {
-      //     e.reserved = 2;
-      //     e.selected = false;
-      //     e.st_index = stHour;
-      //     e.ed_index = edHour;
-      //   }
-      // });
-
       //  //rsvData Post <<-ing
       // this.$http.post("https://jsonplaceholder.typicode.com/posts", {
       //   title: this.rsvData.date,
@@ -364,8 +344,12 @@ export default {
       this.dialog = false;
 
       this.addRsvData(this.rsvInput);
+      this.clearSelection();
       this.fetchRsvData();
+      console.log("Reservation complete");
+      // this.fetchRsvData();
     },
+
     cnclReservation() {
       //예약 취소 API 호출
       let stHour = this.currCell[1].st_index;
@@ -383,6 +367,14 @@ export default {
       this.dialog = false;
     },
     closeReservation() {},
+    clearSelection() {
+      for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
+        this.rooms[this.room_indx][i].hours.forEach(e => {
+          e.selected = false;
+        });
+      }
+    },
+
     swipeHandler(direction) {
       console.log(direction);
       if (direction == "left") {
@@ -440,8 +432,11 @@ export default {
     closeMrPopup() {
       this.meetingroom_info = false;
     },
+    forceRerender() {
+      this.renderKey = +1;
+    },
     fetchRsvData() {
-      this.loadRsvData();
+      // this.loadRsvData();
       console.log("Fetched");
       // console.log(this.geRsvData)
       for (var key in this.getRsvData) {
@@ -473,6 +468,7 @@ export default {
     }
   },
   created() {
+    console.log("created");
     // 회의실 시간 테이블 정보 생성
     for (var i = 0; i < this.$store.state.room_src.length; i++) {
       this.rooms.push(
@@ -503,8 +499,25 @@ export default {
         });
 
   },
+
   computed: {
     ...mapGetters(["getRsvData"])
+  },
+
+  mounted() {
+    console.log("moundted");
+    // this.loadRsvData();
+
+    this.fetchRsvData();
+    // this.forceRerender();
+    // alert(this.$store.state.rsvdata)
+    // this.loadRoomSrc();
+  },
+  // 페이지 refresh 할 때 스토어의 데이터를 바로 불러오기 위한 코드
+  beforeCreate() {
+    console.log("beforeCreate");
+    // this.$store.getters.getRsvData;
+    this.$store.dispatch("loadRsvData");
   }
 };
 /*

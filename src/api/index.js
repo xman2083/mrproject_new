@@ -154,10 +154,6 @@ const fetchRsvData = () => {
   });
 };
 
-const fetchRoomSrcData = () => {
-  return localforage.startsWith();
-};
-
 const saveRsvData = rsvdata => {
   return localforage
     .setItem(RSVDATA_NAMESPACE + rsvdata.id, rsvdata)
