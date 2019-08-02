@@ -72,7 +72,7 @@
                   <td style="padding:2px;">
                     <!-- <button type="button" class="btn btn-success btn-block">{{room.name}}</button> -->
                     <v-btn
-                      @click="meetingroom_info=true, currRoom=room"
+                      @click="meetingroom_info=true"
                       outline
                       style="font-size:8px;"
                       :color="roomColorSet[index]"
@@ -96,7 +96,7 @@
                                     'btn-info': (hour.reserved === 1),
                                     'btn-emptyCell': (hour.reserved === 0),
                                     'btn-clickedCell': (hour.selected) }"
-                          @click="cellClick(room, hour)"
+                          @click="currRoom = room, cellClick(room, hour)"
                         >
                           <span style="font-size: smaller; text-align: center;">&nbsp;</span>
                         </button>
@@ -111,10 +111,10 @@
       </div>
     </div>
     <!-- DB 테스트 부분 -->
-    <v-btn color="indigo" dark @click="clearAllData">예약DB삭제</v-btn>
-    <v-btn color="grey" dark @click="CLEAR_STOREDATA">스토어 삭제</v-btn>
-    <v-btn color="warning" dark @click="fetchRsvData">fetch</v-btn>
-    <v-btn color="info" dark @click="forceRerender">rerender:{{this.renderKey}}</v-btn>
+    <v-btn color="indigo" small dark @click="clearAllData">예약DB삭제</v-btn>
+    <v-btn color="grey" small dark @click="CLEAR_STOREDATA">스토어 삭제</v-btn>
+    <v-btn color="warning" small dark @click="fetchRsvData">fetch</v-btn>
+    <v-btn color="info" small dark @click="forceRerender">rerender:{{this.renderKey}}</v-btn>
     <div>{{this.$store.state.rsvdata}}</div>
 
     <!-- 회의실 예약 팝업, dialog가 true 일 경우만 노출 -->
@@ -126,9 +126,12 @@
         :dialog="dialog"
         :currCell="currCell"
         :currRoom="currRoom"
-        @dialogChange="dialogChange"
+        @closeDialog="closeDialog"
         @makeReservation="makeReservation"
         @cnclReservation="cnclReservation"
+        @updateReservation="updateReservation"
+        @updateRsv="updateRsv"
+        @clearRsv="clearRsv"
       ></rsv-popup-form>
     </v-dialog>
     <v-dialog v-model="meetingroom_info" persistent max-width="600px">
@@ -144,12 +147,10 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import { clearAllData, getRoomData, getRsvData } from "../api";
+import { clearAllData, getRoomData, getRsvData, removeRsvData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 // import ConstantValues from '../utils/constant-values.js'
-
-
 
 export default {
   components: {
@@ -217,7 +218,7 @@ export default {
     ...mapActions([
       "addRsvData",
       "updateRsvData",
-      "removeRsvData",
+      "deleteRsvData",
       "loadRsvData",
       "loadRoomSrc"
     ]),
@@ -226,17 +227,9 @@ export default {
     cellClick(room, hour) {
       this.rsvInput.user_name = this.$store.state.user.user_name;
       this.rsvInput.telNum = this.$store.state.user.tel_num;
-      //if hour.reserved
-      // console.log(
-      //   this.room_indx,
-      //   room.name,
-      //   this.roomsrooms[this.room_indx].indexOf(room),
-      //   hour.index,
-      //   hour.selected
-      // );
-      // console.log(window.innerWidth);
 
       this.currCell = [room, hour];
+      // console.log(room[1].rsv_key);
 
       if (hour.reserved === 2 || hour.reserved === 3) {
         this.dialog = true;
@@ -249,7 +242,7 @@ export default {
       } else if (this.edCell === "") {
         this.edCell = [room, hour];
         if (
-          // 첫 셀, 끝 셀 이름이 동일하고 시간이 동일할 경우 (1시간만 예약)
+          // 첫 셀, 끝 셀 이름이 동일하고 시간이 동일할 경우 (1시간만 소약)
           this.stCell[0].name === this.edCell[0].name &&
           this.stCell[1].index === this.edCell[1].index
         ) {
@@ -298,7 +291,7 @@ export default {
         }
       } else {
         // 첫 셀, 끝 셀이 모두 선택된 경우 실행하는 조건문
-        // 시작 시간, 종료 시간 선언
+        // 이미 선택되어 있던 셀의 selected 초기화 후 stCell만 재할당
         let stHour =
           this.edCell[1].index > this.stCell[1].index
             ? this.stCell[1].index
@@ -319,58 +312,75 @@ export default {
         this.stCell[1].selected = true;
       }
     },
-    makeReservation() {
-      //  //rsvData Post <<-ing
-      // this.$http.post("https://jsonplaceholder.typicode.com/posts", {
-      //   title: this.rsvData.date,
-      //   body: this.rsvData.user_name,
-      //   userID : 1
-      // }).then(function(data){
-      //   console.log(data);
-      // });
-
+    makeReservation(data) {
       this.rsvInput.date = this.date;
+
+      this.stCell = "";
+      this.edCell = "";
+      this.currCell = [];
+      this.dialog = false;
+
+      this.addRsvData(this.rsvInput);
+      this.clearCellData();
+      this.clearSelectionData();
+      this.rsvInput = {};
+
+      console.log("Reservation complete...");
       //  회의실 정보 post
-      getRsvData({})
+      getRsvData({
+        tel_num: this.$store.state.user.tel_num,
+        token: this.$store.state.token,
+        rsvdata: this.rsvInput
+      })
         .then(response => {
           console.log(response);
         })
         .catch(error => {
           console.log(error);
         });
+    },
 
+    cnclReservation(data) {
       this.stCell = "";
       this.edCell = "";
+      this.currCell = [];
+
+      this.deleteRsvData(data);
       this.dialog = false;
 
-      this.addRsvData(this.rsvInput);
-      this.clearSelection();
-      this.fetchRsvData();
-      console.log("Reservation complete...");
-      // this.fetchRsvData();
+      this.clearSelectionData();
     },
 
-    cnclReservation() {
-      //예약 취소 API 호출
-      let stHour = this.currCell[1].st_index;
-      let edHour = this.currCell[1].ed_index;
-
-      this.currCell[0].hours.forEach(e => {
-        if (e.index >= stHour && e.index <= edHour) {
-          e.reserved = 0;
-          e.selected = false;
-          e.st_index = 0;
-          e.ed_index = 0;
-        }
-      });
-      this.currCell = "";
+    updateReservation(data) {
+      this.updateRsvData(data);
+      console.log("updated...");
       this.dialog = false;
+      // this.currCell = "";
     },
-    closeReservation() {},
-    clearSelection() {
+    // 셀을 클릭했을 때 예약이 존재하는 경우(키 값이 존재하는 경우) 해당 키값에 해당되는 예약 데이터를 불러와 인풋으로 저장
+    updateRsv() {
+      this.rsvInput = this.getRsvDataStore[this.currCell[1].rsv_key];
+    },
+
+    clearRsv() {
+      this.rsvInput = {};
+    },
+
+    clearCellData() {
       for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
         this.rooms[this.room_indx][i].hours.forEach(e => {
-          e.selected = false;
+          e.reserved = 0;
+          e.border_right = "false";
+          e.border_left = "false";
+          e.rsv_key = "";
+        });
+      }
+    },
+    clearSelectionData() {
+      for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
+        this.rooms[this.room_indx][i].hours.forEach(e => {
+          e.selected = 0;
+          // this.currCell = "";
         });
       }
     },
@@ -426,7 +436,7 @@ export default {
         "--empty-cell-color": color
       };
     },
-    dialogChange() {
+    closeDialog() {
       this.dialog = false;
     },
     closeMrPopup() {
@@ -438,6 +448,7 @@ export default {
     fetchRsvData() {
       // this.loadRsvData();
       console.log("Fetching...");
+      this.clearCellData();
       // console.log(this.geRsvData)
       for (var key in this.getRsvDataStore) {
         // console.log(key);
@@ -490,27 +501,43 @@ export default {
             }))
         }))
       );
-    };
+    }
 
-     getRoomData({tel_num: this.$store.state.user.tel_num, token:this.$store.state.token})
-        .then(response => {
-          console.log(response);
-          if(response.data.success) {
-            console.log("success");
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
+    getRoomData({
+      tel_num: this.$store.state.user.tel_num,
+      token: this.$store.state.token
+    })
+      .then(response => {
+        console.log(response);
+        if (response.data.success) {
+          console.log("success");
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  },
 
- 
   computed: {
     ...mapGetters(["getRsvDataStore"])
   },
 
   mounted() {
     console.log("mounted");
+    let data = {
+      id: "08ad375f-995a-150f-172c-58bf29b08f9e",
+      date: "2019-08-01",
+      user_id: "",
+      user_name: "홍길동",
+      telNum: "01033333333",
+      room_id: "",
+      title: "주간 회의",
+      content: "개발 진행 상황 공유",
+      stHour: 9.5,
+      edHour: 12.5,
+      room_name: "몽블랑"
+    };
+    this.addRsvData(data);
     // this.loadRsvData();
     // this.fetchRsvData();
     // this.forceRerender();

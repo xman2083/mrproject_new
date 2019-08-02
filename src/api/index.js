@@ -156,7 +156,7 @@ function getRoomData(data) {
 
 const RSVDATA_NAMESPACE = "RSV-";
 
-const fetchRsvData = () => {
+const fetchRsvDataApi = () => {
   return localforage.startsWith(RSVDATA_NAMESPACE).then(res => {
     return res;
   });
@@ -191,9 +191,7 @@ const removeRsvData = rsvdata => {
 const clearAllData = () => {
   localforage
     .clear()
-    .then(function() {
-      alert("deleted");
-    })
+    .then(function() {})
     .catch(function(err) {
       alert(err); // This code runs if there were any errors
     });
@@ -208,7 +206,7 @@ export {
   // fetchPostById,
   // editPostById,
   // deletePostById,
-  fetchRsvData,
+  fetchRsvDataApi,
   saveRsvData,
   removeRsvData,
   clearAllData,

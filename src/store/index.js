@@ -8,7 +8,12 @@ import {
   deleteCookie,
 } from "../utils/cookies.js";
 import { guid } from "../utils";
-import { removeRsvData, saveRsvData, fetchRsvData, getRoomData } from "../api";
+import {
+  removeRsvData,
+  saveRsvData,
+  fetchRsvDataApi,
+  getRoomData,
+} from "../api";
 
 Vue.use(Vuex);
 
@@ -89,7 +94,7 @@ export default new Vuex.Store({
     UPDATE_RSVDATA(state, payload) {
       state.rsvdata[payload.rsvdata.id] = payload.rsvdata;
     },
-    REMOVE_RSVDATA(state, payload) {
+    DELETE_RSVDATA(state, payload) {
       Vue.delete(state.rsvdata, payload.rsvdata.id);
     },
     LOAD_RSVDATA(state, payload) {
@@ -155,7 +160,7 @@ export default new Vuex.Store({
     async loadRsvData(state) {
       // 로딩 되어 있지 않은 경우만 실행
       if (!state.rsvdata || Object.keys(state.rsvdata).length === 0) {
-        return fetchRsvData().then(res => {
+        return fetchRsvDataApi().then(res => {
           let rsvdata = {};
           Object.keys(res).forEach(key => {
             rsvdata[res[key].id] = res[key];
