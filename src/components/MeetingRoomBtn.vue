@@ -487,46 +487,27 @@ export default {
   created() {
     console.log("created");
     // 회의실 시간 테이블 정보 생성
-    this.$nextTick(function() {
-      console.log("cell display...");
-      for (var i = 0; i < this.$store.state.room_src.length; i++) {
-        this.rooms.push(
-          this.$store.state.room_src[i][1].map(e => ({
-            name: e,
-            hours: Array(24)
-              .fill(0)
-              .map((e, i) => ({
-                index: i * 0.5 + 8,
-                selected: false,
-                reserved: 0,
-                st_index: 0,
-                ed_index: 0,
-                user_name: "",
-                border_right: false,
-                border_left: false,
-                rsv_key: ""
-              }))
-          }))
-        );
-      }
-    });
-
-    // this.loadRoomSrc();
-
-    // getRoomData({
-    //   tel_num: this.$store.state.user.tel_num,
-    //   token: this.$store.state.token
-    // })
-    //   .then(response => {
-    //     console.log(response);
-    //     if (response.data.success) {
-    //       console.log("success");
-    //     }
-    //     this.loadRoomSrc(response);
-    //   })
-    //   .catch(error => {
-    //     console.log(error);
-    //   });
+    console.log("cell display...");
+    for (var i = 0; i < this.$store.state.room_src.length; i++) {
+      this.rooms.push(
+        this.$store.state.room_src[i][1].map(e => ({
+          name: e,
+          hours: Array(24)
+            .fill(0)
+            .map((e, i) => ({
+              index: i * 0.5 + 8,
+              selected: false,
+              reserved: 0,
+              st_index: 0,
+              ed_index: 0,
+              user_name: "",
+              border_right: false,
+              border_left: false,
+              rsv_key: ""
+            }))
+        }))
+      );
+    }
   },
 
   computed: {
