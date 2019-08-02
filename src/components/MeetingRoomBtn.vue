@@ -126,10 +126,13 @@
         :dialog="dialog"
         :currCell="currCell"
         :currRoom="currRoom"
-        @dialogChange="dialogChange"
+        @closeDialog="closeDialog"
         @makeReservation="makeReservation"
         @cnclReservation="cnclReservation"
         @updateReservation="updateReservation"
+        @updateRsv="updateRsv"
+        @clearRsv="clearRsv"
+        @controlMinute="controlMinute"
       ></rsv-popup-form>
     </v-dialog>
     <v-dialog v-model="meetingroom_info" persistent max-width="600px">
@@ -227,7 +230,6 @@ export default {
       this.rsvInput.telNum = this.$store.state.user.tel_num;
 
       this.currCell = [room, hour];
-      console.log("currCell have got data");
       // console.log(room[1].rsv_key);
 
       if (hour.reserved === 2 || hour.reserved === 3) {
@@ -356,8 +358,15 @@ export default {
       this.dialog = false;
       // this.currCell = "";
     },
+    // 셀을 클릭했을 때 예약이 존재하는 경우(키 값이 존재하는 경우) 해당 키값에 해당되는 예약 데이터를 불러와 인풋으로 저장
+    updateRsv() {
+      this.rsvInput = this.getRsvDataStore[this.currCell[1].rsv_key];
+    },
 
-    closeReservation() {},
+    clearRsv() {
+      this.rsvInput = {};
+    },
+
     clearCellData() {
       for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
         this.rooms[this.room_indx][i].hours.forEach(e => {
@@ -374,6 +383,19 @@ export default {
           e.selected = 0;
           // this.currCell = "";
         });
+      }
+    },
+
+    controlMinute(hour, value) {
+      if (hour === "stHour" && value === "plus") {
+        this.rsvInput.stHour += 0.5;
+      } else if (hour === "edHour" && value === "plus") {
+        this.rsvInput.edHour += 0.5;
+      }
+      if (hour === "stHour" && value === "minus") {
+        this.rsvInput.stHour -= 0.5;
+      } else if (hour === "edHour" && value === "minus") {
+        this.rsvInput.edHour -= 0.5;
       }
     },
 
@@ -428,7 +450,7 @@ export default {
         "--empty-cell-color": color
       };
     },
-    dialogChange() {
+    closeDialog() {
       this.dialog = false;
     },
     closeMrPopup() {
@@ -517,17 +539,17 @@ export default {
   mounted() {
     console.log("mounted");
     let data = {
-        id: "08ad375f-995a-150f-172c-58bf29b08f9e",
-        date: "2019-08-01",
-        user_id: "",
-        user_name: "홍길동",
-        telNum: "01033333333",
-        room_id: "",
-        title: "주간 회의",
-        content: "개발 진행 상황 공유",
-        stHour: 9.5,
-        edHour: 12.5,
-        room_name: "몽블랑"
+      id: "08ad375f-995a-150f-172c-58bf29b08f9e",
+      date: "2019-08-01",
+      user_id: "",
+      user_name: "홍길동",
+      telNum: "01033333333",
+      room_id: "",
+      title: "주간 회의",
+      content: "개발 진행 상황 공유",
+      stHour: 9.5,
+      edHour: 12.5,
+      room_name: "몽블랑"
     };
     this.addRsvData(data);
     // this.loadRsvData();
