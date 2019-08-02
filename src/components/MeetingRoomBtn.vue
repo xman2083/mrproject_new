@@ -151,7 +151,7 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import { clearAllData, getRoomData, getRsvData, removeRsvData } from "../api";
+import { clearAllData, getRoomData, getRsvData, removeRsvData, delRsvData, editRsvData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 // import ConstantValues from '../utils/constant-values.js'
@@ -195,6 +195,20 @@ export default {
         user_name: "",
         telNum: "",
         room_id: "",
+        room_name : "",
+        title: "",
+        content: "",
+        stHour: 0,
+        edHour: 0
+      },
+
+      rsvorg: {
+        date: "",
+        user_id: "",
+        user_name: "",
+        telNum: "",
+        room_id: "",
+        room_name : "",
         title: "",
         content: "",
         stHour: 0,
@@ -236,6 +250,7 @@ export default {
       // console.log(room[1].rsv_key);
 
       if (hour.reserved === 2 || hour.reserved === 3) {
+        this.rsvorg = this.rsvdata;
         this.dialog = true;
         return;
       }
@@ -328,12 +343,15 @@ export default {
       this.clearCellData();
       this.clearSelectionData();
 
+
       console.log("Reservation complete...");
+      
       //  회의실 정보 post
       getRsvData({
         tel_num: this.$store.state.user.tel_num,
         token: this.$store.state.token,
-        rsvdata: this.rsvInput
+        rsvdata: this.rsvInput,
+        httpMethod : 'POST'
       })
         .then(response => {
           console.log(response);
@@ -342,7 +360,8 @@ export default {
           console.log(error);
         });
 
-      this.rsvInput = {};
+        this.rsvInput = {};
+     
     },
 
     cnclReservation(data) {
@@ -354,11 +373,39 @@ export default {
       this.dialog = false;
 
       this.clearSelectionData();
+
+      delRsvData({
+        tel_num: this.$store.state.user.tel_num,
+        token: this.$store.state.token,
+        rsvdata: this.rsvInput
+        
+      })
+        .then(response => {
+          console.log(response);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
     },
 
     updateReservation(data) {
       this.updateRsvData(data);
       console.log("updated...");
+      
+      editRsvData({
+        tel_num: this.$store.state.user.tel_num,
+        token: this.$store.state.token,
+        rsvdata: this.rsvInput,
+        rsvorg:this.rsvorg
+      })
+        .then(response => {
+          console.log(response);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
       this.dialog = false;
       // this.currCell = "";
     },

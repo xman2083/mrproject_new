@@ -117,6 +117,24 @@ function getRsvData(data) {
   }
 }
 
+function delRsvData(data) {
+  try {
+    return rsv.delete("getrsvdata", JSON.stringify(data));
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+function editRsvData(data) {
+  try {
+    return rsv.put("getrsvdata", JSON.stringify(data));
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
 //회의실 정보
 function getRoomData(data) {
   try {
@@ -126,6 +144,7 @@ function getRoomData(data) {
     return error;
   }
 }
+
 
 // function fetchPostById(id) {
 //   try {
@@ -211,6 +230,8 @@ export {
   removeRsvData,
   clearAllData,
   getRsvData,
+  delRsvData,
+  editRsvData,
   getRoomData,
   getMenuData,
 };
