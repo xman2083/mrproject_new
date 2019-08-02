@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="this.dialog" @keydown.esc="closeDialog">
+  <v-card v-if="this.dialog">
     <v-card-title>
       <v-avatar color="indigo" size="36">
         <span class="white--text">{{this.$store.state.room_src[room_indx][0]}}</span>
@@ -257,14 +257,12 @@ export default {
       this.$emit("updateReservation", this.rsvInput);
     },
     closeDialog() {
-      this.$emit("clearRsv");
       this.$emit("closeDialog");
-    },
-    controlMinute(hour, value) {
-      this.$emit("controlMinut", hour, value);
+      this.$emit("clearRsv");
     }
   },
   beforeUpdate() {
+    this.owner = false;
     console.log("RsvPopupForm >> beforeUpdate");
     if (this.dialog) {
       if (this.currCell[1].rsv_key) {
@@ -282,6 +280,13 @@ export default {
     }
   },
   mounted() {
+    // Close modal with 'esc' key
+    document.addEventListener("keydown", e => {
+      if (e.keyCode == 27) {
+        this.$emit("closeDialog");
+      }
+    });
+
     // if (this.currCell[1]) {
     //   console.log(this.currCell[1].rsv_key);
     // }

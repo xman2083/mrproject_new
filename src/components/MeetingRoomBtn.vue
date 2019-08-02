@@ -132,7 +132,6 @@
         @updateReservation="updateReservation"
         @updateRsv="updateRsv"
         @clearRsv="clearRsv"
-        @controlMinute="controlMinute"
       ></rsv-popup-form>
     </v-dialog>
     <v-dialog v-model="meetingroom_info" persistent max-width="600px">
@@ -383,19 +382,6 @@ export default {
           e.selected = 0;
           // this.currCell = "";
         });
-      }
-    },
-
-    controlMinute(hour, value) {
-      if (hour === "stHour" && value === "plus") {
-        this.rsvInput.stHour += 0.5;
-      } else if (hour === "edHour" && value === "plus") {
-        this.rsvInput.edHour += 0.5;
-      }
-      if (hour === "stHour" && value === "minus") {
-        this.rsvInput.stHour -= 0.5;
-      } else if (hour === "edHour" && value === "minus") {
-        this.rsvInput.edHour -= 0.5;
       }
     },
 
