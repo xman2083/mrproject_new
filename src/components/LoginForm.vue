@@ -32,6 +32,7 @@
 
 <script>
   import bus from '../utils/bus.js';
+import { setInterval, clearInterval } from 'timers';
 
   export default {
     data: () => ({
@@ -43,8 +44,11 @@
       otpNum: ''
     }),
     computed: {
-      countDown: function() {
-        return this.otpTime/60 + ' : ' + ('0' + this.otpTime%60).slice(-2);
+     countDown: function() {
+        if (this.otpTime === 0)
+          return 'OTP 만료됨'
+        else
+          return Math.trunc(this.otpTime/60) + ' : ' + ('0' + this.otpTime%60).slice(-2);
       }
     },
     props: {
@@ -75,11 +79,27 @@
               alert('전화번호를 입력하세요.');
               return;
             }
-            const response = await this.$store.dispatch('SENDOTP', {
+           const response = await this.$store.dispatch('SENDOTP', {
               tel_num: this.telNum,
             });
-            this.btnText = 'OTP 확인';
-            this.isOtpSent = true;
+            if (response.data.statusCode == 200) {
+              this.btnText = 'OTP 확인';
+              this.isOtpSent = true;
+              this.timeInterval = setInterval(function () {
+                // This will be executed after 1,000 milliseconds
+                if (this.otpTime > 0) {
+                  this.otpTime--;
+                  console.log(this.otpTime);
+                }
+                else clearInterval(this.timeInterval);
+              }.bind(this), 1000);
+            }
+            else if (response.data.statusCode == 204) {
+              alert('가입자 정보가 없습니다.');
+            }
+            else {
+              alert('OTP 전송에 실패했습니다.')
+            }
             console.log(response);
           }
         } catch (error) {
@@ -92,7 +112,12 @@
         this.otpNum = '';
         this.btnText = 'OTP 전송';
         this.isOtpSent = false;
+        his.otpTime = 180;
+        if (this.timeInterval) clearInterval(this.timeInterval);
+      },
+    },
+    beforeDestroy: function() {
+      this.initForm();
       },
     }
-  }
 </script>
