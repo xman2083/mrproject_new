@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="this.dialog" @keydown.esc="dialogChange">
+  <v-card v-if="this.dialog">
     <v-card-title>
       <v-avatar color="indigo" size="36">
         <span class="white--text">{{this.$store.state.room_src[room_indx][0]}}</span>
@@ -7,7 +7,7 @@
       <span
         class="headline"
         style="color:grey !important;"
-      >&nbsp;&nbsp;{{this.currRoom.name}}&nbsp;&nbsp;</span>
+      >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
       <span v-if="reserved">reserved</span>
       <span v-else>(test)not reserved</span>
       <span v-if="owner" style="color:red">(owner)</span>
@@ -90,10 +90,10 @@
             <v-text-field value="S" readonly solo dark></v-text-field>
           </v-flex>
           <v-flex xs3>
-            <v-text-field suffix="시" :value="parseInt(rsvLoaded.stHour)" solo readonly></v-text-field>
+            <v-text-field suffix="시" :value="parseInt(rsvInput.stHour)" solo readonly></v-text-field>
           </v-flex>
           <v-flex xs3>
-            <v-text-field suffix="분" :value="rsvLoaded.stHour%1*60" solo readonly></v-text-field>
+            <v-text-field suffix="분" :value="rsvInput.stHour%1*60" solo readonly></v-text-field>
           </v-flex>
           <v-flex xs4>
             <v-btn
@@ -107,8 +107,8 @@
             >
               <v-icon
                 dark
-                v-on:click="rsvLoaded.stHour-=0.5"
-                :disabled="rsvLoaded.stHour<=8?true:false"
+                v-on:click="rsvInput.stHour-=0.5"
+                :disabled="rsvInput.stHour<=8?true:false"
               >remove</v-icon>
             </v-btn>
             <v-btn
@@ -122,8 +122,8 @@
             >
               <v-icon
                 dark
-                v-on:click="rsvLoaded.stHour+=0.5"
-                :disabled="rsvLoaded.stHour>19 || rsvLoaded.stHour >= rsvLoaded.edHour?true:false"
+                v-on:click="rsvInput.stHour+=0.5"
+                :disabled="rsvInput.stHour>19 || rsvInput.stHour >= rsvInput.edHour?true:false"
               >add</v-icon>
             </v-btn>
           </v-flex>
@@ -131,15 +131,10 @@
             <v-text-field value="E" readonly solo dark></v-text-field>
           </v-flex>
           <v-flex xs3>
-            <v-text-field
-              suffix="시"
-              :value="parseInt(rsvLoaded.edHour+0.5)"
-              solo
-              :readonly="!owner"
-            ></v-text-field>
+            <v-text-field suffix="시" :value="parseInt(rsvInput.edHour+0.5)" solo :readonly="!owner"></v-text-field>
           </v-flex>
           <v-flex xs3>
-            <v-text-field suffix="분" :value="(rsvLoaded.edHour+0.5)%1*60" solo :readonly="!owner"></v-text-field>
+            <v-text-field suffix="분" :value="(rsvInput.edHour+0.5)%1*60" solo :readonly="!owner"></v-text-field>
           </v-flex>
           <v-flex xs4>
             <v-btn
@@ -153,8 +148,8 @@
             >
               <v-icon
                 dark
-                v-on:click="rsvLoaded.edHour-=0.5"
-                :disabled="rsvLoaded.edHour<=8 || rsvLoaded.edHour <= rsvLoaded.stHour?true:false"
+                v-on:click="rsvInput.edHour-=0.5"
+                :disabled="rsvInput.edHour<=8 || rsvInput.edHour <= rsvInput.stHour?true:false"
               >remove</v-icon>
             </v-btn>
             <v-btn
@@ -168,15 +163,15 @@
             >
               <v-icon
                 dark
-                v-on:click="rsvLoaded.edHour+=0.5"
-                :disabled="rsvLoaded.edHour>19?true:false"
+                v-on:click="rsvInput.edHour+=0.5"
+                :disabled="rsvInput.edHour>19?true:false"
               >add</v-icon>
             </v-btn>
           </v-flex>
           <v-flex xs6 sm6 md4>
             <v-text-field
               label="예약자 성명*"
-              v-model="rsvLoaded.user_name"
+              v-model="rsvInput.user_name"
               required
               :clearable="owner"
               :readonly="!owner"
@@ -185,7 +180,7 @@
           <v-flex xs6 sm6 md4>
             <v-text-field
               label="휴대폰 번호"
-              v-model="rsvLoaded.telNum"
+              v-model="rsvInput.telNum"
               :clearable="owner"
               :readonly="!owner"
             ></v-text-field>
@@ -200,7 +195,7 @@
               :autofocus="!reserved"
               required
               label="회의 주제*"
-              v-model="rsvLoaded.title"
+              v-model="rsvInput.title"
               :clearable="owner"
               :readonly="!owner"
             ></v-text-field>
@@ -208,7 +203,7 @@
           <v-flex xs12 sm12 md12>
             <v-text-field
               label="회의 내용"
-              v-model="rsvLoaded.content"
+              v-model="rsvInput.content"
               :clearable="owner"
               :readonly="!owner"
             ></v-text-field>
@@ -219,7 +214,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="disabled" @click="dialogChange">닫기</v-btn>
+      <v-btn color="disabled" @click="closeDialog">닫기</v-btn>
       <v-btn
         color="warning"
         v-if="currCell !== '' && (currCell[1].reserved === 2 || currCell[1].reserved === 3) && owner"
@@ -227,12 +222,14 @@
       >예약취소</v-btn>
       <v-btn
         v-if="currCell !== '' && (currCell[1].reserved === 2 || currCell[1].reserved === 3) && owner"
-        color="primary"
+        color="indigo"
+        dark
         @click="updateReservation()"
       >예약 수정</v-btn>
       <v-btn
         v-if="currCell !== '' && (currCell[1].reserved === 0)"
-        color="primary"
+        color="indigo"
+        dark
         @click="makeReservation()"
       >예약</v-btn>
     </v-card-actions>
@@ -245,62 +242,52 @@ export default {
   data() {
     return {
       reserved: false,
-      owner: false,
-      rsvLoaded: {
-        date: "",
-        user_id: "",
-        user_name: "",
-        telNum: "",
-        room_id: "",
-        title: "",
-        content: "",
-        stHour: 0,
-        edHour: 0,
-        id: ""
-      }
+      owner: false
     };
   },
-  props: [
-    "rsvInput",
-    "room_indx",
-    "date",
-    "dialog",
-    "currCell",
-    "currRoom",
-    "dialog"
-  ],
+  props: ["rsvInput", "room_indx", "date", "dialog", "currCell"],
   methods: {
     makeReservation() {
-      this.$emit("makeReservation", this.rsvLoaded);
+      this.$emit("makeReservation", this.rsvInput);
     },
     cnclReservation() {
-      this.$emit("cnclReservation", this.rsvLoaded);
+      this.$emit("cnclReservation", this.rsvInput);
     },
     updateReservation() {
-      this.$emit("updateReservation", this.rsvLoaded);
+      this.$emit("updateReservation", this.rsvInput);
     },
-    dialogChange() {
-      this.$emit("dialogChange");
+    closeDialog() {
+      this.$emit("closeDialog");
+      this.$emit("clearRsv");
     }
   },
   beforeUpdate() {
+    this.owner = false;
     console.log("RsvPopupForm >> beforeUpdate");
     if (this.dialog) {
       if (this.currCell[1].rsv_key) {
         console.log(this.currCell[1].rsv_key);
         this.reserved = true;
-        this.rsvLoaded = this.getRsvDataStore[this.currCell[1].rsv_key];
-        console.log(this.rsvLoaded);
+        this.$emit("updateRsv");
+        // this.rsvInput = this.getRsvDataStore[this.currCell[1].rsv_key];
+        console.log(this.rsvInput);
       } else {
         this.reserved = false;
-        this.rsvLoaded = {};
       }
-      if (this.rsvLoaded.telNum === this.$store.state.user.tel_num) {
+      if (this.rsvInput.telNum === this.$store.state.user.tel_num) {
         this.owner = true;
       }
     }
   },
   mounted() {
+    // Close modal with 'esc' key
+    document.addEventListener("keydown", e => {
+      if (e.keyCode == 27) {
+        this.$emit("closeDialog");
+        this.$emit("clearRsv");
+      }
+    });
+
     // if (this.currCell[1]) {
     //   console.log(this.currCell[1].rsv_key);
     // }

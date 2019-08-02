@@ -115,6 +115,10 @@
     <v-btn color="grey" small dark @click="CLEAR_STOREDATA">스토어 삭제</v-btn>
     <v-btn color="warning" small dark @click="fetchRsvData">fetch</v-btn>
     <v-btn color="info" small dark @click="forceRerender">rerender:{{this.renderKey}}</v-btn>
+    <div>
+      <span style="color:red">{{this.$store.state.room_src}}</span>
+    </div>
+    <div>{{this.$store.state.user}}</div>
     <div>{{this.$store.state.rsvdata}}</div>
 
     <!-- 회의실 예약 팝업, dialog가 true 일 경우만 노출 -->
@@ -126,10 +130,12 @@
         :dialog="dialog"
         :currCell="currCell"
         :currRoom="currRoom"
-        @dialogChange="dialogChange"
+        @closeDialog="closeDialog"
         @makeReservation="makeReservation"
         @cnclReservation="cnclReservation"
         @updateReservation="updateReservation"
+        @updateRsv="updateRsv"
+        @clearRsv="clearRsv"
       ></rsv-popup-form>
     </v-dialog>
     <v-dialog v-model="meetingroom_info" persistent max-width="600px">
@@ -241,7 +247,6 @@ export default {
       this.rsvInput.telNum = this.$store.state.user.tel_num;
 
       this.currCell = [room, hour];
-      console.log("currCell have got data");
       // console.log(room[1].rsv_key);
 
       if (hour.reserved === 2 || hour.reserved === 3) {
@@ -356,6 +361,7 @@ export default {
         });
 
         this.rsvInput = {};
+     
     },
 
     cnclReservation(data) {
@@ -403,8 +409,15 @@ export default {
       this.dialog = false;
       // this.currCell = "";
     },
+    // 셀을 클릭했을 때 예약이 존재하는 경우(키 값이 존재하는 경우) 해당 키값에 해당되는 예약 데이터를 불러와 인풋으로 저장
+    updateRsv() {
+      this.rsvInput = this.getRsvDataStore[this.currCell[1].rsv_key];
+    },
 
-    closeReservation() {},
+    clearRsv() {
+      this.rsvInput = {};
+    },
+
     clearCellData() {
       for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
         this.rooms[this.room_indx][i].hours.forEach(e => {
@@ -475,7 +488,7 @@ export default {
         "--empty-cell-color": color
       };
     },
-    dialogChange() {
+    closeDialog() {
       this.dialog = false;
     },
     closeMrPopup() {
@@ -521,26 +534,76 @@ export default {
   created() {
     console.log("created");
     // 회의실 시간 테이블 정보 생성
-    for (var i = 0; i < this.$store.state.room_src.length; i++) {
-      this.rooms.push(
-        this.$store.state.room_src[i][1].map(e => ({
-          name: e,
-          hours: Array(24)
-            .fill(0)
-            .map((e, i) => ({
-              index: i * 0.5 + 8,
-              selected: false,
-              reserved: 0,
-              st_index: 0,
-              ed_index: 0,
-              user_name: "",
-              border_right: false,
-              border_left: false,
-              rsv_key: ""
-            }))
-        }))
-      );
-    }
+    this.$nextTick(function() {
+      console.log("cell display...");
+      for (var i = 0; i < this.$store.state.room_src.length; i++) {
+        this.rooms.push(
+          this.$store.state.room_src[i][1].map(e => ({
+            name: e,
+            hours: Array(24)
+              .fill(0)
+              .map((e, i) => ({
+                index: i * 0.5 + 8,
+                selected: false,
+                reserved: 0,
+                st_index: 0,
+                ed_index: 0,
+                user_name: "",
+                border_right: false,
+                border_left: false,
+                rsv_key: ""
+              }))
+          }))
+        );
+      }
+    });
+
+    // this.loadRoomSrc();
+
+    // getRoomData({
+    //   tel_num: this.$store.state.user.tel_num,
+    //   token: this.$store.state.token
+    // })
+    //   .then(response => {
+    //     console.log(response);
+    //     if (response.data.success) {
+    //       console.log("success");
+    //     }
+    //     this.loadRoomSrc(response);
+    //   })
+    //   .catch(error => {
+    //     console.log(error);
+    //   });
+  },
+
+  computed: {
+    ...mapGetters(["getRsvDataStore"])
+  },
+
+  mounted() {
+    console.log("mounted");
+    let data = {
+      id: "08ad375f-995a-150f-172c-58bf29b08f9e",
+      date: "2019-08-01",
+      user_id: "",
+      user_name: "홍길동",
+      telNum: "01033333333",
+      room_id: "",
+      title: "주간 회의",
+      content: "개발 진행 상황 공유",
+      stHour: 9.5,
+      edHour: 12.5,
+      room_name: "몽블랑"
+    };
+    this.addRsvData(data);
+    // this.loadRsvData();
+    // this.fetchRsvData();
+    // this.forceRerender();
+    // alert(this.$store.state.rsvdata)
+  },
+  // 페이지 refresh 할 때 스토어의 데이터를 바로 불러오기 위한 코드
+  beforeCreate() {
+    console.log("beforeCreate");
 
     getRoomData({
       tel_num: this.$store.state.user.tel_num,
@@ -551,41 +614,12 @@ export default {
         if (response.data.success) {
           console.log("success");
         }
+        this.loadRoomSrc(response);
       })
       .catch(error => {
         console.log(error);
       });
-  },
 
-  computed: {
-    ...mapGetters(["getRsvDataStore"])
-  },
-
-  mounted() {
-    console.log("mounted");
-    let data = {
-        id: "08ad375f-995a-150f-172c-58bf29b08f9e",
-        date: "2019-08-01",
-        user_id: "",
-        user_name: "홍길동",
-        telNum: "01033333333",
-        room_id: "",
-        title: "주간 회의",
-        content: "개발 진행 상황 공유",
-        stHour: 9.5,
-        edHour: 12.5,
-        room_name: "몽블랑"
-    };
-    this.addRsvData(data);
-    // this.loadRsvData();
-    // this.fetchRsvData();
-    // this.forceRerender();
-    // alert(this.$store.state.rsvdata)
-    // this.loadRoomSrc();
-  },
-  // 페이지 refresh 할 때 스토어의 데이터를 바로 불러오기 위한 코드
-  beforeCreate() {
-    console.log("beforeCreate");
     // this.$store.getters.getRsvData;
     this.$store.dispatch("loadRsvData");
     console.log("loadRsvData...");

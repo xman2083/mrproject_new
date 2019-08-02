@@ -72,6 +72,14 @@ function loginUser(data) {
   }
 }
 
+function getMenuData(data) {
+  try{
+    return rsv.post('getmenu', JSON.stringify(data));
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 function signupUser(data) {
   try {
     return auth.post("signup", data);
@@ -225,5 +233,5 @@ export {
   delRsvData,
   editRsvData,
   getRoomData,
-  
+  getMenuData,
 };
