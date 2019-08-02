@@ -284,6 +284,7 @@ export default {
     document.addEventListener("keydown", e => {
       if (e.keyCode == 27) {
         this.$emit("closeDialog");
+        this.$emit("clearRsv");
       }
     });
 

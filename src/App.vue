@@ -2,12 +2,10 @@
   <v-app>
     <Navibar />
     <v-content>
-      <router-view>
-
-      </router-view>
+      <router-view></router-view>
     </v-content>
   </v-app>
-    <!-- <nav>
+  <!-- <nav>
         <v-toolbar flat app>
             <v-toolbar-side-icon @click="drawer = !drawer" class="blue--text" v-show="isLoggedIn"></v-toolbar-side-icon>
             <v-toolbar-title class="text-uppercase blue--text">
@@ -52,22 +50,19 @@
             <router-view></router-view>
           </v-content>
     </nav>
- -->
-
+  -->
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import Navibar from './components/Navibar.vue';
+import { mapGetters } from "vuex";
+import Navibar from "./components/Navibar.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: { Navibar },
-  data () {
-    return {
-
-    }
-  },
+  data() {
+    return {};
+  }
   // computed: {
   //   ...mapGetters(['isLoggedIn']),
   // },
@@ -77,7 +72,5 @@ export default {
   //     this.$router.push('/login');
   //   },
   // }
- 
-}
-
+};
 </script>
