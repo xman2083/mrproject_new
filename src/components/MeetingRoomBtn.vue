@@ -377,7 +377,8 @@ export default {
       delRsvData({
         tel_num: this.$store.state.user.tel_num,
         token: this.$store.state.token,
-        rsvdata: this.rsvInput
+        rsvdata: this.rsvInput,
+        httpMethod: 'DELETE'
         
       })
         .then(response => {
@@ -397,7 +398,8 @@ export default {
         tel_num: this.$store.state.user.tel_num,
         token: this.$store.state.token,
         rsvdata: this.rsvInput,
-        rsvorg:this.rsvorg
+        rsvorg:this.rsvorg,
+        httpMethod : 'PUT'
       })
         .then(response => {
           console.log(response);
