@@ -2,7 +2,10 @@
   <v-card v-if="this.dialog">
     <v-card-title>
       <v-avatar color="indigo" size="36">
-        <span class="white--text">{{this.$store.state.room_src[room_indx][0]}}</span>
+        <span
+          class="white--text"
+          style="font-size:15px;"
+        >{{this.$store.state.room_src[room_indx][0]}}</span>
       </v-avatar>
       <span
         class="headline"
@@ -19,7 +22,7 @@
         <!-- 해당 시간에 예약이 안되어 있는 경우 -->
         <v-layout v-if="reserved === false" wrap>
           <v-flex xs2>
-            <v-text-field value="S" readonly solo dark></v-text-field>
+            <v-text-field value="시작" readonly solo dark text-size="5"></v-text-field>
           </v-flex>
           <v-flex xs3>
             <v-text-field suffix="시" :value="parseInt(rsvInput.stHour)" solo readonly></v-text-field>
@@ -28,6 +31,7 @@
             <v-text-field suffix="분" :value="rsvInput.stHour%1*60" solo readonly></v-text-field>
           </v-flex>
           <v-flex xs4>
+            <td height="9px"></td>
             <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
               <v-icon
                 dark
@@ -53,6 +57,7 @@
             <v-text-field suffix="분" :value="(rsvInput.edHour+0.5)%1*60" solo readonly></v-text-field>
           </v-flex>
           <v-flex xs4>
+            <td height="9px"></td>
             <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
               <v-icon
                 dark
@@ -72,7 +77,7 @@
             <v-text-field label="예약자 성명*" v-model="rsvInput.user_name" required clearable></v-text-field>
           </v-flex>
           <v-flex xs6 sm6 md6>
-            <v-text-field label="휴대폰 번호" v-model="rsvInput.telNum" required clearable></v-text-field>
+            <v-text-field label="휴대폰 번호" v-model="rsvInput.telNum" required clearable v-mask="mask"></v-text-field>
           </v-flex>
 
           <v-flex xs12 sm12 md12>
@@ -183,6 +188,7 @@
               v-model="rsvInput.telNum"
               :clearable="owner"
               :readonly="!owner"
+              :v-mask="mask"
             ></v-text-field>
           </v-flex>
           <v-flex md4>
@@ -219,7 +225,7 @@
         color="warning"
         v-if="currCell !== '' && (currCell[1].reserved === 2 || currCell[1].reserved === 3) && owner"
         @click="cnclReservation()"
-      >예약취소</v-btn>
+      >예약 취소</v-btn>
       <v-btn
         v-if="currCell !== '' && (currCell[1].reserved === 2 || currCell[1].reserved === 3) && owner"
         color="indigo"
@@ -231,21 +237,29 @@
         color="indigo"
         dark
         @click="makeReservation()"
-      >예약</v-btn>
+      >예약 하기</v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import { mask } from "vue-the-mask";
+
 export default {
   data() {
     return {
       reserved: false,
-      owner: false
+      owner: false,
+      mask: "###-####-####"
     };
   },
   props: ["rsvInput", "room_indx", "date", "dialog", "currCell"],
+
+  directives: {
+    mask
+  },
+
   methods: {
     makeReservation() {
       this.$emit("makeReservation", this.rsvInput);

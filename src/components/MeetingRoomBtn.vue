@@ -1,6 +1,13 @@
 <template>
   <div :key="renderKey">
-    <v-tabs @change="tabChanged" v-model="active" color="white" dark slider-color="yellow">
+    <v-tabs
+      @change="tabChanged"
+      v-model="active"
+      color="white"
+      dark
+      slider-color="yellow"
+      show-arrows
+    >
       <v-tab v-for="room in this.$store.state.room_src" :key="room[2]" ripple>{{ room[0] }}</v-tab>
       <v-tab-item v-for="room in this.$store.state.room_src" :key="room[2]"></v-tab-item>
     </v-tabs>
@@ -16,7 +23,7 @@
         min-width="290px"
       >
         <template v-slot:activator="{ on }">
-          <v-layout align-center>
+          <v-layout>
             <v-flex xs4 sm4 md2 lg2>
               <v-text-field v-model="date" prepend-icon="event" readonly v-on="on"></v-text-field>
             </v-flex>
@@ -93,7 +100,18 @@
                                     'btn-clickedCell': (hour.selected) }"
                           @click="currRoom = room, cellClick(room, hour)"
                         >
-                          <span style="font-size: smaller; text-align: center;">&nbsp;</span>
+                          <!-- <span
+                            v-if="hour.border_right==='1px solid'"
+                            style="font-size: 2px;"
+                          >{{hour.name}}</span>-->
+
+                          <v-card v-if="hour.border_left==='1px solid'" max-width="0" height="22">
+                            <v-card-text style="padding:0px; font-size:2px !important;">
+                              <br />
+                              <!-- <v-icon size="5">people</v-icon> -->
+                              {{ hour.name }}
+                            </v-card-text>
+                          </v-card>
                         </button>
                       </div>
                     </div>
@@ -245,6 +263,7 @@ export default {
 
   methods: {
     clearAllData,
+    method() {},
 
     ...mapActions([
       "addRsvData",
@@ -555,6 +574,7 @@ export default {
         // console.log(key);
         let room_name = this.getRsvDataStore[key].room_name;
         let user_name = this.getRsvDataStore[key].user_name;
+        let title = this.getRsvDataStore[key].title;
         let stHour = this.getRsvDataStore[key].stHour;
         let edHour = this.getRsvDataStore[key].edHour;
 
@@ -741,6 +761,8 @@ export default {
   height: 30px;
   color: #fff;
   border-radius: 0px;
+  text-align: right;
+  overflow: visible;
   border-left: var(--room-border-left);
   border-right: var(--room-border-right);
   background: linear-gradient(180deg, white, var(--room-color-set));
