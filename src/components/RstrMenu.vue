@@ -10,6 +10,7 @@
     show-arrows
     v-model="loc_index"
     v-on:change="getMenus"
+    class="fixed-tabs-bar"
   >
     <v-tabs-slider color="yellow"></v-tabs-slider>
 
@@ -41,6 +42,7 @@
           next-icon="fas fa-chevron-right"
           prev-icon="fas fa-chevron-left"
           show-arrows
+          class="fixed-tabs-bar2"
           v-model="date_index"
         >
           <v-tabs-slider color="yellow"></v-tabs-slider>
@@ -181,5 +183,17 @@ import { getMenuData } from '../api/index.js'
 }
 .v-list-item__content{
   justify-content: center;
+}
+.fixed-tabs-bar {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 3.5rem;
+  z-index: 2;
+}
+.fixed-tabs-bar2 {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 6.5rem;
+  z-index: 2;
 }
 </style>
