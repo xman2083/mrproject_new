@@ -31,7 +31,7 @@
         <v-list-item v-for="item in items" :key="item.title" router :to="item.route">
           <v-icon>{{ item.icon }}</v-icon>
 
-          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
