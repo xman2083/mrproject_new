@@ -121,7 +121,7 @@ export default new Vuex.Store({
 
       roomset = Array.from(new Set(uniq));
 
-      console.log(roomset);
+      // console.log(roomset);
 
       for (let i = 0; i < roomset.length; i++) {
         state.room_src[i] = [roomset[i], []];
@@ -149,9 +149,9 @@ export default new Vuex.Store({
         let room_name = payload.data.group[i][1];
         let floor = payload.data.group[i][2];
 
-        room[floor].push(room_name);
+        room[floor].push([room_name, room_key]);
       }
-      console.log(room);
+      // console.log(room);
 
       for (let i = 0; i < state.room_src.length; i++) {
         state.room_src[i][1] = room[state.room_src[i][0]];
