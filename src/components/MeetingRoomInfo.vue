@@ -47,7 +47,14 @@ export default {
       this.$emit("closeMrPopup");
     }
   },
-  props: ["room_indx", "rsvInput", "currRoom"]
+  props: ["room_indx", "rsvInput", "currRoom"],
+  mounted() {
+    document.addEventListener("keydown", e => {
+      if (e.keyCode == 27) {
+        this.$emit("closeMrPopup");
+      }
+    });
+  }
 };
 </script>
 

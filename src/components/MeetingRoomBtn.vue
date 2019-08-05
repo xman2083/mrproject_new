@@ -1,6 +1,6 @@
 <template>
   <div :key="renderKey">
-    <v-tabs @change="tabChanged" v-model="active" color="cyan" dark slider-color="yellow">
+    <v-tabs @change="tabChanged" v-model="active" color="white" dark slider-color="yellow">
       <v-tab v-for="room in this.$store.state.room_src" :key="room[2]" ripple>{{ room[0] }}</v-tab>
       <v-tab-item v-for="room in this.$store.state.room_src" :key="room[2]"></v-tab-item>
     </v-tabs>
@@ -10,7 +10,6 @@
         v-model="menu"
         :close-on-content-click="false"
         :nudge-right="40"
-        lazy
         transition="scale-transition"
         offset-y
         full-width
@@ -23,8 +22,8 @@
             </v-flex>
 
             <v-flex xs8 sm8 md10 lg10>
-              <v-btn small outline color="#BDBDBD" @click="dateDecrement">◀ 이전일</v-btn>
-              <v-btn small outline color="#BDBDBD" @click="dateIncrement">다음일 ▶</v-btn>
+              <v-btn small outlined color="#BDBDBD" @click="dateDecrement">◀ 이전일</v-btn>
+              <v-btn small outlined color="#BDBDBD" @click="dateIncrement">다음일 ▶</v-btn>
             </v-flex>
           </v-layout>
         </template>
@@ -40,12 +39,7 @@
               <thead>
                 <tr>
                   <th>
-                    <button
-                      type="button"
-                      class="btn btn-primary btn-block"
-                      style="width:80px;background-color:grey;border-style:solid;border-color:#fff;box-shadow: 0px 0px 0px #fff;  padding:0px !important; border-round: 0px !important;"
-                      disabled
-                    >회의실</button>
+                    <v-btn height="22" width="88" disabled>회의실</v-btn>
                   </th>
 
                   <th>
@@ -54,7 +48,7 @@
                         <button
                           type="button"
                           class="btn btn-primary"
-                          style="background-color:grey;border-style:solid;border-width:2px;border-color:#fff;box-shadow: 0px 0px 0px #fff; padding:0px !important; border-round: 0px !important"
+                          style="background-color:grey;border-style:solid;border-width:1px;border-color:#ddd;box-shadow: 0px 0px 0px #ddd; padding:0px !important; border-round: 0px !important;"
                           disabled
                         >
                           <span
@@ -69,13 +63,14 @@
               </thead>
               <tbody>
                 <tr v-for="room,index in rooms[room_indx]">
-                  <td style="padding:2px;">
+                  <td>
                     <!-- <button type="button" class="btn btn-success btn-block">{{room.name}}</button> -->
                     <v-btn
                       @click="meetingroom_info=true"
-                      outline
-                      style="font-size:8px;"
+                      outlined
+                      :style="roomBtn(room.name.length)"
                       :color="roomColorSet[index]"
+                      width="88"
                     >{{room.name}}</v-btn>
                   </td>
                   <td style="vertical-align:middle !important">
@@ -116,9 +111,19 @@
     <v-btn color="warning" small dark @click="fetchRsvData">fetch</v-btn>
     <v-btn color="info" small dark @click="forceRerender">rerender:{{this.renderKey}}</v-btn>
     <div>
-      <span style="color:red">{{this.$store.state.room_src}}</span>
+      <span style="color:red; font-size:5px;">{{this.$store.state.room_src}}</span>
     </div>
-    <div>{{this.$store.state.user}}</div>
+    <div>
+      <table>
+        <tr>
+          <td v-on:click="fetchRsvData">test</td>
+        </tr>
+      </table>
+    </div>
+
+    <div>
+      <span style="font-size:5px; background-color:yellow;">{{this.$store.state.user}}</span>
+    </div>
     <div>{{this.$store.state.rsvdata}}</div>
 
     <!-- 회의실 예약 팝업, dialog가 true 일 경우만 노출 -->
@@ -133,6 +138,7 @@
         @closeDialog="closeDialog"
         @makeReservation="makeReservation"
         @cnclReservation="cnclReservation"
+        np
         @updateReservation="updateReservation"
         @updateRsv="updateRsv"
         @clearRsv="clearRsv"
@@ -151,7 +157,14 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import { clearAllData, getRoomData, getRsvData, removeRsvData, delRsvData, editRsvData } from "../api";
+import {
+  clearAllData,
+  getRoomData,
+  getRsvData,
+  removeRsvData,
+  delRsvData,
+  editRsvData
+} from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 // import ConstantValues from '../utils/constant-values.js'
@@ -195,7 +208,7 @@ export default {
         user_name: "",
         telNum: "",
         room_id: "",
-        room_name : "",
+        room_name: "",
         title: "",
         content: "",
         stHour: 0,
@@ -208,7 +221,7 @@ export default {
         user_name: "",
         telNum: "",
         room_id: "",
-        room_name : "",
+        room_name: "",
         title: "",
         content: "",
         stHour: 0,
@@ -343,15 +356,14 @@ export default {
       this.clearCellData();
       this.clearSelectionData();
 
-
       console.log("Reservation complete...");
-      
+
       //  회의실 정보 post
       getRsvData({
         tel_num: this.$store.state.user.tel_num,
         token: this.$store.state.token,
         rsvdata: this.rsvInput,
-        httpMethod : 'POST'
+        httpMethod: "POST"
       })
         .then(response => {
           console.log(response);
@@ -360,8 +372,7 @@ export default {
           console.log(error);
         });
 
-        this.rsvInput = {};
-     
+      this.rsvInput = {};
     },
 
     cnclReservation(data) {
@@ -378,7 +389,6 @@ export default {
         tel_num: this.$store.state.user.tel_num,
         token: this.$store.state.token,
         rsvdata: this.rsvInput
-        
       })
         .then(response => {
           console.log(response);
@@ -386,18 +396,17 @@ export default {
         .catch(error => {
           console.log(error);
         });
-
     },
 
     updateReservation(data) {
       this.updateRsvData(data);
       console.log("updated...");
-      
+
       editRsvData({
         tel_num: this.$store.state.user.tel_num,
         token: this.$store.state.token,
         rsvdata: this.rsvInput,
-        rsvorg:this.rsvorg
+        rsvorg: this.rsvorg
       })
         .then(response => {
           console.log(response);
@@ -488,6 +497,43 @@ export default {
         "--empty-cell-color": color
       };
     },
+
+    roomBtn(room_name) {
+      let size;
+      if (room_name <= 7) {
+        size = "13px";
+      } else {
+        size = "9px";
+      }
+
+      return {
+        "--room-btn-text-size": size,
+        "--room-btn-width-size": "300px;"
+      };
+    },
+
+    createRoom() {
+      for (var i = 0; i < this.$store.state.room_src.length; i++) {
+        this.rooms.push(
+          this.$store.state.room_src[i][1].map(e => ({
+            name: e,
+            hours: Array(24)
+              .fill(0)
+              .map((e, i) => ({
+                index: i * 0.5 + 8,
+                selected: false,
+                reserved: 0,
+                st_index: 0,
+                ed_index: 0,
+                user_name: "",
+                border_right: false,
+                border_left: false,
+                rsv_key: ""
+              }))
+          }))
+        );
+      }
+    },
     closeDialog() {
       this.dialog = false;
     },
@@ -497,9 +543,10 @@ export default {
     forceRerender() {
       this.renderKey += 1;
     },
+
     fetchRsvData() {
       // this.loadRsvData();
-      console.log("Fetching...");
+      console.log(">>fetchRsvData...");
       this.clearCellData();
       // console.log(this.geRsvData)
       for (var key in this.getRsvDataStore) {
@@ -531,30 +578,18 @@ export default {
       }
     }
   },
-  created() {
+  async created() {
     console.log("created");
-    // 회의실 시간 테이블 정보 생성
-    console.log("cell display...");
-    for (var i = 0; i < this.$store.state.room_src.length; i++) {
-      this.rooms.push(
-        this.$store.state.room_src[i][1].map(e => ({
-          name: e,
-          hours: Array(24)
-            .fill(0)
-            .map((e, i) => ({
-              index: i * 0.5 + 8,
-              selected: false,
-              reserved: 0,
-              st_index: 0,
-              ed_index: 0,
-              user_name: "",
-              border_right: false,
-              border_left: false,
-              rsv_key: ""
-            }))
-        }))
-      );
-    }
+    this.createRoom(
+      await this.loadRoomSrc(
+        await getRoomData({
+          tel_num: this.$store.state.user.tel_num,
+          token: this.$store.state.token
+        })
+      ),
+      (this.renderKey = 1)
+    );
+    console.log("loadRoomSrc activated...");
   },
 
   computed: {
@@ -563,6 +598,7 @@ export default {
 
   mounted() {
     console.log("mounted");
+    // test 예약건 하드 코딩
     let data = {
       id: "08ad375f-995a-150f-172c-58bf29b08f9e",
       date: "2019-08-01",
@@ -577,6 +613,7 @@ export default {
       room_name: "몽블랑"
     };
     this.addRsvData(data);
+
     // this.loadRsvData();
     // this.fetchRsvData();
     // this.forceRerender();
@@ -585,30 +622,17 @@ export default {
   // 페이지 refresh 할 때 스토어의 데이터를 바로 불러오기 위한 코드
   beforeCreate() {
     console.log("beforeCreate");
-
-    getRoomData({
-      tel_num: this.$store.state.user.tel_num,
-      token: this.$store.state.token
-    })
-      .then(response => {
-        console.log(response);
-        if (response.data.success) {
-          console.log("success");
-        }
-        this.loadRoomSrc(response);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
     // this.$store.getters.getRsvData;
     this.$store.dispatch("loadRsvData");
-    console.log("loadRsvData...");
+    console.log(">>loadRsvData...");
   },
   // 페이지 refresh 할 때 예약 데이터 화면 노출 위한 코드s
   beforeUpdate() {
     console.log("beforeUpadate");
-    this.fetchRsvData();
+    if (this.renderKey > 0) {
+      this.fetchRsvData();
+      console.log(">>fetchRsvData...");
+    }
   }
 };
 /*
@@ -784,5 +808,10 @@ export default {
   border-radius: 0px;
   background-color: #4071A4;
   border-color: #4071A4;
+}
+
+.v-btn {
+  font-size: var(--room-btn-text-size);
+  max-width: var(--room-btn-width-size);
 }
 </style>

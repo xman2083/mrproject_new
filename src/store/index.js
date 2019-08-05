@@ -22,7 +22,8 @@ export default new Vuex.Store({
     user: {},
     token: "",
     rsvdata: {},
-    room_src: [],
+    room_src: [[[]]],
+    // room_src2: [["16층", ["몽블랑"]]],
     // room_src: [
     //   [
     //     "16층",
@@ -219,7 +220,7 @@ export default new Vuex.Store({
     },
 
     loadRoomSrc(state, roomsrc) {
-      console.log("loadRoomSrc commit...");
+      console.log("(store) >> loadRoomSrc commit...");
       state.commit("LOAD_ROOMDATA", roomsrc);
     },
 

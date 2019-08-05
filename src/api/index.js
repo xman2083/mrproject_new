@@ -73,8 +73,8 @@ function loginUser(data) {
 }
 
 function getMenuData(data) {
-  try{
-    return rsv.post('getmenu', JSON.stringify(data));
+  try {
+    return rsv.post("getmenu", JSON.stringify(data));
   } catch (error) {
     console.log(error);
   }
@@ -136,6 +136,15 @@ function editRsvData(data) {
 }
 
 //회의실 정보
+// function getRoomData(data) {
+//   try {
+//     return rsv.post("getroomdata", JSON.stringify(data));
+//   } catch (error) {
+//     console.log(error);
+//     return error;
+//   }
+// }
+
 function getRoomData(data) {
   try {
     return rsv.post("getroomdata", JSON.stringify(data));
@@ -144,7 +153,6 @@ function getRoomData(data) {
     return error;
   }
 }
-
 
 // function fetchPostById(id) {
 //   try {
