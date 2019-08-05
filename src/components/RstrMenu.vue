@@ -84,49 +84,48 @@
 </template>
 
 <script>
-import { getMenuData } from '../api/index.js'
+import { getMenuData } from "../api/index.js";
 
-  export default {
-    data () {
-      return {
-        text: 'Lorem ipsum dolor sit amet, .',
-        places: ['남산', '보라매'],
-        dates: ['월요일', '화요일', '수요일', '목요일', '금요일'],
-        date_index:0,
-        loc_index:0,
-        itemsPerPageOptions: [3, 6, 9],
-        itemsPerPage: 3,
-        sktl_menu: [],
+export default {
+  data() {
+    return {
+      text: "Lorem ipsum dolor sit amet, .",
+      places: ["남산", "보라매"],
+      dates: ["월요일", "화요일", "수요일", "목요일", "금요일"],
+      date_index: 0,
+      loc_index: 0,
+      itemsPerPageOptions: [3, 6, 9],
+      itemsPerPage: 3,
+      sktl_menu: []
+    };
+  },
+  methods: {
+    getMenus: function() {
+      var vm = this;
 
-      }
-    },
-    methods: {
-      getMenus: function() {
-        var vm = this;
-
-        getMenuData({ tel_num: this.$store.state.user.tel_num, 
-                      token: this.$store.state.token,
-                      loc: this.loc_index === 0 ? 'N' : 'B'})
-          .then((response) => {
-            console.log(response);
-            if (response.data.success) {
-              console.log("success");
-              vm.sktl_menu = response.data.data;
-              vm.date_index = 0;
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-
-    },
-    // beforeUpdate() {
-    //   this.getMenus();
-    // }
-    created() {
-      this.getMenus();
+      getMenuData({
+        tel_num: this.$store.state.user.tel_num,
+        token: this.$store.state.token,
+        loc: this.loc_index === 0 ? "N" : "B"
+      })
+        .then(response => {
+          console.log(response);
+          if (response.data.success) {
+            console.log("success");
+            vm.sktl_menu = response.data.data;
+            vm.date_index = 0;
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
+  },
+  // beforeUpdate() {
+  //   this.getMenus();
+  // }
+  created() {
+    this.getMenus();
   }
 };
 </script>
