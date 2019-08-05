@@ -22,7 +22,7 @@
         <!-- 해당 시간에 예약이 안되어 있는 경우 -->
         <v-layout v-if="reserved === false" wrap>
           <v-flex xs2>
-            <v-text-field value="시작" readonly solo dark text-size="5"></v-text-field>
+            <v-text-field value="시작" readonly solo dark style="font-size:smaller;"></v-text-field>
           </v-flex>
           <v-flex xs3>
             <v-text-field suffix="시" :value="parseInt(rsvInput.stHour)" solo readonly></v-text-field>
@@ -48,7 +48,7 @@
             </v-btn>
           </v-flex>
           <v-flex xs2>
-            <v-text-field value="E" readonly solo dark></v-text-field>
+            <v-text-field value="종료" readonly solo dark style="font-size:smaller;"></v-text-field>
           </v-flex>
           <v-flex xs3>
             <v-text-field suffix="시" :value="parseInt(rsvInput.edHour+0.5)" solo readonly></v-text-field>
@@ -92,7 +92,7 @@
         <!-- 해당 시간에 예약이 되어 있는 경우 -->
         <v-layout v-if="reserved === true" wrap>
           <v-flex xs2>
-            <v-text-field value="S" readonly solo dark></v-text-field>
+            <v-text-field value="시작" readonly solo dark style="font-size:smaller;"></v-text-field>
           </v-flex>
           <v-flex xs3>
             <v-text-field suffix="시" :value="parseInt(rsvInput.stHour)" solo readonly></v-text-field>
@@ -133,7 +133,7 @@
             </v-btn>
           </v-flex>
           <v-flex xs2>
-            <v-text-field value="E" readonly solo dark></v-text-field>
+            <v-text-field value="종료" readonly solo dark style="font-size:smaller;"></v-text-field>
           </v-flex>
           <v-flex xs3>
             <v-text-field suffix="시" :value="parseInt(rsvInput.edHour+0.5)" solo :readonly="!owner"></v-text-field>
@@ -188,10 +188,11 @@
               v-model="rsvInput.telNum"
               :clearable="owner"
               :readonly="!owner"
-              :v-mask="mask"
+              v-mask="mask"
             ></v-text-field>
           </v-flex>
-          <v-flex md4>
+          <v-flex xs8></v-flex>
+          <v-flex xs4 md4>
             <v-btn v-if="!owner" color="indigo" dark small>전화하기</v-btn>
           </v-flex>
 
@@ -254,7 +255,7 @@ export default {
       mask: "###-####-####"
     };
   },
-  props: ["rsvInput", "room_indx", "date", "dialog", "currCell"],
+  props: ["rsvInput", "room_indx", "rooms", "date", "dialog", "currCell"],
 
   directives: {
     mask
@@ -262,13 +263,13 @@ export default {
 
   methods: {
     makeReservation() {
-      this.$emit("makeReservation", this.rsvInput);
+      this.$emit("makeReservation");
     },
     cnclReservation() {
-      this.$emit("cnclReservation", this.rsvInput);
+      this.$emit("cnclReservation");
     },
     updateReservation() {
-      this.$emit("updateReservation", this.rsvInput);
+      this.$emit("updateReservation");
     },
     closeDialog() {
       this.$emit("closeDialog");
@@ -280,15 +281,17 @@ export default {
     console.log("RsvPopupForm >> beforeUpdate");
     if (this.dialog) {
       if (this.currCell[1].rsv_key) {
-        console.log(this.currCell[1].rsv_key);
+        // console.log(this.currCell[1].rsv_key);
         this.reserved = true;
         this.$emit("updateRsv");
         // this.rsvInput = this.getRsvDataStore[this.currCell[1].rsv_key];
-        console.log(this.rsvInput);
       } else {
         this.reserved = false;
       }
-      if (this.rsvInput.telNum === this.$store.state.user.tel_num) {
+      if (
+        this.rsvInput.telNum.replace("-", "").replace("-", "") ===
+        this.$store.state.user.tel_num
+      ) {
         this.owner = true;
       }
     }
