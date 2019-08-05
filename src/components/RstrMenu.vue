@@ -92,25 +92,25 @@
               <v-divider></v-divider>
               <v-list dense>
                 <v-list-item>
-                  <v-list-item-content class="align-end">{{ item.menu1 }}</v-list-item-content>
+                  <v-list-item-content class="align-center">{{ item.menu1 }}</v-list-item-content>
                 </v-list-item>
                 <v-list-item>
-                  <v-list-item-content class="align-end">{{ item.menu2 }}</v-list-item-content>
+                  <v-list-item-content class="align-center">{{ item.menu2 }}</v-list-item-content>
                 </v-list-item>
                 <v-list-item>
-                  <v-list-item-content class="align-end">{{ item.menu3 }}</v-list-item-content>
+                  <v-list-item-content class="align-center">{{ item.menu3 }}</v-list-item-content>
                 </v-list-item>
                 <v-list-item>
-                  <v-list-item-content class="align-end">{{ item.menu4 }}</v-list-item-content>
+                  <v-list-item-content class="align-center">{{ item.menu4 }}</v-list-item-content>
                 </v-list-item>
                 <v-list-item>
-                  <v-list-item-content class="align-end">{{ item.menu5 }}</v-list-item-content>
+                  <v-list-item-content class="align-center">{{ item.menu5 }}</v-list-item-content>
                 </v-list-item>
                 <v-list-item>
-                  <v-list-item-content class="align-end">{{ item.menu6 }}</v-list-item-content>
+                  <v-list-item-content class="align-center">{{ item.menu6 }}</v-list-item-content>
                 </v-list-item>
                 <v-list-item>
-                  <v-list-item-content class="align-end">{{ item.menu7 }}</v-list-item-content>
+                  <v-list-item-content class="align-center">{{ item.menu7 }}</v-list-item-content>
                 </v-list-item>
               </v-list>
             </v-card>
@@ -175,5 +175,11 @@ import { getMenuData } from '../api/index.js'
 .v-divider {
   margin-top: 0;
   margin-bottom: 0;
+}
+.v-card__title{
+  justify-content: center;
+}
+.v-list-item__content{
+  justify-content: center;
 }
 </style>
