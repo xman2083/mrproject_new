@@ -89,7 +89,7 @@
             md4
             lg3
           >
-            <v-card>
+            <v-card :loading="loading">
               <v-card-title><h4>{{ item.name }}</h4></v-card-title>
               <v-divider></v-divider>
               <v-list dense>
@@ -133,6 +133,7 @@ import { getMenuData } from '../api/index.js'
     data () {
       return {
         text: 'Lorem ipsum dolor sit amet, .',
+        loading: false,
         places: ['남산', '보라매'],
         dates: ['월요일', '화요일', '수요일', '목요일', '금요일'],
         date_index:0,
@@ -146,6 +147,7 @@ import { getMenuData } from '../api/index.js'
     methods: {
       getMenus: function() {
         var vm = this;
+        this.loading=true;
 
         getMenuData({ tel_num: this.$store.state.user.tel_num, 
                       token: this.$store.state.token,
@@ -156,6 +158,7 @@ import { getMenuData } from '../api/index.js'
               console.log("success");
               vm.sktl_menu = response.data.data;
               vm.date_index = 0;
+              this.loading=false;
             }
           })
           .catch((error) => {
