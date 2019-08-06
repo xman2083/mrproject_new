@@ -411,6 +411,7 @@ export default {
         console.log(this.rsvInput.edHour, this.rsvInput.stHour);
         this.rsvInput.stHour = this.makeHour(this.rsvInput.stHour);
         this.rsvInput.edHour = this.makeHour(this.rsvInput.edHour);
+        this.rsvInput.floor_id = this.room_indx;
         // if this.rsvInput.content = "";
         //   content= "hi"
         // 빔이 선택됐을때만 rsv_id정보 추가되고, 없으면 null
@@ -427,7 +428,7 @@ export default {
 
         console.log("Reservation complete...");
        
-
+  
         //  회의실 정보 post
         getRsvData({
           tel_num: this.$store.state.user.tel_num,
@@ -750,6 +751,7 @@ export default {
       )
     );
     console.log("created hook complete");
+
   },
 
   computed: {
