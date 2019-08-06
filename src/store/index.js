@@ -133,6 +133,7 @@ export default new Vuex.Store({
     },
 
     addRsvData({ commit }, data) {
+      // console.log(data);
       let id = guid();
       let rsvdata = Object.assign(
         {

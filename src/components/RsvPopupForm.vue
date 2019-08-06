@@ -257,7 +257,7 @@ export default {
     };
   },
   props: ["rsvInput", "room_indx", "rooms", "date", "dialog", "currCell"],
-
+  
   directives: {
     mask
   },
