@@ -240,6 +240,7 @@ export default {
         user_name: "",
         telNum: "",
         room_id: "",
+        rsv_id: "",
         room_name: "",
         floor_id: "",
         title: "",
@@ -254,6 +255,7 @@ export default {
         user_name: "",
         telNum: "",
         room_id: "",
+        rsv_id: "",
         room_name: "",
         floor_id: "",
         title: "",
@@ -292,13 +294,14 @@ export default {
 
     cellClick(room, hour) {
       this.rsvInput.user_name = this.$store.state.user.user_name;
+      this.rsvInput.user_id = this.$store.state.user.user_id;
       this.rsvInput.telNum = this.$store.state.user.tel_num;
 
       this.currCell = [room, hour];
       // console.log(room[1].rsv_key);
 
       if (hour.reserved === 2 || hour.reserved === 3) {
-        this.rsvorg = this.rsvdata;
+        this.rsvorg = this.rsvInput;
         this.dialog = true;
         return;
       }
@@ -384,7 +387,8 @@ export default {
     makeReservation() {
       if (this.rsvAvailableCheck()) {
         this.rsvInput.date = this.date;
-        this.rsvInput.room_id = this.roo;
+        this.rsvInput.rsv_id = this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
+        // 빔이 선택됐을때만 rsv_id정보 추가되고, 없으면 null
 
         this.stCell = "";
         this.edCell = "";
@@ -402,7 +406,7 @@ export default {
           tel_num: this.$store.state.user.tel_num,
           token: this.$store.state.token,
           rsvdata: this.rsvInput,
-          httpMethod: "POST"
+          httpMethod: "INSERT"
         })
           .then(response => {
             console.log(response);
@@ -456,7 +460,7 @@ export default {
         token: this.$store.state.token,
         rsvdata: this.rsvInput,
         rsvorg: this.rsvorg,
-        httpMethod: "PUT"
+        httpMethod: "UPDATE"
       })
         .then(response => {
           console.log(response);

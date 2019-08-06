@@ -119,7 +119,7 @@ function getRsvData(data) {
 
 function delRsvData(data) {
   try {
-    return rsv.delete("getrsvdata", JSON.stringify(data));
+    return rsv.post("getrsvdata", JSON.stringify(data));
   } catch (error) {
     console.log(error);
     return error;
@@ -127,8 +127,9 @@ function delRsvData(data) {
 }
 
 function editRsvData(data) {
+  console.log(data);
   try {
-    return rsv.put("getrsvdata", JSON.stringify(data));
+    return rsv.post("getrsvdata", JSON.stringify(data));
   } catch (error) {
     console.log(error);
     return error;
