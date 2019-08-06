@@ -284,13 +284,14 @@ export default {
 
     cellClick(room, hour) {
       this.rsvInput.user_name = this.$store.state.user.user_name;
+      this.rsvInput.user_id = this.$store.state.user.user_id;
       this.rsvInput.telNum = this.$store.state.user.tel_num;
 
       this.currCell = [room, hour];
       // console.log(room[1].rsv_key);
 
       if (hour.reserved === 2 || hour.reserved === 3) {
-        this.rsvorg = this.rsvdata;
+        this.rsvorg = this.rsvInput;
         this.dialog = true;
         return;
       }
@@ -448,7 +449,7 @@ export default {
         token: this.$store.state.token,
         rsvdata: this.rsvInput,
         rsvorg: this.rsvorg,
-        httpMethod: "PUT"
+        httpMethod: "UPDATE"
       })
         .then(response => {
           console.log(response);
