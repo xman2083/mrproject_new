@@ -13,28 +13,20 @@
     class="fixed-tabs-bar"
   >
     <v-tabs-slider color="yellow"></v-tabs-slider>
-
     <v-tab
       v-for="place in places"
       :key="place"
     >
      {{ place }}
     </v-tab>
-
     <v-tabs-items>
       <v-tab-item
         v-for="place in places"
         :key="place"
       >
-        
-   
-        
       </v-tab-item>
     </v-tabs-items>
   </v-tabs>
-
-
-
 
   <v-tabs
           background-color="cyan"
@@ -48,27 +40,18 @@
           <v-tabs-slider color="yellow"></v-tabs-slider>
           <v-tab
             v-for="date in dates"
-            :key="date"
-            
-            
+            :key="date"   
           >
           {{ date }}
           </v-tab>
-
           <v-tabs-items>
             <v-tab-item
               v-for="date in dates"
               :key="date"
-
-            >
-          
-        
-           
+            > 
         </v-tab-item>
       </v-tabs-items>    
     </v-tabs>
-
-
 
      <!-- 카드 삽입구간 -->
     <v-container fluid grid-list-md>
@@ -77,8 +60,9 @@
         :items-per-page.sync="itemsPerPage"
         :footer-props="{ itemsPerPageOptions }"
         hide-default-footer
+        loading="식단표를 불러오는 중입니다."
+    
       >
-
         <template v-slot:default="props">
           <v-layout wrap>
           <v-flex
@@ -89,7 +73,7 @@
             md4
             lg3
           >
-            <v-card :loading="loading">
+            <v-card>
               <v-card-title><h4>{{ item.name }}</h4></v-card-title>
               <v-divider></v-divider>
               <v-list dense>
@@ -122,7 +106,9 @@
     </v-data-iterator>
   </v-container>
 <!-- 카드 삽입구간 끝 -->
-
+    <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
 </v-sheet>
 </template>
 
@@ -141,14 +127,17 @@ import { getMenuData } from '../api/index.js'
         itemsPerPageOptions: [3, 6, 9],
         itemsPerPage: 3,
         sktl_menu: [],
-
+        overlay: false
       }
     },
+
     methods: {
       getMenus: function() {
         var vm = this;
-        this.loading=true;
+        var today = new Date();
+        var dayLabel = today.getDay();
 
+        vm.overlay = true;
         getMenuData({ tel_num: this.$store.state.user.tel_num, 
                       token: this.$store.state.token,
                       loc: this.loc_index === 0 ? 'N' : 'B'})
@@ -157,19 +146,18 @@ import { getMenuData } from '../api/index.js'
             if (response.data.success) {
               console.log("success");
               vm.sktl_menu = response.data.data;
-              vm.date_index = 0;
-              this.loading=false;
+              vm.date_index = dayLabel;
             }
           })
           .catch((error) => {
             console.log(error);
+          })
+          .finally(() => {
+            vm.overlay = false;
           });
       }
 
     },
-    // beforeUpdate() {
-    //   this.getMenus();
-    // }
     created() {
       this.getMenus();
     }
