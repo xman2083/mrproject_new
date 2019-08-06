@@ -13,28 +13,20 @@
     class="fixed-tabs-bar"
   >
     <v-tabs-slider color="yellow"></v-tabs-slider>
-
     <v-tab
       v-for="place in places"
       :key="place"
     >
      {{ place }}
     </v-tab>
-
     <v-tabs-items>
       <v-tab-item
         v-for="place in places"
         :key="place"
       >
-        
-   
-        
       </v-tab-item>
     </v-tabs-items>
   </v-tabs>
-
-
-
 
   <v-tabs
           background-color="cyan"
@@ -48,27 +40,18 @@
           <v-tabs-slider color="yellow"></v-tabs-slider>
           <v-tab
             v-for="date in dates"
-            :key="date"
-            
-            
+            :key="date"   
           >
           {{ date }}
           </v-tab>
-
           <v-tabs-items>
             <v-tab-item
               v-for="date in dates"
               :key="date"
-
-            >
-          
-        
-           
+            > 
         </v-tab-item>
       </v-tabs-items>    
     </v-tabs>
-
-
 
      <!-- 카드 삽입구간 -->
     <v-container fluid grid-list-md>
@@ -78,7 +61,6 @@
         :footer-props="{ itemsPerPageOptions }"
         hide-default-footer
       >
-
         <template v-slot:default="props">
           <v-layout wrap>
           <v-flex
@@ -141,14 +123,12 @@ import { getMenuData } from '../api/index.js'
         itemsPerPageOptions: [3, 6, 9],
         itemsPerPage: 3,
         sktl_menu: [],
-
       }
     },
     methods: {
       getMenus: function() {
         var vm = this;
         this.loading=true;
-
         getMenuData({ tel_num: this.$store.state.user.tel_num, 
                       token: this.$store.state.token,
                       loc: this.loc_index === 0 ? 'N' : 'B'})
@@ -167,9 +147,6 @@ import { getMenuData } from '../api/index.js'
       }
 
     },
-    // beforeUpdate() {
-    //   this.getMenus();
-    // }
     created() {
       this.getMenus();
     }
