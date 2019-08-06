@@ -171,6 +171,9 @@
         @closeMrPopup="closeMrPopup"
       ></meeting-room-info>
     </v-dialog>
+    <v-dialog v-model="unavailable_reservation" persistent max-width="250px">
+      <modal :alert_detail="alert_detail" @closeModal="closeModal"></modal>
+    </v-dialog>
   </div>
 </template>
 
@@ -186,12 +189,14 @@ import {
 } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
+import Modal from "./Modal.vue";
 // import ConstantValues from '../utils/constant-values.js'
 
 export default {
   components: {
     RsvPopupForm,
-    MeetingRoomInfo
+    MeetingRoomInfo,
+    Modal
   },
   data() {
     return {
@@ -200,6 +205,8 @@ export default {
       dateConverted: new Date(),
       menu: false,
       modal: false,
+      unavailable_reservation: false,
+      alert_detail: { type: "", message: "" },
       timeTable: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
       dialog: false,
       meetingroom_info: false,
@@ -398,8 +405,13 @@ export default {
 
         this.rsvInput = {};
       } else {
-        alert("예약 실패");
-        return (this.dialog = false);
+        return (
+          (this.unavailable_reservation = true),
+          (this.alert_detail = {
+            type: "rsvError",
+            message: "기존 예약이 존재합니다."
+          })
+        );
       }
     },
 
@@ -486,10 +498,20 @@ export default {
 
       for (var x = 0; x < 24; x++) {
         if (
-          this.rsvInput.stHour <= x &&
-          x <= this.rsvInput.edHour &&
+          this.rsvInput.stHour <= room_check.hours[x].index &&
+          room_check.hours[x].index <= this.rsvInput.edHour &&
           room_check.hours[x].reserved === 2
         ) {
+          console.log(
+            "x:",
+            x,
+            "stHour:",
+            this.rsvInput.stHour,
+            "edHour",
+            this.rsvInput.edHour,
+            "room:",
+            room_check.hours
+          );
           return false;
         }
       }
@@ -605,6 +627,10 @@ export default {
     },
     closeMrPopup() {
       this.meetingroom_info = false;
+    },
+    closeModal() {
+      this.unavailable_reservation = false;
+      this.alert_detail.message = "";
     },
     forceRerender() {
       this.renderKey += 1;
