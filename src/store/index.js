@@ -206,10 +206,10 @@ export default new Vuex.Store({
       removeRsvData(data);
     },
 
-    async loadRsvData(state) {
+    loadRsvData(state, date) {
       // 로딩 되어 있지 않은 경우만 실행
       if (!state.rsvdata || Object.keys(state.rsvdata).length === 0) {
-        return fetchRsvDataApi().then(res => {
+        return fetchRsvDataApi(date).then(res => {
           let rsvdata = {};
           Object.keys(res).forEach(key => {
             rsvdata[res[key].id] = res[key];
