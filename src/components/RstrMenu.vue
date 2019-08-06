@@ -135,7 +135,7 @@ import { getMenuData } from '../api/index.js'
       getMenus: function() {
         var vm = this;
         var today = new Date();
-        var dayLabel = today.getDay();
+        var dayLabel = today.getDay()-1;
 
         vm.overlay = true;
         getMenuData({ tel_num: this.$store.state.user.tel_num, 
