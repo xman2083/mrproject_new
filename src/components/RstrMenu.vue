@@ -128,6 +128,9 @@ import { getMenuData } from '../api/index.js'
     methods: {
       getMenus: function() {
         var vm = this;
+        var today = new Date();
+        var dayLabel = today.getDay();
+
         this.loading=true;
         getMenuData({ tel_num: this.$store.state.user.tel_num, 
                       token: this.$store.state.token,
@@ -137,7 +140,7 @@ import { getMenuData } from '../api/index.js'
             if (response.data.success) {
               console.log("success");
               vm.sktl_menu = response.data.data;
-              vm.date_index = 0;
+              vm.date_index = dayLabel;
               this.loading=false;
             }
           })
