@@ -236,6 +236,7 @@ export default {
         user_name: "",
         telNum: "",
         room_id: "",
+        rsv_id: "",
         room_name: "",
         floor_id: "",
         title: "",
@@ -250,7 +251,9 @@ export default {
         user_name: "",
         telNum: "",
         room_id: "",
+        rsv_id: "",
         room_name: "",
+        floor_id: "",
         title: "",
         content: "",
         stHour: 0,
@@ -380,7 +383,8 @@ export default {
     makeReservation() {
       if (this.rsvAvailableCheck()) {
         this.rsvInput.date = this.date;
-        this.rsvInput.room_id = this.roo;
+        this.rsvInput.rsv_id = this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
+        // 빔이 선택됐을때만 rsv_id정보 추가되고, 없으면 null
 
         this.stCell = "";
         this.edCell = "";
@@ -398,7 +402,7 @@ export default {
           tel_num: this.$store.state.user.tel_num,
           token: this.$store.state.token,
           rsvdata: this.rsvInput,
-          httpMethod: "POST"
+          httpMethod: "INSERT"
         })
           .then(response => {
             console.log(response);
