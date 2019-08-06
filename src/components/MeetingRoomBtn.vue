@@ -8,7 +8,12 @@
       slider-color="yellow"
       show-arrows
     >
-      <v-tab v-for="room in this.$store.state.room_src" :key="room[2]" ripple>{{ room[0] }}</v-tab>
+      <v-tab
+        v-for="room in this.$store.state.room_src"
+        @click="loadRsvStore"
+        :key="room[2]"
+        ripple
+      >{{ room[0] }}</v-tab>
       <v-tab-item v-for="room in this.$store.state.room_src" :key="room[2]"></v-tab-item>
     </v-tabs>
 
@@ -37,7 +42,6 @@
         <v-date-picker v-model="date" @input="menu = false" locale="ko-kr"></v-date-picker>
       </v-menu>
     </v-layout>
-
     <div>
       <div class="panel">
         <div class="panel-body">
@@ -226,7 +230,7 @@ export default {
       //   }))
       // })),
 
-      active: null,
+      active: 0,
 
       room_indx: 0,
 
@@ -251,6 +255,7 @@ export default {
         telNum: "",
         room_id: "",
         room_name: "",
+        floor_id: "",
         title: "",
         content: "",
         stHour: 0,
@@ -552,7 +557,6 @@ export default {
     },
     //예약 안내 팝업에서 시작/종료 시각을 증감하는 메소드
     timeControl(val, cal) {
-
       // if (cal === "add"){
       //   this.rsvInput.val += 0.5;
       // } else {
@@ -624,6 +628,11 @@ export default {
         );
       }
     },
+    // 페이지 refresh 할 때 스토어의 데이터를 바로 불러오기 위한 코드
+    loadRsvStore() {
+      console.log(">>loadRsvData...");
+      this.loadRsvData(this.date, this.room_indx);
+    },
     closeDialog() {
       this.dialog = false;
     },
@@ -677,16 +686,18 @@ export default {
   },
   async created() {
     console.log("created");
-    this.createRoom(
-      await this.loadRoomSrc(
-        await getRoomData({
-          tel_num: this.$store.state.user.tel_num,
-          token: this.$store.state.token
-        })
-      ),
-      (this.renderKey = 1)
+    this.loadRsvStore(
+      await this.createRoom(
+        await this.loadRoomSrc(
+          await getRoomData({
+            tel_num: this.$store.state.user.tel_num,
+            token: this.$store.state.token
+          })
+        ),
+        (this.renderKey = 1)
+      )
     );
-    console.log("loadRoomSrc activated...");
+    console.log("created hook complete");
   },
 
   computed: {
@@ -724,19 +735,14 @@ export default {
 
     this.addRsvData(data);
     this.addRsvData(data_second);
-
-    // this.loadRsvData();
-    // this.fetchRsvData();
-    // this.forceRerender();
-    // alert(this.$store.state.rsvdata)
   },
   // 페이지 refresh 할 때 스토어의 데이터를 바로 불러오기 위한 코드
-  beforeCreate() {
-    console.log("beforeCreate");
-    // this.$store.getters.getRsvData;
-    this.$store.dispatch("loadRsvData");
-    console.log(">>loadRsvData...");
-  },
+  // beforeCreate() {
+  //   console.log("beforeCreate");
+  //   // this.$store.getters.getRsvData;
+  //   this.$store.dispatch("loadRsvData", this.date, this.room_indx);
+  //   console.log(">>loadRsvData...");
+  // },
   // 페이지 refresh 할 때 예약 데이터 화면 노출 위한 코드s
   beforeUpdate() {
     console.log("beforeUpadate");
