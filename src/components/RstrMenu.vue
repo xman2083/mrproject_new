@@ -60,6 +60,8 @@
         :items-per-page.sync="itemsPerPage"
         :footer-props="{ itemsPerPageOptions }"
         hide-default-footer
+        loading="식단표를 불러오는 중입니다."
+    
       >
         <template v-slot:default="props">
           <v-layout wrap>
@@ -71,7 +73,7 @@
             md4
             lg3
           >
-            <v-card :loading="loading">
+            <v-card>
               <v-card-title><h4>{{ item.name }}</h4></v-card-title>
               <v-divider></v-divider>
               <v-list dense>
@@ -104,7 +106,9 @@
     </v-data-iterator>
   </v-container>
 <!-- 카드 삽입구간 끝 -->
-
+    <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
 </v-sheet>
 </template>
 
@@ -123,15 +127,17 @@ import { getMenuData } from '../api/index.js'
         itemsPerPageOptions: [3, 6, 9],
         itemsPerPage: 3,
         sktl_menu: [],
+        overlay: false
       }
     },
+
     methods: {
       getMenus: function() {
         var vm = this;
         var today = new Date();
         var dayLabel = today.getDay();
 
-        this.loading=true;
+        vm.overlay = true;
         getMenuData({ tel_num: this.$store.state.user.tel_num, 
                       token: this.$store.state.token,
                       loc: this.loc_index === 0 ? 'N' : 'B'})
@@ -141,11 +147,13 @@ import { getMenuData } from '../api/index.js'
               console.log("success");
               vm.sktl_menu = response.data.data;
               vm.date_index = dayLabel;
-              this.loading=false;
             }
           })
           .catch((error) => {
             console.log(error);
+          })
+          .finally(() => {
+            vm.overlay = false;
           });
       }
 
