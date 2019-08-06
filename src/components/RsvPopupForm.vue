@@ -1,7 +1,7 @@
 <template>
   <v-card v-if="this.dialog">
     <v-card-title>
-      <v-avatar color="indigo" size="36">
+      <v-avatar color="indigo" size="40">
         <span
           class="white--text"
           style="font-size:15px;"
@@ -11,9 +11,10 @@
         class="headline"
         style="color:grey !important;"
       >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
-      <span v-if="reserved">reserved</span>
+      <!-- <span v-if="reserved">reserved</span>
       <span v-else>(test)not reserved</span>
       <span v-if="owner" style="color:red">(owner)</span>
+      <span>{{rsvInput.stHour}} / {{rsvInput.edHour}}</span>-->
       <span class="grey--text subtitle-1">{{this.date}}</span>
     </v-card-title>
     <v-divider style="margin:0px;"></v-divider>
@@ -35,14 +36,14 @@
             <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
               <v-icon
                 dark
-                v-on:click="rsvInput.stHour-=0.5"
+                v-on:click="timeControl('stHour','sub')"
                 :disabled="rsvInput.stHour<=8?true:false"
               >remove</v-icon>
             </v-btn>
             <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
               <v-icon
                 dark
-                v-on:click="rsvInput.stHour+=0.5"
+                v-on:click="timeControl('stHour','add')"
                 :disabled="rsvInput.stHour>19 || rsvInput.stHour >= rsvInput.edHour?true:false"
               >add</v-icon>
             </v-btn>
@@ -61,14 +62,14 @@
             <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
               <v-icon
                 dark
-                v-on:click="rsvInput.edHour-=0.5"
+                v-on:click="timeControl('edHour','sub')"
                 :disabled="rsvInput.edHour<=8 || rsvInput.edHour <= rsvInput.stHour?true:false"
               >remove</v-icon>
             </v-btn>
             <v-btn class="mx-2" fab dark depressed style="height:30px;width:30px;" color="grey">
               <v-icon
                 dark
-                v-on:click="rsvInput.edHour+=0.5"
+                v-on:click="timeControl('edHour','add')"
                 :disabled="rsvInput.edHour>19?true:false"
               >add</v-icon>
             </v-btn>
@@ -112,7 +113,7 @@
             >
               <v-icon
                 dark
-                v-on:click="rsvInput.stHour-=0.5"
+                v-on:click="timeControl('stHour','sub')"
                 :disabled="rsvInput.stHour<=8?true:false"
               >remove</v-icon>
             </v-btn>
@@ -127,7 +128,7 @@
             >
               <v-icon
                 dark
-                v-on:click="rsvInput.stHour+=0.5"
+                v-on:click="timeControl('stHour','add')"
                 :disabled="rsvInput.stHour>19 || rsvInput.stHour >= rsvInput.edHour?true:false"
               >add</v-icon>
             </v-btn>
@@ -153,7 +154,7 @@
             >
               <v-icon
                 dark
-                v-on:click="rsvInput.edHour-=0.5"
+                v-on:click="timeControl('edHour','sub')"
                 :disabled="rsvInput.edHour<=8 || rsvInput.edHour <= rsvInput.stHour?true:false"
               >remove</v-icon>
             </v-btn>
@@ -168,7 +169,7 @@
             >
               <v-icon
                 dark
-                v-on:click="rsvInput.edHour+=0.5"
+                v-on:click="timeControl('edHour','add')"
                 :disabled="rsvInput.edHour>19?true:false"
               >add</v-icon>
             </v-btn>
@@ -274,6 +275,12 @@ export default {
     closeDialog() {
       this.$emit("closeDialog");
       this.$emit("clearRsv");
+    },
+    timeControl(val, cal) {
+      this.$emit("timeControl", val, cal);
+    },
+    rsvAvailableCheck() {
+      this.$emit("rsvAvailableCheck");
     }
   },
   beforeUpdate() {

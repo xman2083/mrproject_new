@@ -161,6 +161,8 @@
         @updateReservation="updateReservation"
         @updateRsv="updateRsv"
         @clearRsv="clearRsv"
+        @timeControl="timeControl"
+        @rsvAvailableCheck="rsvAvailableCheck"
       ></rsv-popup-form>
     </v-dialog>
     <v-dialog v-model="meetingroom_info" persistent max-width="600px">
@@ -235,6 +237,7 @@ export default {
         telNum: "",
         room_id: "",
         room_name: "",
+        floor_id: "",
         title: "",
         content: "",
         stHour: 0,
@@ -374,7 +377,7 @@ export default {
       }
     },
     makeReservation() {
-      if (this.roomEmptyCheck()) {
+      if (this.rsvAvailableCheck()) {
         this.rsvInput.date = this.date;
         this.rsvInput.room_id = this.roo;
 
@@ -460,7 +463,7 @@ export default {
       this.dialog = false;
       // this.currCell = "";
     },
-    // 셀을 클릭했을 때 예약이 존재하는 경우(키 값이 존재하는 경우) 해당 키값에 해당되는 예약 데이터를 불러와 인풋으로 저장
+    // 셀을 클릭했을 때 예약이 존재하는 경우(키 값이 존재하는 경우) 해당 키값에 해당되는 예약 데이터를 불러와 예약 데이터로로 저장
     updateRsv() {
       this.rsvInput = this.getRsvDataStore[this.currCell[1].rsv_key];
     },
@@ -468,7 +471,7 @@ export default {
     clearRsv() {
       this.rsvInput = {};
     },
-
+    //셀을 초기화 (예약 정보 초기화)
     clearCellData() {
       for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
         this.rooms[this.room_indx][i].hours.forEach(e => {
@@ -479,6 +482,7 @@ export default {
         });
       }
     },
+    //셀의 셀렉트 데이터 초기화
     clearSelectionData() {
       for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
         this.rooms[this.room_indx][i].hours.forEach(e => {
@@ -487,8 +491,8 @@ export default {
         });
       }
     },
-
-    roomEmptyCheck() {
+    // 예약 가능한 상태인지 조회 (가능: true / 불가능: false 리턴)
+    rsvAvailableCheck() {
       var room_check = [];
       for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
         if (this.rooms[this.room_indx][i].room_id === this.rsvInput.room_id) {
@@ -515,22 +519,7 @@ export default {
           return false;
         }
       }
-
       return true;
-
-      // for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
-      //           this.rooms[this.room_indx][i].hours.forEach(e => {
-      //             if (
-      //               e.index >= stHour &&
-      //               e.index <= edHour &&
-      //               this.rooms[this.room_indx][i].name === room_name
-      //             ) {
-      //               e.reserved = 2;
-      //               e.name = user_name;
-      //               e.rsv_key = key;
-      //             }
-      //           });
-      //     },
     },
 
     swipeHandler(direction) {
@@ -550,13 +539,7 @@ export default {
     tabChanged() {
       this.room_indx = this.active;
     },
-    startHourSel(room, hour) {
-      console.log("st:" + hour.index);
-    },
-    endHourSel(room, hour) {
-      console.log("ed:" + hour.index);
-    },
-    // 날짜 하루씩 증감하는 함수
+    // 캘린더의 날짜 하루씩 증감
     dateDecrement() {
       let today = this.dateConverted;
       today.setDate(today.getDate() - 1);
@@ -567,6 +550,25 @@ export default {
       today.setDate(today.getDate() + 1);
       this.date = today.toISOString().substr(0, 10);
     },
+    //예약 안내 팝업에서 시작/종료 시각을 증감하는 메소드
+    timeControl(val, cal) {
+
+      // if (cal === "add"){
+      //   this.rsvInput.val += 0.5;
+      // } else {
+      //   this.rsvInput.val -= 0.5;
+      // }
+      if (val === "stHour" && cal === "add") {
+        this.rsvInput.stHour += 0.5;
+      } else if (val === "stHour" && cal === "sub") {
+        this.rsvInput.stHour -= 0.5;
+      } else if (val === "edHour" && cal === "add") {
+        this.rsvInput.edHour += 0.5;
+      } else if (val === "edHour" && cal === "sub") {
+        this.rsvInput.edHour -= 0.5;
+      }
+    },
+
     // 예약된 시간대 색상을 커스텀 설정하는 메소드로 css에 해당 값을 전달 함
     // 회의실 마다 고유 색상 지정 & 홀수 시간대 예약 셀 바탕 색 지정
     roomColors(index, left, right, hour) {
@@ -647,25 +649,28 @@ export default {
         let user_name = this.getRsvDataStore[key].user_name;
         let stHour = this.getRsvDataStore[key].stHour;
         let edHour = this.getRsvDataStore[key].edHour;
+        let rsv_date = this.getRsvDataStore[key].date;
 
-        for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
-          this.rooms[this.room_indx][i].hours.forEach(e => {
-            if (
-              e.index >= stHour &&
-              e.index <= edHour &&
-              this.rooms[this.room_indx][i].name === room_name
-            ) {
-              if (e.index === stHour) {
-                e.border_left = "1px solid";
+        if (rsv_date === this.date) {
+          for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
+            this.rooms[this.room_indx][i].hours.forEach(e => {
+              if (
+                e.index >= stHour &&
+                e.index <= edHour &&
+                this.rooms[this.room_indx][i].name === room_name
+              ) {
+                if (e.index === stHour) {
+                  e.border_left = "1px solid";
+                }
+                if (e.index === edHour) {
+                  e.border_right = "1px solid";
+                }
+                e.reserved = 2;
+                e.name = user_name;
+                e.rsv_key = key;
               }
-              if (e.index === edHour) {
-                e.border_right = "1px solid";
-              }
-              e.reserved = 2;
-              e.name = user_name;
-              e.rsv_key = key;
-            }
-          });
+            });
+          }
         }
       }
     }
@@ -693,10 +698,10 @@ export default {
     // test 예약건 하드 코딩
     let data = {
       id: "08ad375f-995a-150f-172c-58bf29b08f9e",
-      date: "2019-08-01",
+      date: this.date,
       user_id: "",
       user_name: "홍길동",
-      telNum: "01033333333",
+      telNum: "010-3333-3333",
       title: "주간 회의",
       content: "개발 진행 상황 공유",
       stHour: 9.5,
@@ -704,7 +709,21 @@ export default {
       room_name: "몽블랑",
       room_id: "MTR000"
     };
+    let data_second = {
+      id: "b216870d-b39a-bc2a-bf47-9349a031a530",
+      date: this.date,
+      user_id: "",
+      user_name: "김갑환",
+      telNum: "010-9999-9999",
+      room_name: "한라산",
+      title: "코드 리뷰",
+      content: "Vue.js 코드리뷰 예정입니다.",
+      stHour: 10,
+      edHour: 11.5
+    };
+
     this.addRsvData(data);
+    this.addRsvData(data_second);
 
     // this.loadRsvData();
     // this.fetchRsvData();
