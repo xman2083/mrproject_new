@@ -39,6 +39,7 @@
           <v-flex xs2>
             <v-text-field value="종료" readonly solo dark style="font-size:smaller;"></v-text-field>
           </v-flex>
+          
           <v-flex>
             <vue-timepicker
               :hour-range="[[8,9]]"
@@ -289,7 +290,8 @@ export default {
     return {
       reserved: false,
       owner: false,
-      mask: "###-####-####"
+      mask: "###-####-####",
+      selected_time : {}
     };
   },
   props: [
@@ -298,8 +300,7 @@ export default {
     "rooms",
     "date",
     "dialog",
-    "currCell",
-    "selected_time"
+    "currCell"
   ],
   components: {
     VueTimepicker

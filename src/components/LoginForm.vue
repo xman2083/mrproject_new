@@ -18,7 +18,9 @@
               <v-card-actions>
                 <v-btn color="primary" v-on:click="initForm">초기화</v-btn>
                 <v-spacer></v-spacer>
-                <span v-if="isOtpSent" >{{ countDown }}</span>
+                <!-- <span v-if="isOtpSent" >{{ countDown }}</span> -->
+                <!-- __Jungmi__ CountdownTimer호출 -->
+                <span v-if="isOtpSent"><CountdownTimer v-on:toolate="latealert"></CountdownTimer></span>
                 <v-spacer></v-spacer>
                 <v-btn color="primary" v-on:click="submitForm">{{ btnText }}</v-btn>
               </v-card-actions>
@@ -31,26 +33,33 @@
 </template>
 
 <script>
-  import bus from '../utils/bus.js';
+import bus from '../utils/bus.js';
 import { setInterval, clearInterval } from 'timers';
+import CountdownTimer from './OTPTimer.vue';
 
   export default {
     data: () => ({
       drawer: null,
       btnText: 'OTP 전송',
       isOtpSent: false,
-      otpTime: 180,
+      otpTime: 10,
       telNum: '',
       otpNum: ''
     }),
-    computed: {
-     countDown: function() {
-        if (this.otpTime === 0)
-          return 'OTP 만료됨'
-        else
-          return Math.trunc(this.otpTime/60) + ' : ' + ('0' + this.otpTime%60).slice(-2);
-      }
+    // computed: {
+    //  countDown: function() {
+    //     if (this.otpTime === 0)
+    //       return 'OTP 만료됨'
+    //     else
+    //       return Math.trunc(this.otpTime/60) + ' : ' + ('0' + this.otpTime%60).slice(-2);
+    //   }
+    // },
+
+    // __Jungmi__ CountdownTimer 등록
+    components:{
+      CountdownTimer
     },
+
     props: {
       source: String
     },
@@ -87,11 +96,11 @@ import { setInterval, clearInterval } from 'timers';
               this.isOtpSent = true;
               this.timeInterval = setInterval(function () {
                 // This will be executed after 1,000 milliseconds
-                if (this.otpTime > 0) {
-                  this.otpTime--;
-                  console.log(this.otpTime);
-                }
-                else clearInterval(this.timeInterval);
+                // if (this.otpTime > 0) {
+                //   this.otpTime--;
+                //   console.log(this.otpTime);
+                // }
+                // else clearInterval(this.timeInterval);
               }.bind(this), 1000);
             }
             else if (response.data.statusCode == 204) {
@@ -114,6 +123,14 @@ import { setInterval, clearInterval } from 'timers';
         this.isOtpSent = false;
         his.otpTime = 180;
         if (this.timeInterval) clearInterval(this.timeInterval);
+      },
+      // __Jungmi__ Timeover alert
+      latealert() {
+        this.isOtpSent = false;
+        this.timeover = true;
+        // this.initForm();
+        this.btnText = 'OTP 전송';
+        alert('느져쓰');
       },
     },
     beforeDestroy: function() {
