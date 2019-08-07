@@ -109,10 +109,10 @@
             </v-btn>
           </v-flex>-->
           <v-flex xs6 sm6 md6>
-            <v-text-field label="예약자 성명*" v-model="rsvInput.user_name" required clearable></v-text-field>
+            <v-text-field label="예약자 성명*" v-model="rsvInput.user_name" required readonly></v-text-field>
           </v-flex>
           <v-flex xs6 sm6 md6>
-            <v-text-field label="휴대폰 번호" v-model="rsvInput.telNum" required clearable v-mask="mask"></v-text-field>
+            <v-text-field label="휴대폰 번호" v-model="rsvInput.telNum" required readonly v-mask="mask"></v-text-field>
           </v-flex>
 
           <v-flex xs12 sm12 md12>
@@ -219,22 +219,10 @@
             </v-btn>
           </v-flex>-->
           <v-flex xs6 sm6 md4>
-            <v-text-field
-              label="예약자 성명*"
-              v-model="rsvInput.user_name"
-              required
-              :clearable="owner"
-              :readonly="!owner"
-            ></v-text-field>
+            <v-text-field label="예약자 성명*" v-model="rsvInput.user_name" required readonly></v-text-field>
           </v-flex>
           <v-flex xs6 sm6 md4>
-            <v-text-field
-              label="휴대폰 번호"
-              v-model="rsvInput.telNum"
-              :clearable="owner"
-              :readonly="!owner"
-              v-mask="mask"
-            ></v-text-field>
+            <v-text-field label="휴대폰 번호" v-model="rsvInput.telNum" readonly v-mask="mask"></v-text-field>
           </v-flex>
           <v-flex xs8></v-flex>
           <v-flex xs4 md4>

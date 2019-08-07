@@ -242,12 +242,15 @@ export default {
         telNum: "",
         room_id: "",
         rsv_id: "",
+        rsv_created : "",
         room_name: "",
         floor_id: "",
         title: "",
         content: "",
         stHour: 0,
-        edHour: 0
+        edHour: 0,
+        stTm: "",
+        edTm: ""
       },
 
       rsvorg: {
@@ -257,12 +260,15 @@ export default {
         telNum: "",
         room_id: "",
         rsv_id: "",
+        rsv_created : "",
         room_name: "",
         floor_id: "",
         title: "",
         content: "",
         stHour: 0,
-        edHour: 0
+        edHour: 0,
+        stTm: "",
+        edTm: ""
       },
 
       // 회의실 색상 코드
@@ -292,6 +298,19 @@ export default {
       "loadRoomSrc"
     ]),
     ...mapMutations(["CLEAR_STOREDATA"]),
+
+    getTimeStamp() {
+      var d = new Date();
+      var s =
+        d.getFullYear() +
+          ('0' + (d.getMonth() + 1)).slice(-2) +
+          ('0' + d.getDate()).slice(-2) +
+          ('0' + d.getHours()).slice(-2) +
+          ('0' + d.getMinutes()).slice(-2) +
+          ('0' + d.getSeconds()).slice(-2);
+          
+      return s;
+    },
 
     cellClick(room, hour) {
       this.rsvInput.user_name = this.$store.state.user.user_name;
@@ -392,9 +411,16 @@ export default {
 
       if (this.rsvAvailableCheck()) {
         this.rsvInput.date = this.date;
-        this.rsvInput.rsv_id =
-          this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
+        this.rsvInput.rsv_id = this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
+        this.rsvInput.rsv_created = this.getTimeStamp();
+        console.log(this.rsvInput.edHour, this.rsvInput.stHour);
+        this.rsvInput.stHour = this.makeHour(this.rsvInput.stHour);
+        this.rsvInput.edHour = this.makeHour(this.rsvInput.edHour);
+        this.rsvInput.floor_id = this.room_indx;
+        // if this.rsvInput.content = "";
+        //   content= "hi"
         // 빔이 선택됐을때만 rsv_id정보 추가되고, 없으면 null
+        // console.log(this.rsvInput);
 
         this.stCell = "";
         this.edCell = "";
@@ -406,7 +432,8 @@ export default {
         this.clearSelectionData();
 
         console.log("Reservation complete...");
-
+       
+  
         //  회의실 정보 post
         getRsvData({
           tel_num: this.$store.state.user.tel_num,
@@ -421,7 +448,7 @@ export default {
             console.log(error);
           });
 
-        this.rsvInput = {};
+        this.clearRsv();//this.rsvInput = {};
       } else {
         return (
           (this.unavailable_reservation = true),
@@ -484,7 +511,23 @@ export default {
     },
 
     clearRsv() {
-      this.rsvInput = {};
+      this.rsvInput = {
+        date: "",
+        user_id: "",
+        user_name: "",
+        telNum: "",
+        room_id: "",
+        rsv_id: "",
+        rsv_created : "",
+        room_name: "",
+        floor_id: "",
+        title: "",
+        content: "",
+        stHour: 0,
+        edHour: 0,
+        stTm: "",
+        edTm: ""
+      };
     },
     //셀을 초기화 (예약 정보 초기화)
     clearCellData() {
@@ -688,6 +731,11 @@ export default {
     forceRerender() {
       this.renderKey += 1;
     },
+    makeHour(hr) {
+      var h = ('0' + Math.trunc(hr)).slice(-2);
+
+      return h + (hr - Math.trunc(hr) === 0.5 ? '30' : '00');
+    },
 
     fetchRsvData() {
       // this.loadRsvData();
@@ -740,6 +788,7 @@ export default {
       )
     );
     console.log("created hook complete");
+
   },
 
   computed: {
