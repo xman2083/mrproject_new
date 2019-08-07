@@ -11,7 +11,7 @@
               </v-toolbar>
               <v-card-text>
                 <v-form>
-                  <v-text-field prepend-icon="person" name="login" label="휴대폰 번호" type="text" v-model="telNum" v-bind:disabled="isOtpSent"></v-text-field>
+                  <v-text-field prepend-icon="person" name="login" label="휴대폰 번호" type="text" v-model="telNum" v-bind:disabled="isOtpSent" v-on:keyup.enter="submitForm" autofocus="true"></v-text-field>
                   <v-text-field id="password" prepend-icon="lock" name="password" label="OTP" type="text" v-model="otpNum" v-bind:disabled="!isOtpSent"></v-text-field>
                 </v-form>
               </v-card-text>

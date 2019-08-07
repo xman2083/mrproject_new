@@ -14,11 +14,11 @@ copyright 'Copyright 2019, SK Telink CO,LTD All Rights Reserved.'
 
 <script>
 export default {
-    props: {
-        data:{
-            type: Number,
-        }
-    },
+    // props: {
+    //     data:{
+    //         type: Number,
+    //     }
+    // },
 
     data(){
         return{
