@@ -30,7 +30,7 @@ export default {
     methods: {
         timer_loop(){
             this.count++
-            if(this.count<70) {
+            if(this.count<180) {
                 this.otpTime = this.otpTime-1
                 setTimeout(this.timer_loop, 1000)
             }
