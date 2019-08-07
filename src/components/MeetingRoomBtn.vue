@@ -135,14 +135,7 @@
     <div>
       <span style="color:red; font-size:5px;">{{this.$store.state.room_src}}</span>
     </div>
-    <div>
-      <table>
-        <tr>
-          <td v-on:click="fetchRsvData">test</td>
-        </tr>
-      </table>
-    </div>
-
+    {{this.selected_time}}
     <div>
       <span style="font-size:5px; background-color:yellow;">{{this.$store.state.user}}</span>
     </div>
@@ -181,9 +174,6 @@
     </v-dialog>
     <v-dialog v-model="unavailable_reservation" persistent max-width="250px">
       <modal :alert_detail="alert_detail" @closeModal="closeModal"></modal>
-    </v-dialog>
-    <v-dialog v-model="time_picker">
-      <time-picker :selected_time="selected_time"></time-picker>
     </v-dialog>
   </div>
 </template>
@@ -399,17 +389,20 @@ export default {
       }
     },
     makeReservation() {
-      this.rsvInput.stHour = this.timeControl(this.selected_time.st, "get");
-      this.rsvInput.edHour = this.timeControl(this.selected_time.et, "get");
-
       if (this.rsvAvailableCheck()) {
         this.rsvInput.date = this.date;
         this.rsvInput.rsv_id =
           this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
         this.rsvInput.rsv_created = this.getTimeStamp();
         console.log(this.rsvInput.edHour, this.rsvInput.stHour);
-        this.rsvInput.stHour = this.makeHour(this.rsvInput.stHour);
-        this.rsvInput.edHour = this.makeHour(this.rsvInput.edHour);
+        console.log(this.timeControl(this.selected_time.st, "get"));
+
+        let value = this.timeControl(this.selected_time.et, "get");
+        this.rsvInput.stHour = this.timeControl(this.selected_time.st, "get");
+        this.rsvInput.edHour = this.timeControl(value, "add");
+
+        // this.rsvInput.stHour = this.makeHour(this.rsvInput.stHour);
+        // this.rsvInput.edHour = this.makeHour(this.rsvInput.edHour);
         this.rsvInput.floor_id = this.room_indx;
         // if this.rsvInput.content = "";
         //   content= "hi"
@@ -635,11 +628,16 @@ export default {
       this.date = today.toISOString().substr(0, 10);
     },
     //예약 안내 팝업에서 시작/종료 시각을 증감하는 메소드
-    timeControl(time, con) {
-      let hour = time.substring(0, 2);
-      let minute = time.substring(2, 4);
-      console.log(hour, "/", minute);
-
+    timeControl(val, con) {
+      console.log("val:", val);
+      if (typeof val === "object") {
+        var hour = val.HH;
+        var minute = val.mm;
+      } else if (typeof val === "string") {
+        var hour = val.substring(0, 2);
+        var minute = val.substring(2, 4);
+      }
+      console.log("in timeControl:", hour, "/", minute);
       if (con === "add" && minute === "00") {
         minute = "30";
       } else if (con === "add" && minute === "30") {
@@ -655,7 +653,7 @@ export default {
       if (con === "set") {
         return { HH: hour, mm: minute };
       } else if (con === "get") {
-        return time.HH + time.mm;
+        return val.HH + val.mm;
       }
       return hour + minute;
     },
@@ -756,43 +754,51 @@ export default {
     forceRerender() {
       this.renderKey += 1;
     },
-    makeHour(hr) {
-      var h = ("0" + Math.trunc(hr)).slice(-2);
+    // makeHour(hr) {
+    //   var h = ("0" + Math.trunc(hr)).slice(-2);
 
-      return h + (hr - Math.trunc(hr) === 0.5 ? "30" : "00");
-    },
+    //   return h + (hr - Math.trunc(hr) === 0.5 ? "30" : "00");
+    // },
 
-    fetchRsvData() {
+    async fetchRsvData() {
       console.log(">>fetchRsvData...");
       this.clearCellData();
 
-      let rsv_datas = [];
+      let rsv_datas = { data: { rsv: [] } };
 
-      RsvDataApi({
-        tel_num: this.$store.state.user.tel_num,
-        token: this.$store.state.token,
-        rsvdata: {
-          date: this.date,
-          floor_id: this.room_indx
-        },
-        httpMethod: "SELECT"
-      })
-        .then(response => {
-          console.log(response);
-          rsv_datas = response.data.rsv;
+      this.drawRooms(
+        await RsvDataApi({
+          tel_num: this.$store.state.user.tel_num,
+          token: this.$store.state.token,
+          rsvdata: {
+            date: this.date,
+            floor_id: this.room_indx
+          },
+          httpMethod: "SELECT"
         })
-        .catch(error => {
-          console.log(error);
-        });
+        // .then(response => {
+        //   console.log(response);
+        //   return response.data.rsv;
+        // })
+        // .catch(error => {
+        //   console.log(error);
+        // })
+      );
       // this.loadRsvData();
 
-      for (var rsv_data in rsv_datas) {
-        // console.log(key);
-        let room_name = rsv_data.room_name;
-        let user_name = rsv_data.emp_nm;
-        let stHour = rsv_data.stHour;
-        let edHour = rsv_data.edHour;
-        let rsv_date = rsv_data.date;
+      console.log("실행...");
+    },
+    drawRooms(rsv_datas) {
+      console.log(rsv_datas);
+      // console.log(this.rsv_datas.data.rsv.length);
+      for (var rsv_data of rsv_datas.data.rsv) {
+        console.log("rsv_data:", rsv_data);
+        var room_name = rsv_data[7];
+        var stHour = rsv_data[3];
+        var edHour = this.timeControl(rsv_data[4], "sub");
+        var rsv_date = rsv_data[5];
+        var rsv_key = rsv_data[6];
+        console.log("예약건:", rsv_data);
 
         //if (rsv_date === this.date) {
         for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
@@ -809,8 +815,7 @@ export default {
                 e.border_right = "1px solid";
               }
               e.reserved = 2;
-              e.name = user_name;
-              e.rsv_key = key;
+              e.rsv_key = rsv_key;
             }
           });
         }
@@ -880,13 +885,15 @@ export default {
   // 페이지 refresh 할 때 예약 데이터 화면 노출 위한 코드s
   beforeUpdate() {
     console.log("beforeUpadate");
-    if (this.renderKey > 0) {
-      this.fetchRsvData();
-      // if (this.rsvInput.edHour!=""){
-      // this.selected_time.st = this.timeControl(this.rsvInput.stHour, "set");
-      // this.selected_time.et = this.timeControl(this.rsvInput.edHour, "set");}
-      console.log(">>fetchRsvData...");
+    // if (this.renderKey > 0) {
+    //   this.fetchRsvData();
+    if (this.rsvInput.edHour != "") {
+      this.selected_time.st = this.timeControl(this.rsvInput.stHour, "set");
+      let value = this.timeControl(this.rsvInput.edHour, "add");
+      this.selected_time.et = this.timeControl(value, "set");
     }
+    console.log(">>fetchRsvData...");
+    // }
   }
 };
 /*

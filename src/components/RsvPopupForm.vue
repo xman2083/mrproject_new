@@ -28,6 +28,8 @@
           </v-flex>
           <v-flex xs10>
             <vue-timepicker
+              hide-disabled-hours
+              :hour-range="[5, [8, 12], [14, 17], 19]"
               v-model="selected_time.st"
               :minute-interval="30"
               style="padding: 5px;width:200px; font-size:20px; text-align:center !important;"
@@ -39,6 +41,8 @@
           </v-flex>
           <v-flex>
             <vue-timepicker
+              :hour-range="[[8,9]]"
+              hide-disabled-hours
               v-model="selected_time.et"
               :minute-interval="30"
               style="padding: 5px;width:200px; font-size:20px;"
@@ -128,7 +132,6 @@
         <v-layout v-if="reserved === true" wrap>
           <v-flex xs2>
             <v-text-field value="시작" readonly solo dark style="font-size:smaller;"></v-text-field>
-            <time-picker></time-picker>
           </v-flex>
           <v-flex xs10>
             <vue-timepicker
