@@ -22,7 +22,7 @@ export default {
 
     data(){
         return{
-            otpTime: 70,
+            otpTime: 180,
             count: 0,
         }
     },
