@@ -51,8 +51,8 @@ export default {
     return {
       drawer: false,
       items: [
-        { title: "Home", icon: "home", route: "/" },
-        { title: "회의실예약", icon: "event", route: "/meetingroombtn" },
+        { title: "Home", icon: "fab fa-fort-awesome", route: "/" },
+        { title: "회의실예약", icon: "fas fa-calendar-alt", route: "/meetingroombtn" },
         // { title: "공지사항", icon: "info", route: "/notice" },
         { title: "식단표", icon: "fas fa-utensils", route: "/RstrMenu" }
       ]
