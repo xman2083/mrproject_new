@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto" max-width="600">
     <v-card-title>
-      <v-avatar color="grey" size="34" tile="true">
+      <v-avatar color="grey" size="34" tile>
         <span
           class="white--text"
           style="font-size:small;"
@@ -13,7 +13,7 @@
       >&nbsp;&nbsp;{{this.currRoom.name}} &nbsp;&nbsp;</span>
       <!-- <span>&nbsp;st: {{this.rsvInput.stHour}} / ed: {{this.rsvInput.edHour}}</span> -->
     </v-card-title>
-    <v-img :src="require('../assets/16_monblanck.gif')" width="600px"></v-img>
+    <v-img v-bind:src="currRoom.img_src" width="600px"></v-img>
 
     <v-card-actions>
 
@@ -30,7 +30,8 @@
 export default {
   data() {
     return {
-      show: false
+      show: false,
+      src_path: ''
     };
   },
   methods: {
@@ -44,7 +45,7 @@ export default {
       if (e.keyCode == 27) {
         this.$emit("closeMrPopup");
       }
-    });
+    }); 
   }
 };
 </script>
