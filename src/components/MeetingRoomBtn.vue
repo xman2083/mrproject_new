@@ -77,7 +77,7 @@
                   <td>
                     <!-- <button type="button" class="btn btn-success btn-block">{{room.name}}</button> -->
                     <v-btn
-                      @click="meetingroom_info=true"
+                      @click="onRoomBtnClick(room)"
                       outlined
                       :style="roomBtn(room.name.length)"
                       :color="roomColorSet[index]"
@@ -295,6 +295,13 @@ export default {
         ("0" + d.getSeconds()).slice(-2);
 
       return s;
+    },
+
+    onRoomBtnClick(room) {
+      this.meetingroom_info = true;
+      this.currRoom = room;
+      this.currRoom.img_src = require("../assets/" + room.room_id + ".gif");
+      console.log("AAAAAAAA", this.currRoom);
     },
 
     cellClick(room, hour) {
