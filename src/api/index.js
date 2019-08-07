@@ -108,28 +108,9 @@ function signupUser(data) {
 //   }
 // }
 
-function getRsvData(data) {
+function RsvDataApi(data) {
   try {
-    return rsv.post("getrsvdata", JSON.stringify(data));
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-}
-
-function delRsvData(data) {
-  try {
-    return rsv.post("getrsvdata", JSON.stringify(data));
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-}
-
-function editRsvData(data) {
-  console.log(data);
-  try {
-    return rsv.post("getrsvdata", JSON.stringify(data));
+    return rsv.post("managersvdata", JSON.stringify(data));
   } catch (error) {
     console.log(error);
     return error;
@@ -238,9 +219,7 @@ export {
   saveRsvData,
   removeRsvData,
   clearAllData,
-  getRsvData,
-  delRsvData,
-  editRsvData,
+  RsvDataApi,
   getRoomData,
   getMenuData,
 };

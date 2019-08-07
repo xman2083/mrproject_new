@@ -190,14 +190,7 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import {
-  clearAllData,
-  getRoomData,
-  getRsvData,
-  removeRsvData,
-  delRsvData,
-  editRsvData
-} from "../api";
+import { clearAllData, getRoomData, RsvDataApi, removeRsvData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 import Modal from "./Modal.vue";
@@ -242,7 +235,7 @@ export default {
         telNum: "",
         room_id: "",
         rsv_id: "",
-        rsv_created : "",
+        rsv_created: "",
         room_name: "",
         floor_id: "",
         title: "",
@@ -260,7 +253,7 @@ export default {
         telNum: "",
         room_id: "",
         rsv_id: "",
-        rsv_created : "",
+        rsv_created: "",
         room_name: "",
         floor_id: "",
         title: "",
@@ -303,12 +296,12 @@ export default {
       var d = new Date();
       var s =
         d.getFullYear() +
-          ('0' + (d.getMonth() + 1)).slice(-2) +
-          ('0' + d.getDate()).slice(-2) +
-          ('0' + d.getHours()).slice(-2) +
-          ('0' + d.getMinutes()).slice(-2) +
-          ('0' + d.getSeconds()).slice(-2);
-          
+        ("0" + (d.getMonth() + 1)).slice(-2) +
+        ("0" + d.getDate()).slice(-2) +
+        ("0" + d.getHours()).slice(-2) +
+        ("0" + d.getMinutes()).slice(-2) +
+        ("0" + d.getSeconds()).slice(-2);
+
       return s;
     },
 
@@ -411,7 +404,8 @@ export default {
 
       if (this.rsvAvailableCheck()) {
         this.rsvInput.date = this.date;
-        this.rsvInput.rsv_id = this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
+        this.rsvInput.rsv_id =
+          this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
         this.rsvInput.rsv_created = this.getTimeStamp();
         console.log(this.rsvInput.edHour, this.rsvInput.stHour);
         this.rsvInput.stHour = this.makeHour(this.rsvInput.stHour);
@@ -432,10 +426,11 @@ export default {
         this.clearSelectionData();
 
         console.log("Reservation complete...");
-       
-  
+
+        var vm = this;
+
         //  회의실 정보 post
-        getRsvData({
+        RsvDataApi({
           tel_num: this.$store.state.user.tel_num,
           token: this.$store.state.token,
           rsvdata: this.rsvInput,
@@ -443,12 +438,21 @@ export default {
         })
           .then(response => {
             console.log(response);
+            if (response.data.statusCode == 409) {
+              vm.unavailable_reservation = true;
+              vm.alert_detail = {
+                type: "rsvError",
+                message: "기존 예약이 존재합니다."
+              };
+            } else {
+              console.log(response);
+            }
           })
           .catch(error => {
             console.log(error);
           });
 
-        this.clearRsv();//this.rsvInput = {};
+        this.clearRsv(); //this.rsvInput = {};
       } else {
         return (
           (this.unavailable_reservation = true),
@@ -470,7 +474,7 @@ export default {
 
       this.clearSelectionData();
 
-      delRsvData({
+      RsvDataApi({
         tel_num: this.$store.state.user.tel_num,
         token: this.$store.state.token,
         rsvdata: this.rsvInput,
@@ -485,25 +489,46 @@ export default {
     },
 
     updateReservation() {
-      this.updateRsvData(this.rsvInput);
-      console.log("updated...");
+      if (this.rsvAvailableCheck()) {
+        this.updateRsvData(this.rsvInput);
+        console.log("updated...");
 
-      editRsvData({
-        tel_num: this.$store.state.user.tel_num,
-        token: this.$store.state.token,
-        rsvdata: this.rsvInput,
-        rsvorg: this.rsvorg,
-        httpMethod: "UPDATE"
-      })
-        .then(response => {
-          console.log(response);
+        var vm = this;
+
+        RsvDataApi({
+          tel_num: this.$store.state.user.tel_num,
+          token: this.$store.state.token,
+          rsvdata: this.rsvInput,
+          rsvorg: this.rsvorg,
+          httpMethod: "UPDATE"
         })
-        .catch(error => {
-          console.log(error);
-        });
+          .then(response => {
+            console.log(response);
+            if (response.data.statusCode == 409) {
+              vm.unavailable_reservation = true;
+              vm.alert_detail = {
+                type: "rsvError",
+                message: "기존 예약이 존재합니다."
+              };
+            } else {
+              console.log(response);
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
 
-      this.dialog = false;
-      // this.currCell = "";
+        this.dialog = false;
+        // this.currCell = "";
+      } else {
+        return (
+          (this.unavailable_reservation = true),
+          (this.alert_detail = {
+            type: "rsvError",
+            message: "기존 예약이 존재합니다."
+          })
+        );
+      }
     },
     // 셀을 클릭했을 때 예약이 존재하는 경우(키 값이 존재하는 경우) 해당 키값에 해당되는 예약 데이터를 불러와 예약 데이터로로 저장
     updateRsv() {
@@ -518,7 +543,7 @@ export default {
         telNum: "",
         room_id: "",
         rsv_id: "",
-        rsv_created : "",
+        rsv_created: "",
         room_name: "",
         floor_id: "",
         title: "",
@@ -732,45 +757,64 @@ export default {
       this.renderKey += 1;
     },
     makeHour(hr) {
-      var h = ('0' + Math.trunc(hr)).slice(-2);
+      var h = ("0" + Math.trunc(hr)).slice(-2);
 
-      return h + (hr - Math.trunc(hr) === 0.5 ? '30' : '00');
+      return h + (hr - Math.trunc(hr) === 0.5 ? "30" : "00");
     },
 
     fetchRsvData() {
-      // this.loadRsvData();
       console.log(">>fetchRsvData...");
       this.clearCellData();
-      // console.log(this.geRsvData)
-      for (var key in this.getRsvDataStore) {
-        // console.log(key);
-        let room_name = this.getRsvDataStore[key].room_name;
-        let user_name = this.getRsvDataStore[key].user_name;
-        let stHour = this.getRsvDataStore[key].stHour;
-        let edHour = this.getRsvDataStore[key].edHour;
-        let rsv_date = this.getRsvDataStore[key].date;
 
-        if (rsv_date === this.date) {
-          for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
-            this.rooms[this.room_indx][i].hours.forEach(e => {
-              if (
-                e.index >= stHour &&
-                e.index <= edHour &&
-                this.rooms[this.room_indx][i].name === room_name
-              ) {
-                if (e.index === stHour) {
-                  e.border_left = "1px solid";
-                }
-                if (e.index === edHour) {
-                  e.border_right = "1px solid";
-                }
-                e.reserved = 2;
-                e.name = user_name;
-                e.rsv_key = key;
+      let rsv_datas = [];
+
+      RsvDataApi({
+        tel_num: this.$store.state.user.tel_num,
+        token: this.$store.state.token,
+        rsvdata: {
+          date: this.date,
+          floor_id: this.room_indx
+        },
+        httpMethod: "SELECT"
+      })
+        .then(response => {
+          console.log(response);
+          rsv_datas = response.data.rsv;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      // this.loadRsvData();
+
+      for (var rsv_data in rsv_datas) {
+        // console.log(key);
+        let room_name = rsv_data.room_name;
+        let user_name = rsv_data.emp_nm;
+        let stHour = rsv_data.stHour;
+        let edHour = rsv_data.edHour;
+        let rsv_date = rsv_data.date;
+
+        //if (rsv_date === this.date) {
+        for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
+          this.rooms[this.room_indx][i].hours.forEach(e => {
+            if (
+              e.index >= stHour &&
+              e.index <= edHour &&
+              this.rooms[this.room_indx][i].name === room_name
+            ) {
+              if (e.index === stHour) {
+                e.border_left = "1px solid";
               }
-            });
-          }
+              if (e.index === edHour) {
+                e.border_right = "1px solid";
+              }
+              e.reserved = 2;
+              e.name = user_name;
+              e.rsv_key = key;
+            }
+          });
         }
+        //}
       }
     }
   },
@@ -788,7 +832,6 @@ export default {
       )
     );
     console.log("created hook complete");
-
   },
 
   computed: {
