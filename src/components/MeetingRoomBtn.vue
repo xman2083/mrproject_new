@@ -388,11 +388,11 @@ export default {
         this.stCell[1].selected = true;
       }
     },
+
     makeReservation() {
       if (this.rsvAvailableCheck()) {
-        this.rsvInput.date = this.date;
-        this.rsvInput.rsv_id =
-          this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
+        this.rsvInput.date = (this.date).replace(/\-/g,'');
+        this.rsvInput.rsv_id = this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
         this.rsvInput.rsv_created = this.getTimeStamp();
         console.log(this.rsvInput.edHour, this.rsvInput.stHour);
         console.log(this.timeControl(this.selected_time.st, "get"));
@@ -771,7 +771,7 @@ export default {
           tel_num: this.$store.state.user.tel_num,
           token: this.$store.state.token,
           rsvdata: {
-            date: this.date,
+            date: (this.date).replace(/\-/g,''),
             floor_id: this.room_indx
           },
           httpMethod: "SELECT"
