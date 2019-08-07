@@ -20,16 +20,20 @@
     <v-navigation-drawer app v-model="drawer" class="white" temporary width="200px;">
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title class="title">Application</v-list-item-title>
-          <v-list-item-subtitle>subtext</v-list-item-subtitle>
+          <v-list-item-title class="title">SKtelink</v-list-item-title>
+          <v-list-item-subtitle>회의실예약</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
 
       <v-divider></v-divider>
-      <v-list class="pt-0" dense>
-        <v-divider></v-divider>
-        <v-list-item v-for="item in items" :key="item.title" router :to="item.route">
-          <v-icon>{{ item.icon }}</v-icon>
+      <v-list dense nav>
+        <v-list-item v-for="item in items" 
+        :key="item.title" 
+        router :to="item.route"
+        >
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
 
           <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
@@ -49,7 +53,7 @@ export default {
       items: [
         { title: "Home", icon: "home", route: "/" },
         { title: "회의실예약", icon: "event", route: "/meetingroombtn" },
-        { title: "공지사항", icon: "info", route: "/notice" },
+        // { title: "공지사항", icon: "info", route: "/notice" },
         { title: "식단표", icon: "fas fa-utensils", route: "/RstrMenu" }
       ]
     };
