@@ -77,7 +77,7 @@
                   <td>
                     <!-- <button type="button" class="btn btn-success btn-block">{{room.name}}</button> -->
                     <v-btn
-                      @click="meetingroom_info=true"
+                      @click="meetingroom_info=true, currRoom=room"
                       outlined
                       :style="roomBtn(room.name.length)"
                       :color="roomColorSet[index]"
