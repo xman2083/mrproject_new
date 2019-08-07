@@ -158,6 +158,7 @@
         :currCell="currCell"
         :currRoom="currRoom"
         :rooms="rooms"
+        :selected_time="selected_time"
         @closeDialog="closeDialog"
         @makeReservation="makeReservation"
         @cnclReservation="cnclReservation"
@@ -167,6 +168,7 @@
         @clearRsv="clearRsv"
         @timeControl="timeControl"
         @rsvAvailableCheck="rsvAvailableCheck"
+        @timePicker="timePicker"
       ></rsv-popup-form>
     </v-dialog>
     <v-dialog v-model="meetingroom_info" persistent max-width="600px">
@@ -179,6 +181,9 @@
     </v-dialog>
     <v-dialog v-model="unavailable_reservation" persistent max-width="250px">
       <modal :alert_detail="alert_detail" @closeModal="closeModal"></modal>
+    </v-dialog>
+    <v-dialog v-model="time_picker">
+      <time-picker :selected_time="selected_time"></time-picker>
     </v-dialog>
   </div>
 </template>
@@ -216,20 +221,16 @@ export default {
       timeTable: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
       dialog: false,
       meetingroom_info: false,
+      time_picker: false,
       currRoom: "",
       currCell: "",
       stCell: "",
       edCell: "",
       rooms: [],
-      // curr_rooms.map(e => ({
-      //   name: e,
-      //   hours: Array(12).fill(0).map((e, i) => ({
-      //     index: i + 8,
-      //     //disp: (i + 8) / ,
-      //     selected: false
-      //   }))
-      // })),
-
+      selected_time: {
+        st: { HH: "", mm: "" },
+        et: { HH: "", mm: "" }
+      },
       active: 0,
 
       room_indx: 0,
@@ -319,6 +320,7 @@ export default {
           this.rsvInput.room_name = this.stCell[0].name;
           this.rsvInput.room_id = this.stCell[0].room_id;
           this.rsvInput.stHour = this.stCell[1].index;
+          //종료 시간 인덱스에 30분을 더해서 저장해야 함
           this.rsvInput.edHour = this.stCell[1].index;
 
           this.dialog = true;
@@ -385,9 +387,13 @@ export default {
       }
     },
     makeReservation() {
+      this.rsvInput.stHour = this.timeControl(this.selected_time.st, "get");
+      this.rsvInput.edHour = this.timeControl(this.selected_time.et, "get");
+
       if (this.rsvAvailableCheck()) {
         this.rsvInput.date = this.date;
-        this.rsvInput.rsv_id = this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
+        this.rsvInput.rsv_id =
+          this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
         // 빔이 선택됐을때만 rsv_id정보 추가되고, 없으면 null
 
         this.stCell = "";
@@ -512,7 +518,8 @@ export default {
       for (var x = 0; x < 24; x++) {
         if (
           this.rsvInput.stHour <= room_check.hours[x].index &&
-          room_check.hours[x].index <= this.rsvInput.edHour &&
+          room_check.hours[x].index <=
+            this.timeControl(this.rsvInput.edHour, "sub") &&
           room_check.hours[x].reserved === 2
         ) {
           console.log(
@@ -560,21 +567,41 @@ export default {
       this.date = today.toISOString().substr(0, 10);
     },
     //예약 안내 팝업에서 시작/종료 시각을 증감하는 메소드
-    timeControl(val, cal) {
-      // if (cal === "add"){
-      //   this.rsvInput.val += 0.5;
-      // } else {
-      //   this.rsvInput.val -= 0.5;
-      // }
-      if (val === "stHour" && cal === "add") {
-        this.rsvInput.stHour += 0.5;
-      } else if (val === "stHour" && cal === "sub") {
-        this.rsvInput.stHour -= 0.5;
-      } else if (val === "edHour" && cal === "add") {
-        this.rsvInput.edHour += 0.5;
-      } else if (val === "edHour" && cal === "sub") {
-        this.rsvInput.edHour -= 0.5;
+    timeControl(time, con) {
+      let hour = time.substring(0, 2);
+      let minute = time.substring(2, 4);
+      console.log(hour, "/", minute);
+
+      if (con === "add" && minute === "00") {
+        minute = "30";
+      } else if (con === "add" && minute === "30") {
+        this.pad((hour = parseInt(hour) + 1), 2);
+        minute = "00";
       }
+      if (con === "sub" && minute === "00") {
+        this.pad((hour = parseInt(hour) - 1), 2);
+        minute = "30";
+      } else if (con === "sub" && minute === "30") {
+        minute = "30";
+      }
+      if (con === "set") {
+        return { HH: hour, mm: minute };
+      } else if (con === "get") {
+        return time.HH + time.mm;
+      }
+      return hour + minute;
+    },
+    // timeFetch(con) {
+    //   if (con === "get")
+    //   this.selected_time.st = this.timeControl(this.rsvInput.stHour, "sum");
+    //   this.selected_time.et = this.timeControl(this.rsvInput.etHour, "sum");
+    // },
+
+    pad(n, width) {
+      n = n + "";
+      return n.length >= width
+        ? n
+        : new Array(width - n.length + 1).join("0") + n;
     },
 
     // 예약된 시간대 색상을 커스텀 설정하는 메소드로 css에 해당 값을 전달 함
@@ -618,7 +645,10 @@ export default {
             hours: Array(24)
               .fill(0)
               .map((e, i) => ({
-                index: i * 0.5 + 8,
+                index: this.pad(
+                  Math.floor(i * 0.5 + 8) * 100 + ((i * 0.5 + 8) % 1) * 60,
+                  4
+                ),
                 selected: false,
                 reserved: 0,
                 st_index: 0,
@@ -647,6 +677,14 @@ export default {
       this.unavailable_reservation = false;
       this.alert_detail.message = "";
     },
+    timePicker(status) {
+      if (status === "on") {
+        this.time_picker = true;
+      } else {
+        this.time_picker = false;
+      }
+    },
+
     forceRerender() {
       this.renderKey += 1;
     },
@@ -719,8 +757,8 @@ export default {
       telNum: "010-3333-3333",
       title: "주간 회의",
       content: "개발 진행 상황 공유",
-      stHour: 9.5,
-      edHour: 12.5,
+      stHour: "0930",
+      edHour: "1130",
       room_name: "몽블랑",
       room_id: "MTR000"
     };
@@ -733,8 +771,8 @@ export default {
       room_name: "한라산",
       title: "코드 리뷰",
       content: "Vue.js 코드리뷰 예정입니다.",
-      stHour: 10,
-      edHour: 11.5
+      stHour: "1000",
+      edHour: "1130"
     };
 
     this.addRsvData(data);
@@ -752,6 +790,9 @@ export default {
     console.log("beforeUpadate");
     if (this.renderKey > 0) {
       this.fetchRsvData();
+      // if (this.rsvInput.edHour!=""){
+      // this.selected_time.st = this.timeControl(this.rsvInput.stHour, "set");
+      // this.selected_time.et = this.timeControl(this.rsvInput.edHour, "set");}
       console.log(">>fetchRsvData...");
     }
   }

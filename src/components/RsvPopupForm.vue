@@ -17,6 +17,7 @@
       <span>{{rsvInput.stHour}} / {{rsvInput.edHour}}</span>-->
       <span class="grey--text subtitle-1">{{this.date}}</span>
     </v-card-title>
+    {{ this.rsvInput.stHour}} / {{this.rsvInput.edHour}}
     <v-divider style="margin:0px;"></v-divider>
     <v-card-text style="padding:0;">
       <v-container grid-list-md>
@@ -25,11 +26,44 @@
           <v-flex xs2>
             <v-text-field value="시작" readonly solo dark style="font-size:smaller;"></v-text-field>
           </v-flex>
+          <v-flex xs10>
+            <vue-timepicker
+              v-model="selected_time.st"
+              :minute-interval="30"
+              style="padding: 5px;width:200px; font-size:20px; text-align:center !important;"
+              hide-clear-button
+            ></vue-timepicker>
+          </v-flex>
+          <v-flex xs2>
+            <v-text-field value="종료" readonly solo dark style="font-size:smaller;"></v-text-field>
+          </v-flex>
+          <v-flex>
+            <vue-timepicker
+              v-model="selected_time.et"
+              :minute-interval="30"
+              style="padding: 5px;width:200px; font-size:20px;"
+              hide-clear-button
+            ></vue-timepicker>
+          </v-flex>
+
+          <!-- </v-flex>
           <v-flex xs3>
-            <v-text-field suffix="시" :value="parseInt(rsvInput.stHour)" solo readonly></v-text-field>
+            <v-text-field
+              suffix="시"
+              :value="parseInt(rsvInput.stHour)"
+              @click="timePicker('on')"
+              solo
+              readonly
+            ></v-text-field>
           </v-flex>
           <v-flex xs3>
-            <v-text-field suffix="분" :value="rsvInput.stHour%1*60" solo readonly></v-text-field>
+            <v-text-field
+              suffix="분"
+              :value="rsvInput.stHour%1*60"
+              @click="timePicker('on')"
+              solo
+              readonly
+            ></v-text-field>
           </v-flex>
           <v-flex xs4>
             <td height="9px"></td>
@@ -73,7 +107,7 @@
                 :disabled="rsvInput.edHour>19?true:false"
               >add</v-icon>
             </v-btn>
-          </v-flex>
+          </v-flex>-->
           <v-flex xs6 sm6 md6>
             <v-text-field label="예약자 성명*" v-model="rsvInput.user_name" required clearable></v-text-field>
           </v-flex>
@@ -94,7 +128,17 @@
         <v-layout v-if="reserved === true" wrap>
           <v-flex xs2>
             <v-text-field value="시작" readonly solo dark style="font-size:smaller;"></v-text-field>
+            <time-picker></time-picker>
           </v-flex>
+          <v-flex xs10>
+            <vue-timepicker
+              v-model="day.end_time"
+              :minute-interval="30"
+              style="padding: 1.3em 0.5em; width:60px; font-size:20px;"
+            ></vue-timepicker>
+          </v-flex>
+
+          <!-- </v-flex>
           <v-flex xs3>
             <v-text-field suffix="시" :value="parseInt(rsvInput.stHour)" solo readonly></v-text-field>
           </v-flex>
@@ -173,7 +217,7 @@
                 :disabled="rsvInput.edHour>19?true:false"
               >add</v-icon>
             </v-btn>
-          </v-flex>
+          </v-flex>-->
           <v-flex xs6 sm6 md4>
             <v-text-field
               label="예약자 성명*"
@@ -245,6 +289,7 @@
 </template>
 
 <script>
+import VueTimepicker from "vue2-timepicker";
 import { mapGetters } from "vuex";
 import { mask } from "vue-the-mask";
 
@@ -256,7 +301,18 @@ export default {
       mask: "###-####-####"
     };
   },
-  props: ["rsvInput", "room_indx", "rooms", "date", "dialog", "currCell"],
+  props: [
+    "rsvInput",
+    "room_indx",
+    "rooms",
+    "date",
+    "dialog",
+    "currCell",
+    "selected_time"
+  ],
+  components: {
+    VueTimepicker
+  },
 
   directives: {
     mask
@@ -282,6 +338,9 @@ export default {
     rsvAvailableCheck() {
       this.$emit("rsvAvailableCheck");
     }
+    // timePicker(status) {
+    //   this.$emit("timePicker", status);
+    // }
   },
   beforeUpdate() {
     this.owner = false;
