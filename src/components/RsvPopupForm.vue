@@ -104,7 +104,7 @@
           </v-flex>
           <v-flex xs8></v-flex>
           <v-flex xs4 md4>
-            <v-btn v-if="!owner" color="indigo" dark small>전화하기</v-btn>
+            <a :href="`tel:+${ this.rsvInput.telNum }`"><v-btn v-if="!owner" color="indigo" dark small>전화하기</v-btn></a>
           </v-flex>
 
           <v-flex xs12 sm12 md12>
