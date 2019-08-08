@@ -1,6 +1,6 @@
 module.exports = {
   lintOnSave: false,
-  publicPath: "/sktl-inner-dev/meetingroom/kkangdanni",
+  publicPath: "/sktl-inner-dev/meetingroom",
   devServer: {
     disableHostCheck: true,
   },
@@ -20,7 +20,7 @@ module.exports = {
       skipWaiting: true,
       clientsClaim: true,
       runtimeCaching: [{
-        urlPattern: new RegExp('/sktl-inner-dev/meetingroom/kkangdanni'),
+        urlPattern: new RegExp('/sktl-inner-dev/meetingroom'),
         handler: 'networkFirst',
         options: {
           networkTimeoutSeconds: 20,
