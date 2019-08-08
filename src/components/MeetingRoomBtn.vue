@@ -36,8 +36,13 @@
             </v-flex>
 
             <v-flex xs8 sm8 md10 lg10>
-              <v-btn small outlined color="#BDBDBD" @click="dateDecrement">◀ 이전일</v-btn>
-              <v-btn small outlined color="#BDBDBD" @click="dateIncrement">다음일 ▶</v-btn>
+              <v-btn small outlined color="#BDBDBD" @click="dateDecrement">
+                <v-icon size="15">fa fa-chevron-circle-left</v-icon>&nbsp;이전일
+              </v-btn>&nbsp;&nbsp;
+              <v-btn small outlined color="#BDBDBD" @click="dateIncrement">
+                다음일&nbsp;
+                <v-icon size="15">fa fa-chevron-circle-right</v-icon>
+              </v-btn>
             </v-flex>
           </v-layout>
         </template>
@@ -76,7 +81,7 @@
               </thead>
               <tbody>
                 <tr v-for="room,index in rooms[room_indx]">
-                  <td>
+                  <td style="padding-top:0.8rem; padding-bottom:0.8rem;">
                     <!-- <button type="button" class="btn btn-success btn-block">{{room.name}}</button> -->
                     <v-btn
                       @click="onRoomBtnClick(room)"
@@ -84,7 +89,10 @@
                       :style="roomBtn(room.name.length)"
                       :color="roomColorSet[index]"
                       width="88"
-                    >{{room.name}}</v-btn>
+                    >
+                      {{room.name}}&nbsp;
+                      <v-icon size="10">fas fa-search</v-icon>
+                    </v-btn>
                   </td>
                   <td style="vertical-align:middle !important">
                     <div class="btn-group btn-group-justified flex-wrap">
@@ -112,10 +120,10 @@
                           >{{hour.name}}</span>-->
 
                           <v-card v-if="hour.border_left==='1px solid'" max-width="0" height="22">
-                            <v-card-text style="padding:0px; font-size:2px !important;">
+                            <v-card-text style="padding:0px; font-size:0.5rem; !important;">
                               <br />
                               <!-- <v-icon size="5">people</v-icon> -->
-                              {{ hour.user_name }}
+                              <span style="background-color:white">{{ hour.user_name }}</span>
                             </v-card-text>
                           </v-card>
                         </button>
@@ -475,7 +483,7 @@ export default {
               if (response.data.statusCode == 409) {
                 this.unavailable_reservation = true;
                 this.alert_detail = {
-                  type: "rsvError",
+                  type: "rsvErrorDB",
                   message: "기존 예약이 존재합니다."
                 };
                 console.log("예약 오류", response);
@@ -526,7 +534,6 @@ export default {
         this.updateRsvData(this.rsvInput);
         console.log("updated...");
 
-        var vm = this;
         console.log(cell_time);
         this.rsvInput.stHour = cell_time.st.HH + cell_time.st.mm;
         this.rsvInput.edHour = cell_time.et.HH + cell_time.et.mm;
@@ -541,9 +548,9 @@ export default {
           .then(response => {
             console.log(response);
             if (response.data.statusCode == 409) {
-              vm.unavailable_reservation = true;
-              vm.alert_detail = {
-                type: "rsvError",
+              this.unavailable_reservation = true;
+              this.alert_detail = {
+                type: "rsvUpdateErrorDB",
                 message: "기존 예약이 존재합니다."
               };
             } else {
@@ -561,7 +568,7 @@ export default {
         return (
           (this.unavailable_reservation = true),
           (this.alert_detail = {
-            type: "rsvError",
+            type: "rsvUpdateError_DB",
             message: "기존 예약이 존재합니다."
           })
         );
@@ -618,39 +625,48 @@ export default {
       if (stHour >= edHour) {
         this.unavailable_reservation = true;
         this.alert_detail = {
-          type: "rsvError",
-          message: "예약 시간을 확인해주세요.."
+          type: "rsvErrorFront",
+          message: "예약 시간을 확인해주세요."
         };
         return false;
-      }
-      return true;
-      // var room_check = [];
-      // for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
-      //   if (this.rooms[this.room_indx][i].room_id === this.rsvInput.room_id) {
-      //     room_check = this.rooms[this.room_indx][i];
-      //   }
-      // }
+      } else {
+        var room_check = [];
+        for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
+          if (this.rooms[this.room_indx][i].room_id === this.rsvInput.room_id) {
+            room_check = this.rooms[this.room_indx][i];
+          }
+        }
+        // console.log("room_check:", room_check);
+        // console.log(this.rsvInput.stHour);
+        // console.log(this.rsvInput.edHour);
 
-      // for (var x = 0; x < 24; x++) {
-      //   if (
-      //     this.rsvInput.stHour <= room_check.hours[x].index &&
-      //     room_check.hours[x].index <=
-      //       this.timeControl(this.rsvInput.edHour, "sub") &&
-      //     room_check.hours[x].reserved === 2
-      //   ) {
-      //     console.log(
-      //       "x:",
-      //       x,
-      //       "stHour:",
-      //       this.rsvInput.stHour,
-      //       "edHour",
-      //       this.rsvInput.edHour,
-      //       "room:",
-      //       room_check.hours
-      //     );
-      //     return false;
-      //   }
-      // }
+        for (var x = 0; x < 24; x++) {
+          if (
+            this.rsvInput.stHour <= room_check.hours[x].index &&
+            room_check.hours[x].index <=
+              this.timeControl(this.rsvInput.edHour, "sub") &&
+            room_check.hours[x].reserved === 2
+          ) {
+            console.log(
+              "x:",
+              x,
+              "stHour:",
+              this.rsvInput.stHour,
+              "edHour",
+              this.rsvInput.edHour,
+              "room:",
+              room_check.hours
+            );
+            this.unavailable_reservation = true;
+            this.alert_detail = {
+              type: "rsvErrorFront",
+              message: "기존 예약이 존재합니다."
+            };
+            return false;
+          }
+        }
+      }
+
       return true;
     },
 
@@ -813,12 +829,8 @@ export default {
     forceRerender() {
       this.renderKey += 1;
     },
-    // makeHour(hr) {
-    //   var h = ("0" + Math.trunc(hr)).slice(-2);
 
-    //   return h + (hr - Math.trunc(hr) === 0.5 ? "30" : "00");
-    // },
-
+    // API로 람다 함수 호출하여 response를 drawRooms에 전달
     fetchRsvData() {
       this.clearCellData();
 
@@ -836,18 +848,8 @@ export default {
         this.drawRooms(response);
         console.log("예약 정보 로딩", response);
       });
-      // .then(response => {
-      //   console.log(response);
-      //   return response.data.rsv;
-      // })
-      // .catch(error => {
-      //   console.log(error);
-      // })
-
-      // this.loadRsvData();
-
-      console.log("실행...");
     },
+    // 예약 정보를 받아서 화면 처리
     drawRooms(rsv_datas) {
       this.rsvDataRes = rsv_datas.data.rsv;
       // console.log("AAA", rsv_datas);
