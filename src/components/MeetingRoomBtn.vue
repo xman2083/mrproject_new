@@ -10,7 +10,6 @@
     >
       <v-tab
         v-for="room in this.$store.state.room_src"
-        @click="loadRsvStore"
         :key="room[2]"
         ripple
       >{{ room[0] }}</v-tab>
