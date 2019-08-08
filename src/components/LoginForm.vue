@@ -110,7 +110,7 @@ export default {
             tel_num: this.telNum
           });
           if (response.data.statusCode == 200) {
-            this.btnText = "OTP 확인";
+            this.btnText = "SMS 확인";
             this.isOtpSent = true;
             this.timeInterval = setInterval(
               function() {
@@ -126,7 +126,7 @@ export default {
           } else if (response.data.statusCode == 204) {
             alert("가입자 정보가 없습니다.");
           } else {
-            alert("OTP 전송에 실패했습니다.");
+            alert("SMS 전송에 실패했습니다.");
           }
           console.log(response);
         }
@@ -138,7 +138,7 @@ export default {
     initForm() {
       this.telNum = "";
       this.otpNum = "";
-      this.btnText = "OTP 전송";
+      this.btnText = "SMS 전송";
       this.isOtpSent = false;
       this.otpTime = 180;
       if (this.timeInterval) clearInterval(this.timeInterval);
@@ -148,7 +148,7 @@ export default {
       this.isOtpSent = false;
       this.timeover = true;
       // this.initForm();
-      this.btnText = "OTP 전송";
+      this.btnText = "SMS 전송";
       alert("느져쓰");
     }
   },
