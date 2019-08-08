@@ -33,10 +33,10 @@
 
             <v-flex xs8 sm8 md10 lg10>
               <v-btn small outlined color="#BDBDBD" @click="dateDecrement">
-                <v-icon size="15">fa fa-chevron-circle-left</v-icon>&nbsp;이전일
+                <v-icon size="15">fa fa-chevron-circle-left</v-icon>&nbsp;이전
               </v-btn>&nbsp;&nbsp;
               <v-btn small outlined color="#BDBDBD" @click="dateIncrement">
-                다음일&nbsp;
+                다음&nbsp;
                 <v-icon size="15">fa fa-chevron-circle-right</v-icon>
               </v-btn>
             </v-flex>
@@ -240,9 +240,7 @@ export default {
         title: "",
         content: "",
         stHour: 0,
-        edHour: 0,
-        stTm: "",
-        edTm: ""
+        edHour: 0
       },
 
       rsvorg: {
@@ -258,9 +256,7 @@ export default {
         title: "",
         content: "",
         stHour: 0,
-        edHour: 0,
-        stTm: "",
-        edTm: ""
+        edHour: 0
       },
 
       // 회의실 색상 코드
@@ -761,7 +757,7 @@ export default {
     // 회의실 마다 고유 색상 지정 & 홀수 시간대 예약 셀 바탕 색 지정
     roomColors(index, left, right, hour) {
       let color;
-      if (Math.floor(hour) % 2 === 0) {
+      if (parseInt(hour.substring(0,2)) % 2 === 0) {
         color = "#fff";
       } else {
         color = "#F2F2F2";
