@@ -15,7 +15,7 @@
                     prepend-icon="person"
                     name="login"
                     label="휴대폰 번호"
-                    type="text"
+                    type="number"
                     v-model="telNum"
                     v-bind:disabled="isOtpSent"
                     v-on:keyup.enter="submitForm"
@@ -26,7 +26,7 @@
                     prepend-icon="lock"
                     name="password"
                     label="본인 인증 번호"
-                    type="text"
+                    type="number"
                     v-model="otpNum"
                     v-bind:disabled="!isOtpSent"
                   ></v-text-field>
