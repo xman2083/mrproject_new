@@ -1,5 +1,5 @@
 {
-  "name": "todo-app",
+  "name": "meetingroom",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -29,6 +29,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.10.0",
     "@vue/cli-plugin-eslint": "^3.10.0",
+    "@vue/cli-plugin-pwa": "^3.9.0",
     "@vue/cli-service": "^3.10.0",
     "babel-eslint": "^10.0.1",
     "css-loader": "^3.1.0",

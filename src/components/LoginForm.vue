@@ -121,7 +121,7 @@ import CountdownTimer from './OTPTimer.vue';
         this.otpNum = '';
         this.btnText = 'OTP 전송';
         this.isOtpSent = false;
-        his.otpTime = 180;
+        this.otpTime = 180;
         if (this.timeInterval) clearInterval(this.timeInterval);
       },
       // __Jungmi__ Timeover alert

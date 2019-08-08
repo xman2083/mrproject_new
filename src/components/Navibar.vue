@@ -27,8 +27,8 @@
 
       <v-divider></v-divider>
       <v-list dense nav>
-        <v-list-item v-for="item in items" 
-        :key="item.title" 
+        <v-list-item v-for="item in items"
+        :key="item.title"
         router :to="item.route"
         >
           <v-list-item-icon>
@@ -68,8 +68,10 @@ export default {
     }
   },
   created() {
-    this.$store.commit("SET_USER", JSON.parse(getUserFromCookie()));
-    this.$store.commit("SET_TOKEN", getAuthFromCookie());
+    if (getUserFromCookie()) {
+      this.$store.commit("SET_USER", JSON.parse(getUserFromCookie()));
+      this.$store.commit("SET_TOKEN", getAuthFromCookie());
+    }
   }
 };
 </script>
