@@ -242,6 +242,12 @@ export default {
         this.$emit("clearRsv");
       }
     });
+    document.addEventListener("keydown", e => {
+      if (e.keyCode == 8) {
+        this.$emit("closeDialog");
+        this.$emit("clearRsv");
+      }
+    });
 
     // if (this.currCell[1]) {
     //   console.log(this.currCell[1].rsv_key);
