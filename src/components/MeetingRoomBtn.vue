@@ -291,7 +291,7 @@ export default {
       // "addRsvData",
       "updateRsvData",
       // "deleteRsvData",
-      "loadRsvData",
+      // "loadRsvData",
       "loadRoomSrc"
     ]),
     ...mapMutations(["CLEAR_STOREDATA"]),
@@ -817,10 +817,10 @@ export default {
       }
     },
     // 페이지 refresh 할 때 스토어의 데이터를 바로 불러오기 위한 코드
-    loadRsvStore() {
-      console.log(">>loadRsvData...");
-      this.loadRsvData(this.date, this.room_indx);
-    },
+    // loadRsvStore() {
+    //   console.log(">>loadRsvData...");
+    //   this.loadRsvData(this.date, this.room_indx);
+    // },
     closeDialog() {
       this.dialog = false;
     },
