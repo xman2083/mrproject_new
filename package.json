@@ -1,5 +1,5 @@
 {
-  "name": "todo-app",
+  "name": "meetingroom",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -21,7 +21,7 @@
     "vue-resource": "^1.5.1",
     "vue-router": "^3.0.7",
     "vue-the-mask": "^0.11.1",
-    "vue2-timepicker": "^0.1.4",
+    "vue2-timepicker": "^0.2.0",
     "vuelendar": "^1.0.15",
     "vuetify": "^2.0.4",
     "vuex": "^3.1.1"
@@ -29,6 +29,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.10.0",
     "@vue/cli-plugin-eslint": "^3.10.0",
+    "@vue/cli-plugin-pwa": "^3.9.0",
     "@vue/cli-service": "^3.10.0",
     "babel-eslint": "^10.0.1",
     "css-loader": "^3.1.0",

@@ -14,11 +14,11 @@ copyright 'Copyright 2019, SK Telink CO,LTD All Rights Reserved.'
 
 <script>
 export default {
-    props: {
-        data:{
-            type: Number,
-        }
-    },
+    // props: {
+    //     data:{
+    //         type: Number,
+    //     }
+    // },
 
     data(){
         return{
@@ -30,7 +30,7 @@ export default {
     methods: {
         timer_loop(){
             this.count++
-            if(this.count<180) {
+            if(this.count<181) {
                 this.otpTime = this.otpTime-1
                 setTimeout(this.timer_loop, 1000)
             }
