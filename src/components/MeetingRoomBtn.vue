@@ -8,11 +8,7 @@
       slider-color="yellow"
       show-arrows
     >
-      <v-tab
-        v-for="room in this.$store.state.room_src"
-        :key="room[2]"
-        ripple
-      >{{ room[0] }}</v-tab>
+      <v-tab v-for="room in this.$store.state.room_src" :key="room[2]" ripple>{{ room[0] }}</v-tab>
       <v-tab-item v-for="room in this.$store.state.room_src" :key="room[2]"></v-tab-item>
     </v-tabs>
     <div>
@@ -314,7 +310,7 @@ export default {
       this.currRoom.img_src = require("../assets/" + room.room_id + ".gif");
       console.log("AAAAAAAA", this.currRoom);
     },
-// 셀 선택 메소드로 셀 선택 시 해당 셀 객체의 정보를 기준으로 조건 충족 시 예약 팝업 활성화
+    // 셀 선택 메소드로 셀 선택 시 해당 셀 객체의 정보를 기준으로 조건 충족 시 예약 팝업 활성화
     cellClick(room, hour) {
       this.rsvInput.user_name = this.$store.state.user.user_name;
       this.rsvInput.user_id = this.$store.state.user.user_id;
@@ -433,10 +429,10 @@ export default {
       }
     },
     // 예약 정보 저장
-    makeReservation(value) {
+    makeReservation(cell_time) {
       // console.log("input rsvInput:", value);
       //예약 팝업에서 지정한 시간을 변수로 받아서 selected_time에 할당
-      Object.assign(this.selected_time, value);
+      Object.assign(this.selected_time, cell_time);
       console.log("selected_time:", this.selected_time);
 
       //중복 예약 체크 처리해야 함(필수)
@@ -505,7 +501,7 @@ export default {
         return console.log("예약 실패"), this.fetchRsvData();
       }
     },
-// 기존 예약 취소
+    // 기존 예약 취소
     cnclReservation() {
       this.stCell = "";
       this.edCell = "";
@@ -524,6 +520,7 @@ export default {
       })
         .then(response => {
           console.log(response);
+          this.clearRsv();
           this.fetchRsvData();
         })
         .catch(error => {
@@ -531,8 +528,9 @@ export default {
         });
     },
 
-// 기존 예약 정보 수정
+    // 기존 예약 정보 수정
     updateReservation(cell_time) {
+      Object.assign(this.selected_time, cell_time);
       if (this.rsvAvailableCheck()) {
         // this.updateRsvData(this.rsvInput);
         console.log("updated...");
@@ -625,15 +623,16 @@ export default {
     rsvAvailableCheck() {
       let stHour = this.timeControl(this.selected_time.st, "get");
       let edHour = this.timeControl(this.selected_time.et, "get");
-      if (this.rsvInput.title === ""){
-          this.unavailable_reservation = true;
-            this.alert_detail = {
-              type: "rsvErrorFront",
-              message: "회의 주제를 입력 해주세요."
+
+      if (this.rsvInput.title === "") {
+        this.unavailable_reservation = true;
+        this.alert_detail = {
+          type: "rsvErrorFront",
+          message: "회의 주제를 입력 해주세요."
+        };
+        return false;
       }
-      return false
-      }
-      if (stHour >= edHour) {
+      if (stHour >= edHour || edHour > "2000") {
         this.unavailable_reservation = true;
         this.alert_detail = {
           type: "rsvErrorFront",
@@ -933,7 +932,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["getRsvDataStore","getMyLists"])
+    ...mapGetters(["getRsvDataStore", "getMyLists"])
   },
 
   mounted() {

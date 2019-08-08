@@ -30,7 +30,7 @@
           <v-flex xs9>
             <vue-timepicker
               hide-disabled-hours
-              :hour-range="[[8,19]]"
+              :hour-range="[[8,20]]"
               :minute-interval="30"
               style="padding: 0px;width:200px; font-size:20px;"
               hide-clear-button
@@ -42,7 +42,7 @@
           </v-flex>
           <v-flex xs9>
             <vue-timepicker
-              :hour-range="[[8,19]]"
+              :hour-range="[[8,20]]"
               hide-disabled-hours
               :minute-interval="30"
               style="padding: 0px;width:200px; font-size:20px;"
@@ -74,7 +74,7 @@
           </v-flex>
           <v-flex xs9>
             <vue-timepicker
-              :hour-range="[[8,19]]"
+              :hour-range="[[8,20]]"
               hide-disabled-hours
               :minute-interval="30"
               style="padding: 0px;width:200px; font-size:20px;"
@@ -88,7 +88,7 @@
           </v-flex>
           <v-flex xs9>
             <vue-timepicker
-              :hour-range="[[8,19]]"
+              :hour-range="[[8,20]]"
               hide-disabled-hours
               :minute-interval="30"
               style="padding: 0px;width:200px; font-size:20px;"

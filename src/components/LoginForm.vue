@@ -11,8 +11,25 @@
               </v-toolbar>
               <v-card-text>
                 <v-form>
-                  <v-text-field prepend-icon="person" name="login" label="휴대폰 번호" type="text" v-model="telNum" v-bind:disabled="isOtpSent" v-on:keyup.enter="submitForm" autofocus="true"></v-text-field>
-                  <v-text-field id="password" prepend-icon="lock" name="password" label="OTP" type="text" v-model="otpNum" v-bind:disabled="!isOtpSent"></v-text-field>
+                  <v-text-field
+                    prepend-icon="person"
+                    name="login"
+                    label="휴대폰 번호"
+                    type="text"
+                    v-model="telNum"
+                    v-bind:disabled="isOtpSent"
+                    v-on:keyup.enter="submitForm"
+                    autofocus
+                  ></v-text-field>
+                  <v-text-field
+                    id="password"
+                    prepend-icon="lock"
+                    name="password"
+                    label="본인 인증 번호"
+                    type="text"
+                    v-model="otpNum"
+                    v-bind:disabled="!isOtpSent"
+                  ></v-text-field>
                 </v-form>
               </v-card-text>
               <v-card-actions>
@@ -20,7 +37,9 @@
                 <v-spacer></v-spacer>
                 <!-- <span v-if="isOtpSent" >{{ countDown }}</span> -->
                 <!-- __Jungmi__ CountdownTimer호출 -->
-                <span v-if="isOtpSent"><CountdownTimer v-on:toolate="latealert"></CountdownTimer></span>
+                <span v-if="isOtpSent">
+                  <CountdownTimer v-on:toolate="latealert"></CountdownTimer>
+                </span>
                 <v-spacer></v-spacer>
                 <v-btn color="primary" v-on:click="submitForm">{{ btnText }}</v-btn>
               </v-card-actions>
@@ -33,108 +52,108 @@
 </template>
 
 <script>
-import bus from '../utils/bus.js';
-import { setInterval, clearInterval } from 'timers';
-import CountdownTimer from './OTPTimer.vue';
+import bus from "../utils/bus.js";
+import { setInterval, clearInterval } from "timers";
+import CountdownTimer from "./OTPTimer.vue";
 
-  export default {
-    data: () => ({
-      drawer: null,
-      btnText: 'OTP 전송',
-      isOtpSent: false,
-      otpTime: 10,
-      telNum: '',
-      otpNum: ''
-    }),
-    // computed: {
-    //  countDown: function() {
-    //     if (this.otpTime === 0)
-    //       return 'OTP 만료됨'
-    //     else
-    //       return Math.trunc(this.otpTime/60) + ' : ' + ('0' + this.otpTime%60).slice(-2);
-    //   }
-    // },
+export default {
+  data: () => ({
+    drawer: null,
+    btnText: "SMS 인증",
+    isOtpSent: false,
+    otpTime: 10,
+    telNum: "",
+    otpNum: ""
+  }),
+  // computed: {
+  //  countDown: function() {
+  //     if (this.otpTime === 0)
+  //       return 'OTP 만료됨'
+  //     else
+  //       return Math.trunc(this.otpTime/60) + ' : ' + ('0' + this.otpTime%60).slice(-2);
+  //   }
+  // },
 
-    // __Jungmi__ CountdownTimer 등록
-    components:{
-      CountdownTimer
-    },
+  // __Jungmi__ CountdownTimer 등록
+  components: {
+    CountdownTimer
+  },
 
-    props: {
-      source: String
-    },
-    methods: {
-      async submitForm() {
-        // if (!this.username || !this.password) {
-        //   alert('Fill in the account information');
-        //   return;
-        // }
-        try {
-          if (this.isOtpSent) {
-            const response = await this.$store.dispatch('LOGIN', {
-              tel_num: this.telNum,
-              otp_num: this.otpNum,
-            });
-            console.log(response);
-            alert(response.data.message);
-            if (response.data.statusCode == 200) {
-              bus.$emit('show:toast', response.data.message);
-              this.$router.push('/meetingroombtn');
-              this.initForm();
-            }
+  props: {
+    source: String
+  },
+  methods: {
+    async submitForm() {
+      // if (!this.username || !this.password) {
+      //   alert('Fill in the account information');
+      //   return;
+      // }
+      try {
+        if (this.isOtpSent) {
+          const response = await this.$store.dispatch("LOGIN", {
+            tel_num: this.telNum,
+            otp_num: this.otpNum
+          });
+          console.log(response);
+          alert(response.data.message);
+          if (response.data.statusCode == 200) {
+            bus.$emit("show:toast", response.data.message);
+            this.$router.push("/meetingroombtn");
+            this.initForm();
           }
-          else {
-            if (!this.telNum) {
-              alert('전화번호를 입력하세요.');
-              return;
-            }
-           const response = await this.$store.dispatch('SENDOTP', {
-              tel_num: this.telNum,
-            });
-            if (response.data.statusCode == 200) {
-              this.btnText = 'OTP 확인';
-              this.isOtpSent = true;
-              this.timeInterval = setInterval(function () {
+        } else {
+          if (!this.telNum) {
+            alert("전화번호를 입력하세요.");
+            return;
+          }
+          const response = await this.$store.dispatch("SENDOTP", {
+            tel_num: this.telNum
+          });
+          if (response.data.statusCode == 200) {
+            this.btnText = "OTP 확인";
+            this.isOtpSent = true;
+            this.timeInterval = setInterval(
+              function() {
                 // This will be executed after 1,000 milliseconds
                 // if (this.otpTime > 0) {
                 //   this.otpTime--;
                 //   console.log(this.otpTime);
                 // }
                 // else clearInterval(this.timeInterval);
-              }.bind(this), 1000);
-            }
-            else if (response.data.statusCode == 204) {
-              alert('가입자 정보가 없습니다.');
-            }
-            else {
-              alert('OTP 전송에 실패했습니다.')
-            }
-            console.log(response);
+              }.bind(this),
+              1000
+            );
+          } else if (response.data.statusCode == 204) {
+            alert("가입자 정보가 없습니다.");
+          } else {
+            alert("OTP 전송에 실패했습니다.");
           }
-        } catch (error) {
-          console.log(error);
-          //this.logMessage = error.response.data;
+          console.log(response);
         }
-      },
-      initForm() {
-        this.telNum = '';
-        this.otpNum = '';
-        this.btnText = 'OTP 전송';
-        this.isOtpSent = false;
-        this.otpTime = 180;
-        if (this.timeInterval) clearInterval(this.timeInterval);
-      },
-      // __Jungmi__ Timeover alert
-      latealert() {
-        this.isOtpSent = false;
-        this.timeover = true;
-        // this.initForm();
-        this.btnText = 'OTP 전송';
-        alert('느져쓰');
-      },
+      } catch (error) {
+        console.log(error);
+        //this.logMessage = error.response.data;
+      }
     },
-    beforeDestroy: function() {
-      this.initForm();
-      },
+    initForm() {
+      this.telNum = "";
+      this.otpNum = "";
+      this.btnText = "OTP 전송";
+      this.isOtpSent = false;
+      this.otpTime = 180;
+      if (this.timeInterval) clearInterval(this.timeInterval);
+    },
+    // __Jungmi__ Timeover alert
+    latealert() {
+      this.isOtpSent = false;
+      this.timeover = true;
+      // this.initForm();
+      this.btnText = "OTP 전송";
+      alert("느져쓰");
     }
+  },
+  beforeDestroy: function() {
+    this.initForm();
+  }
+};
 </script>
