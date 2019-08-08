@@ -698,6 +698,7 @@ export default {
     },
     tabChanged() {
       this.room_indx = this.active;
+      this.fetchRsvData();
     },
     // 캘린더의 날짜 하루씩 증감
     dateDecrement() {
