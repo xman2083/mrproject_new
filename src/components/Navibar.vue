@@ -15,6 +15,9 @@
         <span class="mr-2">Logout</span>
         <v-icon>exit_to_app</v-icon>
       </v-btn>
+      <!-- <v-btn x-small color="primary" depressed dark @click="showMyRsvLists">
+        <span class="mr-0">내 예약</span>
+      </v-btn>-->
     </v-app-bar>
 
     <v-navigation-drawer app v-model="drawer" class="white" temporary width="200px;">
@@ -27,10 +30,7 @@
 
       <v-divider></v-divider>
       <v-list dense nav>
-        <v-list-item v-for="item in items"
-        :key="item.title"
-        router :to="item.route"
-        >
+        <v-list-item v-for="item in items" :key="item.title" router :to="item.route">
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
@@ -52,7 +52,11 @@ export default {
       drawer: false,
       items: [
         { title: "Home", icon: "fab fa-fort-awesome", route: "/" },
-        { title: "회의실예약", icon: "fas fa-calendar-alt", route: "/meetingroombtn" },
+        {
+          title: "회의실예약",
+          icon: "fas fa-calendar-alt",
+          route: "/meetingroombtn"
+        },
         // { title: "공지사항", icon: "info", route: "/notice" },
         { title: "식단표", icon: "fas fa-utensils", route: "/RstrMenu" }
       ]
@@ -62,6 +66,9 @@ export default {
     ...mapGetters(["isLoggedIn"])
   },
   methods: {
+    showMyRsvLists() {
+      this.$store.commit("SHOW_MY_RSV_LISTS");
+    },
     logout() {
       this.$store.commit("LOGOUT");
       this.$router.push("/login");

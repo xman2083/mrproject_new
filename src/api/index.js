@@ -163,48 +163,48 @@ function getRoomData(data) {
 //   }
 // }
 
-const RSVDATA_NAMESPACE = "RSV-";
+// const RSVDATA_NAMESPACE = "RSV-";
 
-const fetchRsvDataApi = () => {
-  return localforage.startsWith(RSVDATA_NAMESPACE).then(res => {
-    return res;
-  });
-};
+// const fetchRsvDataApi = () => {
+//   return localforage.startsWith(RSVDATA_NAMESPACE).then(res => {
+//     return res;
+//   });
+// };
 
-const saveRsvData = rsvdata => {
-  return localforage
-    .setItem(RSVDATA_NAMESPACE + rsvdata.id, rsvdata)
-    .then(value => {
-      return value;
-    })
-    .catch(err => {
-      alert(
-        "oops! the RsvData was too far gone, there was nothing we could do to save him ",
-        err
-      );
-    });
-};
+// const saveRsvData = rsvdata => {
+//   return localforage
+//     .setItem(RSVDATA_NAMESPACE + rsvdata.id, rsvdata)
+//     .then(value => {
+//       return value;
+//     })
+//     .catch(err => {
+//       alert(
+//         "oops! the RsvData was too far gone, there was nothing we could do to save him ",
+//         err
+//       );
+//     });
+// };
 
-const removeRsvData = rsvdata => {
-  return localforage
-    .removeItem(RSVDATA_NAMESPACE + rsvdata.id)
-    .then(() => {
-      return true;
-    })
-    .catch(err => {
-      alert(err);
-      return false;
-    });
-};
+// const removeRsvData = rsvdata => {
+//   return localforage
+//     .removeItem(RSVDATA_NAMESPACE + rsvdata.id)
+//     .then(() => {
+//       return true;
+//     })
+//     .catch(err => {
+//       alert(err);
+//       return false;
+//     });
+// };
 
-const clearAllData = () => {
-  localforage
-    .clear()
-    .then(function() {})
-    .catch(function(err) {
-      alert(err); // This code runs if there were any errors
-    });
-};
+// const clearAllData = () => {
+//   localforage
+//     .clear()
+//     .then(function() {})
+//     .catch(function(err) {
+//       alert(err); // This code runs if there were any errors
+//     });
+// };
 
 export {
   loginUser,
@@ -215,10 +215,10 @@ export {
   // fetchPostById,
   // editPostById,
   // deletePostById,
-  fetchRsvDataApi,
-  saveRsvData,
-  removeRsvData,
-  clearAllData,
+  // fetchRsvDataApi,
+  // saveRsvData,
+  // removeRsvData,
+  // clearAllData,
   RsvDataApi,
   getRoomData,
   getMenuData,

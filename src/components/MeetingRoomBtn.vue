@@ -19,6 +19,7 @@
     <div>
       <p></p>
     </div>
+    <!-- 캘린더 선택 기능 -->
     <v-layout>
       <v-menu
         v-model="menu"
@@ -186,12 +187,13 @@
     <v-dialog v-model="unavailable_reservation" persistent max-width="250px">
       <modal :alert_detail="alert_detail" @closeModal="closeModal"></modal>
     </v-dialog>
+    <v-dialog v-model="getMyLists"></v-dialog>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import { clearAllData, getRoomData, RsvDataApi, removeRsvData } from "../api";
+import { getRoomData, RsvDataApi, removeRsvData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 import Modal from "./Modal.vue";
@@ -282,13 +284,13 @@ export default {
   },
 
   methods: {
-    clearAllData,
+    // clearAllData,
     method() {},
 
     ...mapActions([
-      "addRsvData",
+      // "addRsvData",
       "updateRsvData",
-      "deleteRsvData",
+      // "deleteRsvData",
       "loadRsvData",
       "loadRoomSrc"
     ]),
@@ -313,7 +315,7 @@ export default {
       this.currRoom.img_src = require("../assets/" + room.room_id + ".gif");
       console.log("AAAAAAAA", this.currRoom);
     },
-
+// 셀 선택 메소드로 셀 선택 시 해당 셀 객체의 정보를 기준으로 조건 충족 시 예약 팝업 활성화
     cellClick(room, hour) {
       this.rsvInput.user_name = this.$store.state.user.user_name;
       this.rsvInput.user_id = this.$store.state.user.user_id;
@@ -431,6 +433,7 @@ export default {
         // console.log("value2:", this.timeControl(value, "set"));
       }
     },
+    // 예약 정보 저장
     makeReservation(value) {
       // console.log("input rsvInput:", value);
       //예약 팝업에서 지정한 시간을 변수로 받아서 selected_time에 할당
@@ -503,13 +506,13 @@ export default {
         return console.log("예약 실패"), this.fetchRsvData();
       }
     },
-
+// 기존 예약 취소
     cnclReservation() {
       this.stCell = "";
       this.edCell = "";
       this.currCell = [];
 
-      this.deleteRsvData(this.rsvInput);
+      // this.deleteRsvData(this.rsvInput);
       this.dialog = false;
 
       this.clearSelectionData();
@@ -529,9 +532,10 @@ export default {
         });
     },
 
+// 기존 예약 정보 수정
     updateReservation(cell_time) {
       if (this.rsvAvailableCheck()) {
-        this.updateRsvData(this.rsvInput);
+        // this.updateRsvData(this.rsvInput);
         console.log("updated...");
 
         console.log(cell_time);
@@ -598,7 +602,7 @@ export default {
         edTm: ""
       };
     },
-    //셀을 초기화 (예약 정보 초기화)
+    //셀을 초기화 (예약 정보 및 테두리 css 값 초기화)
     clearCellData() {
       for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
         this.rooms[this.room_indx][i].hours.forEach(e => {
@@ -622,6 +626,14 @@ export default {
     rsvAvailableCheck() {
       let stHour = this.timeControl(this.selected_time.st, "get");
       let edHour = this.timeControl(this.selected_time.et, "get");
+      if (this.rsvInput.title === ""){
+          this.unavailable_reservation = true;
+            this.alert_detail = {
+              type: "rsvErrorFront",
+              message: "회의 주제를 입력 해주세요."
+      }
+      return false
+      }
       if (stHour >= edHour) {
         this.unavailable_reservation = true;
         this.alert_detail = {
@@ -636,7 +648,7 @@ export default {
             room_check = this.rooms[this.room_indx][i];
           }
         }
-        // console.log("room_check:", room_check);
+        console.log("room_check:", room_check);
         // console.log(this.rsvInput.stHour);
         // console.log(this.rsvInput.edHour);
 
@@ -645,7 +657,8 @@ export default {
             this.rsvInput.stHour <= room_check.hours[x].index &&
             room_check.hours[x].index <=
               this.timeControl(this.rsvInput.edHour, "sub") &&
-            room_check.hours[x].reserved === 2
+            this.rsvInput.telNum.replace(/\-/g, "") !=
+              this.$store.state.user.tel_num
           ) {
             console.log(
               "x:",
@@ -920,7 +933,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["getRsvDataStore"])
+    ...mapGetters(["getRsvDataStore","getMyLists"])
   },
 
   mounted() {
