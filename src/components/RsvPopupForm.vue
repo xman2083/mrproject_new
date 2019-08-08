@@ -11,12 +11,12 @@
         class="headline"
         style="color:grey !important;"
       >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
-      <span v-if="reserved">reserved</span>
-      <span v-else>(test)not reserved</span>
-      <span v-if="owner" style="color:red">(owner)</span>
-      <span>{{rsvInput.stHour}} / {{rsvInput.edHour}}</span>
+
       <span class="grey--text subtitle-1">{{this.date}}</span>
     </v-card-title>
+    <span v-if="reserved">reserved</span>
+    <span v-else>(test)not reserved</span>
+    <span v-if="owner" style="color:red">(owner)</span>
     {{ this.rsvInput.stHour}} / {{this.rsvInput.edHour}}
     {{this.dialog}}
     <v-divider style="margin:0px;"></v-divider>
@@ -136,13 +136,13 @@
       <v-btn
         color="warning"
         v-if="currCell !== '' && (currCell[1].reserved === 2 || currCell[1].reserved === 3) && owner"
-        @click="cnclReservation()"
+        @click="cnclReservation"
       >예약 취소</v-btn>
       <v-btn
         v-if="currCell !== '' && (currCell[1].reserved === 2 || currCell[1].reserved === 3) && owner"
         color="indigo"
         dark
-        @click="updateReservation()"
+        @click="updateReservation"
       >예약 수정</v-btn>
       <v-btn
         v-if="currCell !== '' && (currCell[1].reserved === 0)"

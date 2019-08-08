@@ -16,7 +16,9 @@
       >{{ room[0] }}</v-tab>
       <v-tab-item v-for="room in this.$store.state.room_src" :key="room[2]"></v-tab-item>
     </v-tabs>
-
+    <div>
+      <p></p>
+    </div>
     <v-layout>
       <v-menu
         v-model="menu"
@@ -39,7 +41,7 @@
             </v-flex>
           </v-layout>
         </template>
-        <v-date-picker v-model="date" @input="menu = false" locale="ko-kr"></v-date-picker>
+        <v-date-picker v-model="date" @input="menu = false" locale="ko-kr" @change="fetchRsvData"></v-date-picker>
       </v-menu>
     </v-layout>
     <div>
@@ -113,7 +115,7 @@
                             <v-card-text style="padding:0px; font-size:2px !important;">
                               <br />
                               <!-- <v-icon size="5">people</v-icon> -->
-                              {{ hour.name }}
+                              {{ hour.user_name }}
                             </v-card-text>
                           </v-card>
                         </button>
@@ -422,11 +424,13 @@ export default {
       }
     },
     makeReservation(value) {
-      console.log("value:", value);
+      // console.log("input rsvInput:", value);
+      //예약 팝업에서 지정한 시간을 변수로 받아서 selected_time에 할당
       Object.assign(this.selected_time, value);
       console.log("selected_time:", this.selected_time);
 
-      if (true) {
+      //중복 예약 체크 처리해야 함(필수)
+      if (this.rsvAvailableCheck()) {
         this.rsvInput.date = this.date.replace(/\-/g, "");
         this.rsvInput.rsv_id =
           this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
@@ -459,45 +463,36 @@ export default {
           st: { HH: "", mm: "" },
           et: { HH: "", mm: "" }
         }),
-          console.log("Reservation complete...");
-
-        var vm = this;
-
-        //  회의실 정보 post
-        RsvDataApi({
-          tel_num: this.$store.state.user.tel_num,
-          token: this.$store.state.token,
-          rsvdata: this.rsvInput,
-          httpMethod: "INSERT"
-        })
-          .then(response => {
-            console.log(response);
-            if (response.data.statusCode == 409) {
-              vm.unavailable_reservation = true;
-              vm.alert_detail = {
-                type: "rsvError",
-                message: "기존 예약이 존재합니다."
-              };
-              console.log("예약 오류", response);
-              this.fetchRsvData();
-            } else {
-              console.log(response);
-              this.fetchRsvData();
-            }
+          //  회의실 정보 post
+          RsvDataApi({
+            tel_num: this.$store.state.user.tel_num,
+            token: this.$store.state.token,
+            rsvdata: this.rsvInput,
+            httpMethod: "INSERT"
           })
-          .catch(error => {
-            console.log(error);
-          });
+            .then(response => {
+              // console.log(response);
+              if (response.data.statusCode == 409) {
+                this.unavailable_reservation = true;
+                this.alert_detail = {
+                  type: "rsvError",
+                  message: "기존 예약이 존재합니다."
+                };
+                console.log("예약 오류", response);
+                this.fetchRsvData();
+              } else {
+                console.log("Reservation complete...");
+                console.log("예약 결과:", response);
+                this.fetchRsvData();
+              }
+            })
+            .catch(error => {
+              console.log(error);
+            });
 
         this.clearRsv(); //this.rsvInput = {};
       } else {
-        return (
-          (this.unavailable_reservation = true),
-          (this.alert_detail = {
-            type: "rsvError",
-            message: "기존 예약이 존재합니다."
-          })
-        );
+        return console.log("예약 실패"), this.fetchRsvData();
       }
     },
 
@@ -618,6 +613,17 @@ export default {
     },
     // 예약 가능한 상태인지 조회 (가능: true / 불가능: false 리턴)
     rsvAvailableCheck() {
+      let stHour = this.timeControl(this.selected_time.st, "get");
+      let edHour = this.timeControl(this.selected_time.et, "get");
+      if (stHour >= edHour) {
+        this.unavailable_reservation = true;
+        this.alert_detail = {
+          type: "rsvError",
+          message: "예약 시간을 확인해주세요.."
+        };
+        return false;
+      }
+      return true;
       // var room_check = [];
       // for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
       //   if (this.rooms[this.room_indx][i].room_id === this.rsvInput.room_id) {
@@ -828,6 +834,7 @@ export default {
         httpMethod: "SELECT"
       }).then(response => {
         this.drawRooms(response);
+        console.log("예약 정보 로딩", response);
       });
       // .then(response => {
       //   console.log(response);
@@ -852,9 +859,9 @@ export default {
         var room_name = rsv_data[7];
         var stHour = rsv_data[3];
         var edHour = this.timeControl(rsv_data[4], "sub");
-        // console.log("org_edHour", rsv_data[4], "edHour", edHour);
         var rsv_date = rsv_data[5];
         var rsv_key = rsv_data[6];
+        var user_name = rsv_data[8];
         // console.log("예약건:", rsv_data);
 
         //if (rsv_date === this.date) {
@@ -875,6 +882,7 @@ export default {
               e.rsv_key = rsv_key;
               e.st_index = stHour;
               e.ed_index = edHour;
+              e.user_name = user_name;
             }
           });
         }
@@ -883,9 +891,9 @@ export default {
     },
     findRsvData(data) {
       var rsrt = [];
-      console.log(this.rsvDataRes);
+      // console.log(this.rsvDataRes);
       for (var rsv of this.rsvDataRes) {
-        console.log(rsv);
+        // console.log(rsv);
         if (rsv[6] === data) {
           rsrt = rsv;
         }
