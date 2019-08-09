@@ -8,6 +8,7 @@ import localforage from "localforage";
 import VueResource from "vue-resource";
 require("localforage-startswith");
 import vuetify from "./plugins/vuetify";
+import 'babel-polyfill'
 
 Vue.config.productionTip = false;
 
