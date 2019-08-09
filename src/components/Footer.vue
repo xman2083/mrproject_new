@@ -28,7 +28,7 @@
       <v-card-text style="font-size:0.8rem">
         Copyrightⓒ {{ new Date().getFullYear() }} — All rights reserved by SK telink
                 <p style="font-size:0.5rem;">
-            made by SKtelink Platform Dev.  <a style="text-decoration:none !important" href="mailto:tabasco@sk.com">Please contact us</a>
+            made by SKtelink Platform Dev.  <a style="color:inherit; !important; text-decoration:none !important" href="mailto:tabasco@sk.com">Please contact us</a>
       </p>
       </v-card-text>
 

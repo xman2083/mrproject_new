@@ -45,7 +45,7 @@
             </v-flex>
           </v-layout>
         </template>
-        <v-date-picker v-model="date" @input="menu = false" locale="ko-kr" @change="fetchRsvData"></v-date-picker>
+        <v-date-picker color="#3fc1c9" style="color:#364f6b;" v-model="date" @input="menu = false" locale="ko-kr" @change="fetchRsvData"></v-date-picker>
       </v-menu>
     </v-layout>
     <div>
