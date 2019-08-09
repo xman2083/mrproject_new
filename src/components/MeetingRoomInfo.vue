@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto" max-width="600">
     <v-card-title>
-      <v-avatar color="grey" size="34" tile>
+      <v-avatar color="indigo" size="34">
         <span
           class="white--text"
           style="font-size:small;"
@@ -16,10 +16,8 @@
     <v-img v-bind:src="currRoom.img_src" width="600px"></v-img>
 
     <v-card-actions>
-
-      <v-btn @click="closeMrPopup" text color="primary">닫기</v-btn>
-
       <v-spacer></v-spacer>
+      <v-btn @click="closeMrPopup" dark color="indigo">닫기</v-btn>
 
     </v-card-actions>
 

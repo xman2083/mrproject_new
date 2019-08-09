@@ -4,7 +4,7 @@
       <v-avatar color="indigo" size="40">
         <span
           class="white--text"
-          style="font-size:15px;"
+          style="font-size:small;"
         >{{this.$store.state.room_src[room_indx][0]}}</span>
       </v-avatar>
       <span
