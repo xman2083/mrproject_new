@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-content>
-      <v-container fluid fill-height>
+      <v-container>
         <v-layout align-center justify-center>
           <v-flex xs10 sm6 md4>
             <v-card class="elevation-12">
@@ -21,6 +21,7 @@
                     v-bind:disabled="isOtpSent"
                     v-on:keyup.enter="submitForm"
                     autofocus
+                    color="cyan"
                   ></v-text-field>
                   <v-text-field
                     id="password"
@@ -31,6 +32,7 @@
                     color="#3fc1c9"
                     v-model="otpNum"
                     v-bind:disabled="!isOtpSent"
+                    color="cyan"
                   ></v-text-field>
                 </v-form>
               </v-card-text>
@@ -159,3 +161,8 @@ export default {
   }
 };
 </script>
+<style>
+  #id {
+    color : "cyan"
+  }
+</style>
