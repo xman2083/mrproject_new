@@ -59,7 +59,7 @@
           </v-flex>
 
           <v-flex xs12 sm12 md12>
-            <v-text-field v-if="dialog" autofocus required label="회의 주제*" v-model="rsvInput.title"></v-text-field>
+            <v-text-field v-if="dialog" autofocus required label="회의 주제*" v-model="rsvInput.title" :rules="[rules.required]" counter maxlength="25"></v-text-field>
           </v-flex>
           <v-flex xs12 sm12 md12>
             <v-text-field label="회의 내용" v-model="rsvInput.content" clearable></v-text-field>
@@ -119,6 +119,9 @@
               v-model="rsvInput.title"
               :clearable="owner"
               :readonly="!owner"
+              :rules="[rules.required]" 
+              counter
+              maxlength="25"
             ></v-text-field>
           </v-flex>
           <v-flex xs12 sm12 md12>
@@ -168,7 +171,10 @@ export default {
       reserved: false,
       owner: false,
       mask: "###-####-####",
-      cell_time: {}
+      cell_time: {},
+      rules : {
+        required: value => !!value || '필수입력 사항입니다.'
+      }
     };
   },
   props: [
