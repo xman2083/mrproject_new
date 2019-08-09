@@ -757,7 +757,7 @@ export default {
     // 회의실 마다 고유 색상 지정 & 홀수 시간대 예약 셀 바탕 색 지정
     roomColors(index, left, right, hour) {
       let color;
-      if (parseInt(hour.substring(0,2)) % 2 === 0) {
+      if (parseInt(hour.substring(0, 2)) % 2 === 0) {
         color = "#fff";
       } else {
         color = "#F2F2F2";
