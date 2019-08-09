@@ -119,7 +119,8 @@
                             <v-card-text style="padding:0px; font-size:0.5rem; !important;">
                               <br />
                               <!-- <v-icon size="5">people</v-icon> -->
-                              <span style="background-color:white">{{ hour.user_name }}</span>
+                              <span v-if="hour.reserved === 3" style="background-color:white;font-color:red"><v-icon size="1">fa fa-check-square</v-icon>{{ hour.user_name }}</span>                              
+                              <span v-else style="background-color:white">{{ hour.user_name }}</span>
                             </v-card-text>
                           </v-card>
                         </button>
@@ -416,7 +417,7 @@ export default {
         this.selected_time.st = this.timeControl(this.rsvInput.stHour, "set");
 
         let value =
-          hour.reserved === 2
+          hour.reserved === 2 || hour.reserved ===3
             ? this.rsvInput.edHour
             : this.timeControl(this.rsvInput.edHour, "add");
         // console.log("value:", value);
@@ -872,6 +873,7 @@ export default {
         var rsv_date = rsv_data[5];
         var rsv_key = rsv_data[6];
         var user_name = rsv_data[8];
+        var telNum = rsv_data[9];
         // console.log("예약건:", rsv_data);
 
         //if (rsv_date === this.date) {
@@ -888,7 +890,12 @@ export default {
               if (e.index === edHour) {
                 e.border_right = "1px solid";
               }
-              e.reserved = 2;
+              if (telNum === this.$store.state.user.tel_num){
+                e.reserved = 3;
+              } else {
+                e.reserved = 2
+              }
+              // e.reserved = 2;
               e.rsv_key = rsv_key;
               e.st_index = stHour;
               e.ed_index = edHour;

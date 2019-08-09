@@ -138,11 +138,11 @@
       <v-btn color="disabled" @click="closeDialog">닫기</v-btn>
       <v-btn
         color="warning"
-        v-if="currCell !== '' && (currCell[1].reserved === 2 || currCell[1].reserved === 3) && owner"
+        v-if="currCell !== '' && (currCell[1].reserved === 3) && owner"
         @click="cnclReservation"
       >예약 취소</v-btn>
       <v-btn
-        v-if="currCell !== '' && (currCell[1].reserved === 2 || currCell[1].reserved === 3) && owner"
+        v-if="currCell !== '' && (currCell[1].reserved === 3) && owner"
         color="indigo"
         dark
         @click="updateReservation"
@@ -219,7 +219,7 @@ export default {
     console.log(this.currCell);
     console.log("RsvPopupForm >> beforeUpdate");
     if (this.dialog) {
-      if (this.currCell[1].reserved === 2) {
+      if (this.currCell[1].reserved === 2 || this.currCell[1].reserved === 3) {
         this.reserved = true;
         // this.$emit("updateRsv");
         // this.rsvInput = this.getRsvDataStore[this.currCell[1].rsv_key];
