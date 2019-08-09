@@ -54,7 +54,7 @@
                 </v-card-title>
                                   <v-divider></v-divider>
                 <v-list dense style="padding:20;">
-                  <v-list-item v-for="(food,index) in item" v-if="!(index==='name' || food==='')">
+                  <v-list-item v-for="(food,index) in item" v-if="!(index==='name'||index==='menu8')">
                     <v-list-item-content class="align-center" ><span style="text-align:center">{{ food }}</span>
                   </v-list-item-content>
                   </v-list-item>

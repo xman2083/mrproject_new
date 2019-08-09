@@ -11,13 +11,10 @@
         login
         <router-link to="/login"></router-link>
       </v-btn>
-      <v-btn text v-else v-on:click="logout">
-        <span class="mr-2">Logout</span>
+      <v-btn x-small text v-else @click="logout">
+        <span class="mr-0">Logout</span>
         <v-icon>exit_to_app</v-icon>
       </v-btn>
-      <!-- <v-btn x-small color="primary" depressed dark @click="showMyRsvLists">
-        <span class="mr-0">내 예약</span>
-      </v-btn>-->
     </v-app-bar>
 
     <v-navigation-drawer app v-model="drawer" class="white" temporary width="200px;">
