@@ -30,7 +30,7 @@
         <template v-slot:activator="{ on }">
           <v-layout>
             <v-flex xs4 sm4 md2 lg2>
-              <v-text-field v-model="date" prepend-icon="event" readonly v-on="on"></v-text-field>
+              <v-text-field color="#364f6b" style="color:#364f6b" v-model="date" prepend-icon="event" readonly v-on="on"></v-text-field>
             </v-flex>
 
             <v-flex xs8 sm8 md10 lg10>
