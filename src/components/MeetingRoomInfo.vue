@@ -17,7 +17,7 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn @click="closeMrPopup" dark color="#364f6b">닫기</v-btn>
+      <v-btn @click="closeMrPopup" dark depressed color="#364f6b">닫기</v-btn>
 
     </v-card-actions>
 
