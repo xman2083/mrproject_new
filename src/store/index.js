@@ -23,7 +23,6 @@ export default new Vuex.Store({
     token: "",
     rsvdata: {},
     room_src: [[[]]],
-    showMyRsvLists: false,
   },
   getters: {
     isLoggedIn(state) {
@@ -37,9 +36,6 @@ export default new Vuex.Store({
     },
     getRsvDataStore(state) {
       return state.rsvdata;
-    },
-    getMyLists(state) {
-      return state.showMyRsvLists;
     },
   },
   mutations: {
@@ -55,9 +51,7 @@ export default new Vuex.Store({
       deleteCookie("til_auth");
       deleteCookie("til_user");
     },
-    SHOW_MY_RSV_LISTS(state) {
-      state.showMyRsvLists = true;
-    },
+
     // ADD_RSVDATA(state, payload) {
     //   state.rsvdata[payload.rsvdata.id] = payload.rsvdata;
     // },

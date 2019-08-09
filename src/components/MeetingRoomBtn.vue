@@ -4,9 +4,11 @@
       @change="tabChanged"
       v-model="active"
       color="white"
-      dark
-      slider-color="yellow"
+      background-color="#364f6b"
+      slider-color="#fc5185"
+      slider-size="3"
       show-arrows
+      dark
     >
       <v-tab v-for="room in this.$store.state.room_src" :key="room[2]" ripple>{{ room[0] }}</v-tab>
       <v-tab-item v-for="room in this.$store.state.room_src" :key="room[2]"></v-tab-item>
@@ -32,13 +34,14 @@
             </v-flex>
 
             <v-flex xs8 sm8 md10 lg10>
-              <v-btn small outlined color="#BDBDBD" @click="dateDecrement">
+              <v-btn small outlined width="70" color="#BDBDBD" @click="dateDecrement">
                 <v-icon size="15">fa fa-chevron-circle-left</v-icon>&nbsp;이전
               </v-btn>&nbsp;&nbsp;
-              <v-btn small outlined color="#BDBDBD" @click="dateIncrement">
+              <v-btn small outlined width="70" color="#BDBDBD" @click="dateIncrement">
                 다음&nbsp;
                 <v-icon size="15">fa fa-chevron-circle-right</v-icon>
-              </v-btn>
+              </v-btn>&nbsp;&nbsp;
+              <!-- <v-btn small outlined width="70" color="primary" @click="show_my_rsv_list = true">내 예약</v-btn> -->
             </v-flex>
           </v-layout>
         </template>
@@ -81,9 +84,10 @@
                     <!-- <button type="button" class="btn btn-success btn-block">{{room.name}}</button> -->
                     <v-btn
                       @click="onRoomBtnClick(room)"
-                      outlined
+                      depressed
                       :style="roomBtn(room.name.length)"
                       :color="roomColorSet[index]"
+                      style="color:white; font-weight:bold"
                       width="88"
                     >
                       {{room.name}}&nbsp;
@@ -119,8 +123,8 @@
                             <v-card-text style="padding:0px; font-size:0.5rem; !important;">
                               <br />
                               <!-- <v-icon size="5">people</v-icon> -->
-                              <span v-if="hour.reserved === 3" style="background-color:white;font-color:red"><v-icon size="1">fa fa-check-square</v-icon>{{ hour.user_name }}</span>                              
-                              <span v-else style="background-color:white">{{ hour.user_name }}</span>
+                              <span v-if="hour.reserved === 3" style="background-color:white;font-weight:bold;"><v-icon size="0.8rem">fa fa-check-square</v-icon>{{ hour.user_name }}</span>                              
+                              <span v-else style="background-color:white;">{{ hour.user_name }}</span>
                             </v-card-text>
                           </v-card>
                         </button>
@@ -134,20 +138,6 @@
         </div>
       </div>
     </div>
-    <!-- DB 테스트 부분 -->
-    <!-- <v-btn color="indigo" small dark @click="clearAllData">예약DB삭제</v-btn>
-    <v-btn color="grey" small dark @click="CLEAR_STOREDATA">스토어 삭제</v-btn>
-    <v-btn color="warning" small dark @click="fetchRsvData">fetch</v-btn>
-    <v-btn color="info" small dark @click="forceRerender">rerender:{{this.renderKey}}</v-btn>
-    <div>
-      <span style="color:red; font-size:5px;">{{this.$store.state.room_src}}</span>
-    </div>
-    {{this.selected_time}}
-    <div>
-      <span style="font-size:5px; background-color:yellow;">{{this.$store.state.user}}</span>
-    </div>
-    <div>{{this.$store.state.rsvdata}}</div>-->
-
     <!-- 회의실 예약 팝업, dialog가 true 일 경우만 노출 -->
     <v-dialog v-model="dialog" persistent max-width="600px">
       <rsv-popup-form
@@ -183,7 +173,9 @@
     <v-dialog v-model="unavailable_reservation" persistent max-width="250px">
       <modal :alert_detail="alert_detail" @closeModal="closeModal"></modal>
     </v-dialog>
-    <v-dialog v-model="getMyLists"></v-dialog>
+    <!-- <v-dialog v-model="show_my_rsv_list">
+      <my-rsv-list-form @closeMyList="show_my_rsv_list = false" :my_rsv_list="my_rsv_list"></my-rsv-list-form>
+    </v-dialog> -->
   </div>
 </template>
 
@@ -193,13 +185,15 @@ import { getRoomData, RsvDataApi, removeRsvData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 import Modal from "./Modal.vue";
+import MyRsvListForm from "./MyRsvListForm.vue"
 // import ConstantValues from '../utils/constant-values.js'
 
 export default {
   components: {
     RsvPopupForm,
     MeetingRoomInfo,
-    Modal
+    Modal,
+    MyRsvListForm
   },
   data() {
     return {
@@ -214,6 +208,8 @@ export default {
       timeTable: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
       dialog: false,
       meetingroom_info: false,
+      show_my_rsv_list: false,
+      my_rsv_list: [],
       time_picker: false,
       currRoom: "",
       currCell: "",
@@ -262,15 +258,26 @@ export default {
 
       // 회의실 색상 코드
       roomColorSet: [
-        "#FE2EC8",
-        "#FF4000",
-        "#0101DF",
-        "#FFBF00",
-        "#B8982F",
-        "#3CD0BA",
-        "#1DEB4E",
-        "#7269DF",
-        "#9D69D1"
+        "#EF9A9A",
+        "#CE93D8",
+        "#9FA8DA",
+        "#90CAF9",
+        "#80DEEA",
+        "#80CBC4",
+        "#E6EE9C",
+        "#FFE082",
+        "#B0BEC5"
+    
+
+        // "#FE2EC8",
+        // "#FF4000",
+        // "#0101DF",
+        // "#FFBF00",
+        // "#B8982F",
+        // "#3CD0BA",
+        // "#1DEB4E",
+        // "#7269DF",
+        // "#9D69D1"
       ]
     };
   },
@@ -874,6 +881,9 @@ export default {
         var rsv_key = rsv_data[6];
         var user_name = rsv_data[8];
         var telNum = rsv_data[9];
+        if (telNum === this.$store.state.user.tel_num){
+          this.my_rsv_list.push(rsv_data);
+        }
         // console.log("예약건:", rsv_data);
 
         //if (rsv_date === this.date) {
@@ -935,7 +945,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["getRsvDataStore", "getMyLists"])
+    ...mapGetters(["getRsvDataStore"]),
   },
 
   mounted() {

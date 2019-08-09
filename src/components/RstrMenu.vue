@@ -1,7 +1,7 @@
 <template>
   <v-sheet elevation="6">
     <v-tabs
-      background-color="cyan darken-2"
+      background-color="#364f6b"
       dark
       next-icon="fas fa-chevron-right"
       prev-icon="fas fa-chevron-left"
@@ -10,7 +10,7 @@
       v-on:change="getMenus"
       class="fixed-tabs-bar"
     >
-      <v-tabs-slider color="yellow"></v-tabs-slider>
+      <v-tabs-slider color="#fc5185"></v-tabs-slider>
       <v-tab v-for="place in places" :key="place">{{ place }}</v-tab>
       <v-tabs-items>
         <v-tab-item v-for="place in places" :key="place"></v-tab-item>
@@ -18,7 +18,7 @@
     </v-tabs>
 
     <v-tabs
-      background-color="cyan"
+      background-color="#3fc1c9"
       dark
       next-icon="fas fa-chevron-right"
       prev-icon="fas fa-chevron-left"
@@ -26,7 +26,7 @@
       class="fixed-tabs-bar2"
       v-model="date_index"
     >
-      <v-tabs-slider color="yellow"></v-tabs-slider>
+      <v-tabs-slider color="#364f6b"></v-tabs-slider>
       <v-tab v-for="date in dates" :key="date">{{ date }}</v-tab>
       <v-tabs-items>
         <v-tab-item v-for="date in dates" :key="date"></v-tab-item>
@@ -46,7 +46,7 @@
           <v-layout wrap>
             <v-flex v-for="item in props.items" :key="item.name" xs12 sm6 md4 lg3>
               <v-card>
-                <v-card-title style="background-color:#FAFAFA">
+                <v-card-title style="background-color:#f5f5f5">
                   <h4>
                     {{ item.name }}&nbsp;
                     <v-icon>fa fa-utensils</v-icon>
@@ -54,7 +54,7 @@
                 </v-card-title>
                                   <v-divider></v-divider>
                 <v-list dense style="padding:20;">
-                  <v-list-item v-for="(food,index) in item" v-if="!(index==='name'||index==='menu8')">
+                  <v-list-item v-for="(food,index) in item" v-if="!(index==='name'||index==='menu8')" :key="index">
                     <v-list-item-content class="align-center" ><span style="text-align:center">{{ food }}</span>
                   </v-list-item-content>
                   </v-list-item>

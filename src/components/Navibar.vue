@@ -1,17 +1,20 @@
 <template>
   <nav>
     <v-app-bar flat app>
-      <v-app-bar-nav-icon @click="drawer = !drawer" class="blue--text" v-show="isLoggedIn"></v-app-bar-nav-icon>
-      <v-toolbar-title class="text-uppercase blue--text">
-        <span class="font-weight-light">SK</span>
+      <v-app-bar-nav-icon style="color:#364f6b" @click="drawer = !drawer" v-show="isLoggedIn"></v-app-bar-nav-icon>
+      <v-toolbar flat>
+      <v-toolbar-title class="text-uppercase" style="color:#364f6b">
+        <span class="font-weight-light" >SK</span>
         <span>telink</span>
+        <!-- <span style="color:#D8D8D8; font-style:italic; font-size:0.9rem;">us</span> -->
       </v-toolbar-title>
+      </v-toolbar>
       <v-spacer></v-spacer>
-      <v-btn text color="blue" v-if="!isLoggedIn">
+      <v-btn text style="color:#364f6b" v-if="!isLoggedIn">
         login
         <router-link to="/login"></router-link>
       </v-btn>
-      <v-btn x-small text v-else @click="logout">
+      <v-btn x-small text v-else style="color:#364f6b" @click="logout">
         <span class="mr-0">Logout</span>
         <v-icon>exit_to_app</v-icon>
       </v-btn>
@@ -20,19 +23,19 @@
     <v-navigation-drawer app v-model="drawer" class="white" temporary width="200px;">
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title class="title">SKtelink</v-list-item-title>
-          <v-list-item-subtitle>회의실예약</v-list-item-subtitle>
+          <v-list-item-title style="color:#364f6b" class="title">SKtelink</v-list-item-title>
+          <v-list-item-subtitle style="color:#364f6b">회의실예약</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
 
       <v-divider></v-divider>
       <v-list dense nav>
-        <v-list-item v-for="item in items" :key="item.title" router :to="item.route">
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
+        <v-list-item style="color:#3fc1c9" v-for="item in items" :key="item.title" router :to="item.route">
+          <v-list-item-icon >
+            <v-icon color="#364f6b">{{ item.icon }}</v-icon>
           </v-list-item-icon>
 
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
+          <v-list-item-title style="color:#364f6b">{{ item.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -63,9 +66,6 @@ export default {
     ...mapGetters(["isLoggedIn"])
   },
   methods: {
-    showMyRsvLists() {
-      this.$store.commit("SHOW_MY_RSV_LISTS");
-    },
     logout() {
       this.$store.commit("LOGOUT");
       this.$router.push("/login");

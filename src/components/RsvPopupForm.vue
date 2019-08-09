@@ -1,7 +1,7 @@
 <template>
   <v-card v-if="this.dialog">
     <v-card-title>
-      <v-avatar color="indigo" size="40">
+      <v-avatar color="#3fc1c9" size="40">
         <span
           class="white--text"
           style="font-size:small;"
@@ -25,44 +25,44 @@
         <!-- 해당 시간에 예약이 안되어 있는 경우 -->
         <v-layout v-if="reserved === false" wrap>
           <v-flex style="align-content:center;" xs3>
-            <v-btn block large color="grey" disabled max-width="200">시작</v-btn>
+            <v-btn style="color:#364f6b !important" block large color="grey" disabled max-width="200">시작</v-btn>
           </v-flex>
           <v-flex xs9>
             <vue-timepicker
               hide-disabled-hours
               :hour-range="[[8,20]]"
               :minute-interval="30"
-              style="padding: 0px;width:200px; font-size:20px;"
+              style="color:#364f6b; padding: 0px;width:200px; font-size:20px;"
               hide-clear-button
               v-model="cell_time.st"
             ></vue-timepicker>
           </v-flex>
           <v-flex xs3>
-            <v-btn block large color="grey" disabled max-width="200">종료</v-btn>
+            <v-btn style="color:#364f6b !important" block large color="grey" disabled max-width="200">종료</v-btn>
           </v-flex>
           <v-flex xs9>
             <vue-timepicker
               :hour-range="[[8,20]]"
               hide-disabled-hours
               :minute-interval="30"
-              style="padding: 0px;width:200px; font-size:20px;"
+              style="color:#364f6b; padding: 0px;width:200px; font-size:20px;"
               hide-clear-button
               v-model="cell_time.et"
             ></vue-timepicker>
           </v-flex>
 
           <v-flex xs6 sm6 md6>
-            <v-text-field label="예약자 성명*" v-model="rsvInput.user_name" required readonly></v-text-field>
+            <v-text-field color="#fc5185" label="예약자 성명*" v-model="rsvInput.user_name" required readonly></v-text-field>
           </v-flex>
           <v-flex xs6 sm6 md6>
-            <v-text-field label="휴대폰 번호" v-model="rsvInput.telNum" required readonly v-mask="mask"></v-text-field>
+            <v-text-field color="#fc5185" label="휴대폰 번호" v-model="rsvInput.telNum" required readonly v-mask="mask"></v-text-field>
           </v-flex>
 
           <v-flex xs12 sm12 md12>
-            <v-text-field v-if="dialog" autofocus required label="회의 주제*" v-model="rsvInput.title" :rules="[rules.required, rules.counter]" counter maxlength="25"></v-text-field>
+            <v-text-field v-if="dialog" color="#fc5185" autofocus required label="회의 주제*" v-model="rsvInput.title" :rules="[rules.required, rules.counter]" counter maxlength="25"></v-text-field>
           </v-flex>
           <v-flex xs12 sm12 md12>
-            <v-text-field label="회의 내용" v-model="rsvInput.content" clearable></v-text-field>
+            <v-text-field color="#fc5185" label="회의 내용" v-model="rsvInput.content" clearable></v-text-field>
           </v-flex>
           <small>*필수 입력 사항 입니다.</small>
         </v-layout>
@@ -70,43 +70,43 @@
         <!-- 해당 시간에 예약이 되어 있는 경우 -->
         <v-layout v-if="reserved === true" wrap>
           <v-flex xs3>
-            <v-btn block large color="grey" disabled max-width="200">시작</v-btn>
+            <v-btn style="color:#364f6b !important" block large color="#f5f5f5" disabled max-width="200">시작</v-btn>
           </v-flex>
           <v-flex xs9>
             <vue-timepicker
               :hour-range="[[8,20]]"
               hide-disabled-hours
               :minute-interval="30"
-              style="padding: 0px;width:200px; font-size:20px;"
+              style="color:#364f6b; padding: 0px;width:200px; font-size:20px;"
               hide-clear-button
               v-model="cell_time.st"
               :disabled="!owner"
             ></vue-timepicker>
           </v-flex>
           <v-flex xs3>
-            <v-btn block large color="grey" disabled max-width="200">종료</v-btn>
+            <v-btn style="color:#364f6b !important" block large color="#f5f5f5" disabled max-width="200">종료</v-btn>
           </v-flex>
           <v-flex xs9>
             <vue-timepicker
               :hour-range="[[8,20]]"
               hide-disabled-hours
               :minute-interval="30"
-              style="padding: 0px;width:200px; font-size:20px;"
+              style="color:#364f6b; padding: 0px;width:200px; font-size:20px;"
               hide-clear-button
               v-model="cell_time.et"
               :disabled="!owner"
             ></vue-timepicker>
           </v-flex>
           <v-flex xs6 sm6 md4>
-            <v-text-field label="예약자 성명*" v-model="rsvInput.user_name" required readonly></v-text-field>
+            <v-text-field color="#fc5185" label="예약자 성명*" v-model="rsvInput.user_name" required readonly></v-text-field>
           </v-flex>
           <v-flex xs6 sm6 md4>
-            <v-text-field label="휴대폰 번호" v-model="rsvInput.telNum" readonly v-mask="mask"></v-text-field>
+            <v-text-field color="#fc5185" label="휴대폰 번호" v-model="rsvInput.telNum" readonly v-mask="mask"></v-text-field>
           </v-flex>
           <v-flex xs8></v-flex>
-          <v-flex xs4 md4>
+          <v-flex offset-xs9 offset-md9>
             <a :href="`tel:${ this.rsvInput.telNum }`">
-              <v-btn v-if="!owner" color="indigo" dark small>전화하기</v-btn>
+              <v-btn small v-if="!owner" color="#364f6b" dark>전화하기</v-btn>
             </a>
           </v-flex>
 
@@ -116,6 +116,7 @@
               :autofocus="!reserved"
               required
               label="회의 주제*"
+              color="#fc5185" 
               v-model="rsvInput.title"
               :clearable="owner"
               :readonly="!owner"
@@ -127,6 +128,7 @@
           <v-flex xs12 sm12 md12>
             <v-text-field
               label="회의 내용"
+              color="#fc5185" 
               v-model="rsvInput.content"
               :clearable="owner"
               :readonly="!owner"
@@ -138,22 +140,28 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="disabled" @click="closeDialog">닫기</v-btn>
+      <v-btn width="80" color="#f5f5f5" style="color:#364f6b" depressed @click="closeDialog">닫기</v-btn>
       <v-btn
         color="warning"
+        width="80"
         v-if="currCell !== '' && (currCell[1].reserved === 3) && owner"
         @click="cnclReservation"
+        depressed
       >예약 취소</v-btn>
       <v-btn
         v-if="currCell !== '' && (currCell[1].reserved === 3) && owner"
         color="indigo"
         dark
+        width="80"
+        depressed
         @click="updateReservation"
       >예약 수정</v-btn>
       <v-btn
         v-if="currCell !== '' && (currCell[1].reserved === 0)"
-        color="indigo"
+        color="#364f6b"
         dark
+        width="80"
+        depressed
         @click="makeReservation"
       >예약 하기</v-btn>
     </v-card-actions>

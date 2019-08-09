@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto" max-width="600">
     <v-card-title>
-      <v-avatar color="indigo" size="34">
+      <v-avatar color="#3fc1c9" size="40">
         <span
           class="white--text"
           style="font-size:small;"
@@ -17,7 +17,7 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn @click="closeMrPopup" dark color="indigo">닫기</v-btn>
+      <v-btn @click="closeMrPopup" dark color="#364f6b">닫기</v-btn>
 
     </v-card-actions>
 

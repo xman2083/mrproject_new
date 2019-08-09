@@ -1,8 +1,8 @@
 <template>
 <span>
   <div class="layer">
-    <h3 style="color:#2E92F5">{{this.$store.state.user.user_name}}님 안녕하세요!</h3>
-    <p style="color:#696A6B"><br>
+    <h3 style="color:#3fc1c9">{{this.$store.state.user.user_name}}님 안녕하세요!</h3>
+    <p style="color:#364f6b"><br>
         SKtelink 회의실 예약 & 식단표 조회 페이지 입니다.<br>
         문의사항은 Platform개발팀으로 연락 부탁드립니다.<br>
         행복한 하루 되세요 :)<br>
