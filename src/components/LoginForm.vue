@@ -1,12 +1,12 @@
 <template>
   <v-app id="inspire">
     <v-content>
-      <v-container fluid fill-height>
+      <v-container>
         <v-layout align-center justify-center>
           <v-flex xs12 sm8 md4>
-            <v-card class="elevation-12">
-              <v-toolbar dark color="primary">
-                <v-toolbar-title>Login</v-toolbar-title>
+            <v-card class="elevation-6">
+              <v-toolbar color="cyan" class="elevation-1">
+                <v-toolbar-title style="color:white">Login</v-toolbar-title>
                 <v-spacer></v-spacer>
               </v-toolbar>
               <v-card-text>
@@ -20,6 +20,7 @@
                     v-bind:disabled="isOtpSent"
                     v-on:keyup.enter="submitForm"
                     autofocus
+                    color="cyan"
                   ></v-text-field>
                   <v-text-field
                     id="password"
@@ -29,11 +30,12 @@
                     type="number"
                     v-model="otpNum"
                     v-bind:disabled="!isOtpSent"
+                    color="cyan"
                   ></v-text-field>
                 </v-form>
               </v-card-text>
               <v-card-actions>
-                <v-btn color="primary" v-on:click="initForm">초기화</v-btn>
+                <v-btn dark color="cyan" v-on:click="initForm">초기화</v-btn>
                 <v-spacer></v-spacer>
                 <!-- <span v-if="isOtpSent" >{{ countDown }}</span> -->
                 <!-- __Jungmi__ CountdownTimer호출 -->
@@ -41,7 +43,7 @@
                   <CountdownTimer v-on:toolate="latealert"></CountdownTimer>
                 </span>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" v-on:click="submitForm">{{ btnText }}</v-btn>
+                <v-btn dark color="cyan" v-on:click="submitForm">{{ btnText }}</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -157,3 +159,8 @@ export default {
   }
 };
 </script>
+<style>
+  #id {
+    color : "cyan"
+  }
+</style>
