@@ -21,7 +21,6 @@
                     v-bind:disabled="isOtpSent"
                     v-on:keyup.enter="submitForm"
                     autofocus
-                    color="cyan"
                   ></v-text-field>
                   <v-text-field
                     id="password"
@@ -32,7 +31,6 @@
                     color="#3fc1c9"
                     v-model="otpNum"
                     v-bind:disabled="!isOtpSent"
-                    color="cyan"
                   ></v-text-field>
                 </v-form>
               </v-card-text>
