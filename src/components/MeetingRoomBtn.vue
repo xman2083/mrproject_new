@@ -48,11 +48,11 @@
         <v-date-picker color="#3fc1c9" style="color:#364f6b;" v-model="date" @input="menu = false" locale="ko-kr" @change="fetchRsvData"></v-date-picker>
       </v-menu>
     </v-layout>
-    <div max-width="800px">
+    <div>
       <div class="panel">
         <div class="panel-body">
           <div class="row">
-            <table class="table table-hover">
+            <table class="table table-hover" style="max-width:900px;">
               <thead>
                 <tr>
                   <th>
