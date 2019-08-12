@@ -48,7 +48,7 @@
         <v-date-picker color="#3fc1c9" style="color:#364f6b;" v-model="date" @input="menu = false" locale="ko-kr" @change="fetchRsvData"></v-date-picker>
       </v-menu>
     </v-layout>
-    <div>
+    <div max-width="800px">
       <div class="panel">
         <div class="panel-body">
           <div class="row">
