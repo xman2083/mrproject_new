@@ -110,7 +110,7 @@ function signupUser(data) {
 
 function RsvDataApi(data) {
   try {
-    return rsv.post("managersvdata", JSON.stringify(data));
+    return rsv.post("repeated-rsv", JSON.stringify(data));
   } catch (error) {
     console.log(error);
     return error;

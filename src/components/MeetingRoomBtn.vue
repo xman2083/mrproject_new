@@ -237,7 +237,8 @@ export default {
         title: "",
         content: "",
         stHour: 0,
-        edHour: 0
+        edHour: 0,
+        rsv_type: "",
       },
 
       rsvorg: {
@@ -253,7 +254,8 @@ export default {
         title: "",
         content: "",
         stHour: 0,
-        edHour: 0
+        edHour: 0, 
+        rsv_type: "",
       },
 
       // 회의실 색상 코드
