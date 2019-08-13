@@ -1,7 +1,6 @@
 import axios from "axios";
 import store from "../store/index.js";
 import { getAuthFromCookie } from "../utils/cookies.js";
-import localforage from "localforage";
 
 // basic config for axios
 const APP_URL =
@@ -61,7 +60,6 @@ function sendOtp(data) {
     return error;
   }
 }
-
 // users
 function loginUser(data) {
   try {
@@ -71,7 +69,7 @@ function loginUser(data) {
     return error;
   }
 }
-
+// 식단표 API
 function getMenuData(data) {
   try {
     return rsv.post("getmenu", JSON.stringify(data));
@@ -79,7 +77,7 @@ function getMenuData(data) {
     console.log(error);
   }
 }
-
+//회원 가입 API
 function signupUser(data) {
   try {
     return auth.post("signup", data);
@@ -88,26 +86,7 @@ function signupUser(data) {
     return error;
   }
 }
-
-// // posts
-// function createNewPost(data) {
-//   try {
-//     return posts.post('/', data);
-//   } catch (error) {
-//     console.log(error);
-//     return error;
-//   }
-// }
-
-// function fetchPosts() {
-//   try {
-//     return posts.get('/');
-//   } catch (error) {
-//     console.log(error);
-//     return error;
-//   }
-// }
-
+//예약 정보 API
 function RsvDataApi(data) {
   try {
     return rsv.post("managersvdata", JSON.stringify(data));
@@ -116,17 +95,7 @@ function RsvDataApi(data) {
     return error;
   }
 }
-
-//회의실 정보
-// function getRoomData(data) {
-//   try {
-//     return rsv.post("getroomdata", JSON.stringify(data));
-//   } catch (error) {
-//     console.log(error);
-//     return error;
-//   }
-// }
-
+//회의실 정보 API
 function getRoomData(data) {
   try {
     return rsv.post("getroomdata", JSON.stringify(data));
@@ -136,90 +105,4 @@ function getRoomData(data) {
   }
 }
 
-// function fetchPostById(id) {
-//   try {
-//     return posts.get(id);
-//   } catch (error) {
-//     console.log(error);
-//     return error;
-//   }
-// }
-
-// function editPostById(id, data) {
-//   try {
-//     return posts.put(id, data);
-//   } catch (error) {
-//     console.log(error);
-//     return error;
-//   }
-// }
-
-// function deletePostById(id) {
-//   try {
-//     return posts.delete(id);
-//   } catch (error) {
-//     console.log(error);
-//     return error;
-//   }
-// }
-
-// const RSVDATA_NAMESPACE = "RSV-";
-
-// const fetchRsvDataApi = () => {
-//   return localforage.startsWith(RSVDATA_NAMESPACE).then(res => {
-//     return res;
-//   });
-// };
-
-// const saveRsvData = rsvdata => {
-//   return localforage
-//     .setItem(RSVDATA_NAMESPACE + rsvdata.id, rsvdata)
-//     .then(value => {
-//       return value;
-//     })
-//     .catch(err => {
-//       alert(
-//         "oops! the RsvData was too far gone, there was nothing we could do to save him ",
-//         err
-//       );
-//     });
-// };
-
-// const removeRsvData = rsvdata => {
-//   return localforage
-//     .removeItem(RSVDATA_NAMESPACE + rsvdata.id)
-//     .then(() => {
-//       return true;
-//     })
-//     .catch(err => {
-//       alert(err);
-//       return false;
-//     });
-// };
-
-// const clearAllData = () => {
-//   localforage
-//     .clear()
-//     .then(function() {})
-//     .catch(function(err) {
-//       alert(err); // This code runs if there were any errors
-//     });
-// };
-
-export {
-  loginUser,
-  sendOtp,
-  signupUser,
-  // createNewPost,
-  // fetchPosts,
-  // fetchPostById,
-  // editPostById,
-  // deletePostById,
-  // fetchRsvDataApi,
-  // saveRsvData,
-  // removeRsvData,
-  // clearAllData,
-  RsvDataApi,
-  getRoomData,
-  getMenuData,
-};
+export { loginUser, sendOtp, signupUser, RsvDataApi, getRoomData, getMenuData };

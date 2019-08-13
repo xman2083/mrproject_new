@@ -6,12 +6,12 @@
     </v-content>
     <Footer />
   </v-app>
-  </template>
+</template>
 
 <script>
 import { mapGetters } from "vuex";
 import Navibar from "./components/Navibar.vue";
-import Footer from './components/Footer.vue';
+import Footer from "./components/Footer.vue";
 
 export default {
   name: "App",

@@ -30,7 +30,14 @@
         <template v-slot:activator="{ on }">
           <v-layout>
             <v-flex xs4 sm4 md2 lg2>
-              <v-text-field color="#364f6b" style="color:#364f6b" v-model="date" prepend-icon="event" readonly v-on="on"></v-text-field>
+              <v-text-field
+                color="#364f6b"
+                style="color:#364f6b"
+                v-model="date"
+                prepend-icon="event"
+                readonly
+                v-on="on"
+              ></v-text-field>
             </v-flex>
 
             <v-flex xs8 sm8 md10 lg10>
@@ -41,11 +48,19 @@
                 다음&nbsp;
                 <v-icon size="15">fa fa-chevron-circle-right</v-icon>
               </v-btn>&nbsp;&nbsp;
+              <!-- 내 예약 보기 -->
               <!-- <v-btn small outlined width="70" color="primary" @click="show_my_rsv_list = true">내 예약</v-btn> -->
             </v-flex>
           </v-layout>
         </template>
-        <v-date-picker color="#3fc1c9" style="color:#364f6b;" v-model="date" @input="menu = false" locale="ko-kr" @change="fetchRsvData"></v-date-picker>
+        <v-date-picker
+          color="#3fc1c9"
+          style="color:#364f6b;"
+          v-model="date"
+          @input="menu = false"
+          locale="ko-kr"
+          @change="fetchRsvData"
+        ></v-date-picker>
       </v-menu>
     </v-layout>
     <div>
@@ -99,10 +114,10 @@
                       <div class="btn-group" v-for="hour in room.hours">
                         <!-- seleted 
                         0: 예약 안됨
-                        1: 반만 예약됨
+                        1: ??? 정의 안함
                         2: 내가 예약
-                        3: 내가 반만 예약
-                        4: 남이 예약-->
+                        3: 타인이 예약
+                        4: ??? 미정의-->
                         <button
                           type="button"
                           class="btn btn-block"
@@ -123,7 +138,13 @@
                             <v-card-text style="padding:0px; font-size:0.5rem; !important;">
                               <br />
                               <!-- <v-icon size="5">people</v-icon> -->
-                              <span v-if="hour.reserved === 3" style="background-color:white;font-weight:bold;"><v-icon size="0.8rem">fa fa-check-square</v-icon>{{ hour.user_name }}</span>                              
+                              <span
+                                v-if="hour.reserved === 3"
+                                style="background-color:white;font-weight:bold;"
+                              >
+                                <v-icon size="0.8rem">fa fa-check-square</v-icon>
+                                {{ hour.user_name }}
+                              </span>
                               <span v-else style="background-color:white;">{{ hour.user_name }}</span>
                             </v-card-text>
                           </v-card>
@@ -175,7 +196,7 @@
     </v-dialog>
     <!-- <v-dialog v-model="show_my_rsv_list">
       <my-rsv-list-form @closeMyList="show_my_rsv_list = false" :my_rsv_list="my_rsv_list"></my-rsv-list-form>
-    </v-dialog> -->
+    </v-dialog>-->
   </div>
 </template>
 
@@ -185,7 +206,7 @@ import { getRoomData, RsvDataApi, removeRsvData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 import Modal from "./Modal.vue";
-import MyRsvListForm from "./MyRsvListForm.vue"
+import MyRsvListForm from "./MyRsvListForm.vue";
 // import ConstantValues from '../utils/constant-values.js'
 
 export default {
@@ -267,17 +288,6 @@ export default {
         "#E6EE9C",
         "#FFE082",
         "#B0BEC5"
-    
-
-        // "#FE2EC8",
-        // "#FF4000",
-        // "#0101DF",
-        // "#FFBF00",
-        // "#B8982F",
-        // "#3CD0BA",
-        // "#1DEB4E",
-        // "#7269DF",
-        // "#9D69D1"
       ]
     };
   },
@@ -286,15 +296,10 @@ export default {
     // clearAllData,
     method() {},
 
-    ...mapActions([
-      // "addRsvData",
-      "updateRsvData",
-      // "deleteRsvData",
-      // "loadRsvData",
-      "loadRoomSrc"
-    ]),
+    ...mapActions(["updateRsvData", "loadRoomSrc"]),
     ...mapMutations(["CLEAR_STOREDATA"]),
 
+    // 현재 시간을 출력
     getTimeStamp() {
       var d = new Date();
       var s =
@@ -324,18 +329,21 @@ export default {
       console.log("cellClick", this.currCell);
       console.log(hour.rsv_key);
 
+      // 선택한 셀이 예약 상태인 경우 해당 rsv_key를 기준으로 예약 정보를 찾아서 rsvInput에 입력
       if (hour.reserved === 2 || hour.reserved === 3) {
         var rsv = this.findRsvData(hour.rsv_key);
+        this.rsvInput.room_id = rsv[0];
         this.rsvInput.title = rsv[1];
         this.rsvInput.content = rsv[2];
         this.rsvInput.stHour = rsv[3];
         this.rsvInput.edHour = rsv[4];
+        this.rsvInput.date = rsv[5];
         this.rsvInput.rsv_id = rsv[6];
-        this.rsvInput.rsv_created = rsv[10];
+
         this.rsvInput.user_name = rsv[8];
         this.rsvInput.telNum = rsv[9];
-        this.rsvInput.date = rsv[5];
-        this.rsvInput.room_id = rsv[0];
+        this.rsvInput.rsv_created = rsv[10];
+
         Object.assign(this.rsvorg, this.rsvInput);
         this.dialog = true;
       } else {
@@ -424,49 +432,38 @@ export default {
         this.selected_time.st = this.timeControl(this.rsvInput.stHour, "set");
 
         let value =
-          hour.reserved === 2 || hour.reserved ===3
+          hour.reserved === 2 || hour.reserved === 3
             ? this.rsvInput.edHour
             : this.timeControl(this.rsvInput.edHour, "add");
-        // console.log("value:", value);
         this.selected_time.et = this.timeControl(value, "set");
-        // console.log("value2:", this.timeControl(value, "set"));
       }
     },
-    // 예약 정보 저장
+    // 예약 정보 저장 메소드
     makeReservation(cell_time) {
       // console.log("input rsvInput:", value);
       //예약 팝업에서 지정한 시간을 변수로 받아서 selected_time에 할당
       Object.assign(this.selected_time, cell_time);
       console.log("selected_time:", this.selected_time);
 
-      //중복 예약 체크 처리해야 함(필수)
+      //중복 예약 체크
       if (this.rsvAvailableCheck()) {
         this.rsvInput.date = this.date.replace(/\-/g, "");
         this.rsvInput.rsv_id =
           this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
         this.rsvInput.rsv_created = this.getTimeStamp();
-        // console.log(this.rsvInput.edHour, this.rsvInput.stHour);
-        // console.log(this.timeControl(this.selected_time.st, "get"));
 
-        // let value = this.timeControl(this.selected_time.et, "get");
+        // 예약 팝업의 시작, 종료 시간을 받아서 rsvInput에 저장 (timeControl method로 시간표현 방식 변경)
         this.rsvInput.stHour = this.timeControl(this.selected_time.st, "get");
         this.rsvInput.edHour = this.timeControl(this.selected_time.et, "get");
         console.log("makeRsv:", this.rsvInput.stHour, this.rsvInput.edHour);
 
-        // this.rsvInput.stHour = this.makeHour(this.rsvInput.stHour);
-        // this.rsvInput.edHour = this.makeHour(this.rsvInput.edHour);
         this.rsvInput.floor_id = this.room_indx;
-        // if this.rsvInput.content = "";
-        //   content= "hi"
-        // 빔이 선택됐을때만 rsv_id정보 추가되고, 없으면 null
-        // console.log(this.rsvInput);
 
         this.stCell = "";
         this.edCell = "";
         this.currCell = [];
         this.dialog = false;
 
-        // this.addRsvData(this.rsvInput);
         this.clearCellData();
         this.clearSelectionData();
         (this.selected_time = {
@@ -881,7 +878,7 @@ export default {
         var rsv_key = rsv_data[6];
         var user_name = rsv_data[8];
         var telNum = rsv_data[9];
-        if (telNum === this.$store.state.user.tel_num){
+        if (telNum === this.$store.state.user.tel_num) {
           this.my_rsv_list.push(rsv_data);
         }
         // console.log("예약건:", rsv_data);
@@ -900,10 +897,10 @@ export default {
               if (e.index === edHour) {
                 e.border_right = "1px solid";
               }
-              if (telNum === this.$store.state.user.tel_num){
+              if (telNum === this.$store.state.user.tel_num) {
                 e.reserved = 3;
               } else {
-                e.reserved = 2
+                e.reserved = 2;
               }
               // e.reserved = 2;
               e.rsv_key = rsv_key;
@@ -945,44 +942,24 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["getRsvDataStore"]),
+    ...mapGetters(["getRsvDataStore"])
   },
 
   mounted() {
     console.log("mounted");
-    // test 예약건 하드 코딩
-    // this.fetchRsvData();
   },
-  // 페이지 refresh 할 때 스토어의 데이터를 바로 불러오기 위한 코드
-  // beforeCreate() {
-  //   console.log("beforeCreate");
-  //   // this.$store.getters.getRsvData;
-  //   this.$store.dispatch("loadRsvData", this.date, this.room_indx);
-  //   console.log(">>loadRsvData...");
-  // },
-  // 페이지 refresh 할 때 예약 데이터 화면 노출 위한 코드s
+
   beforeUpdate() {
     console.log("beforeUpadate");
-    // if (this.renderKey > 0) {
-    //   this.fetchRsvData();
-    // if (this.rsvInput.edHour != "") {
-    //   this.selected_time.st = this.timeControl(this.rsvInput.stHour, "set");
-    //   let value = this.timeControl(this.rsvInput.edHour, "add");
-    //   // console.log("value:", value);
-    //   this.selected_time.et = this.timeControl(value, "set");
-    //   // console.log("value2:", this.timeControl(value, "set"));
-    // }
-    console.log(">>fetchRsvData...");
-    // }
   }
 };
 /*
     seleted
       0: 예약 안됨
-      1: 반만 예약됨
+      1: ??? 미정의
       2: 내가 예약
-      3: 내가 반만 예약
-      4: 남이 예약
+      3: 타인이 예약
+      4: ??? 미정의
   */
 </script>
 
