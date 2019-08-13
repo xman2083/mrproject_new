@@ -35,7 +35,7 @@
                 </v-form>
               </v-card-text>
               <v-card-actions>
-                <v-btn color="#3fc1c9" dark v-on:click="initForm" width="80">초기화</v-btn>
+                <v-btn color="#3fc1c9" dark v-on:click="initForm" depressed width="80">초기화</v-btn>
                 <v-spacer></v-spacer>
                 <!-- <span v-if="isOtpSent" >{{ countDown }}</span> -->
                 <!-- __Jungmi__ CountdownTimer호출 -->
@@ -43,7 +43,13 @@
                   <CountdownTimer v-on:toolate="latealert"></CountdownTimer>
                 </span>
                 <v-spacer></v-spacer>
-                <v-btn color="#364f6b" width="80" dark v-on:click="submitForm">{{ btnText }}</v-btn>
+                <v-btn
+                  color="#364f6b"
+                  width="80"
+                  dark
+                  depressed
+                  v-on:click="submitForm"
+                >{{ btnText }}</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>

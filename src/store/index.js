@@ -7,13 +7,6 @@ import {
   getUserFromCookie,
   deleteCookie,
 } from "../utils/cookies.js";
-import { guid } from "../utils";
-// import {
-//   removeRsvData,
-//   saveRsvData,
-//   fetchRsvDataApi,
-//   getRoomData,
-// } from "../api";
 
 Vue.use(Vuex);
 
@@ -52,21 +45,6 @@ export default new Vuex.Store({
       deleteCookie("til_user");
     },
 
-    // ADD_RSVDATA(state, payload) {
-    //   state.rsvdata[payload.rsvdata.id] = payload.rsvdata;
-    // },
-    // UPDATE_RSVDATA(state, payload) {
-    //   state.rsvdata[payload.rsvdata.id] = payload.rsvdata;
-    // },
-    // DELETE_RSVDATA(state, payload) {
-    //   Vue.delete(state.rsvdata, payload.rsvdata.id);
-    // },
-    // LOAD_RSVDATA(state, payload) {
-    //   state.rsvdata = payload;
-    // },
-    // CLEAR_STOREDATA(state) {
-    //   state.rsvdata = {};
-    // },
     LOAD_ROOMDATA(state, payload) {
       console.log(payload);
       // 부끄러운 코드들 총집합... -.-;; by tabasco
@@ -132,52 +110,6 @@ export default new Vuex.Store({
       const response = await sendOtp(data);
       return response;
     },
-
-    // addRsvData({ commit }, data) {
-    //   // console.log(data);
-    //   let id = guid();
-    //   let rsvdata = Object.assign(
-    //     {
-    //       id: id,
-    //     },
-    //     data
-    //   ); // copy the data into a new object with the generated ID
-    //   commit("ADD_RSVDATA", {
-    //     rsvdata: rsvdata,
-    //   });
-    //   saveRsvData(rsvdata).then(value => {
-    //     // we've saved the account, what now?
-    //   });
-    // },
-
-    // updateRsvData({ commit }, data) {
-    //   commit("UPDATE_RSVDATA", {
-    //     rsvdata: data,
-    //   });
-    //   saveRsvData(data);
-    // },
-
-    // deleteRsvData({ commit }, data) {
-    //   commit("DELETE_RSVDATA", {
-    //     rsvdata: data,
-    //   });
-    //   removeRsvData(data);
-    // },
-
-    // loadRsvData(state, date, room_indx) {
-    //   // 로딩 되어 있지 않은 경우만 실행
-    //   console.log(date, room_indx);
-    //   if (!state.rsvdata || Object.keys(state.rsvdata).length === 0) {
-    //     return fetchRsvDataApi(date, room_indx).then(res => {
-    //       let rsvdata = {};
-    //       Object.keys(res).forEach(key => {
-    //         rsvdata[res[key].id] = res[key];
-    //       });
-    //       state.commit("LOAD_RSVDATA", rsvdata);
-    //     });
-    //   }
-    // },
-
     loadRoomSrc(state, roomsrc) {
       console.log("(store) >> loadRoomSrc commit...");
       state.commit("LOAD_ROOMDATA", roomsrc);

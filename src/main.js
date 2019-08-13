@@ -1,3 +1,5 @@
+import "es6-promise/auto";
+import "idempotent-babel-polyfill";
 import Vue from "vue";
 import "./plugins/vuetify";
 import App from "./App.vue";
