@@ -10,7 +10,9 @@
   "dependencies": {
     "axios": "^0.19.0",
     "core-js": "^2.6.5",
+    "es6-promise": "^4.2.8",
     "fibers": "^4.0.1",
+    "idempotent-babel-polyfill": "^7.4.4",
     "localforage": "^1.7.3",
     "localforage-startswith": "^1.4.0",
     "node-sass": "^4.12.0",
