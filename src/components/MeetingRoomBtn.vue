@@ -47,12 +47,21 @@
             </v-flex>
 
             <v-flex xs8 sm8 md10 lg10>
-              <v-btn small outlined width="70" color="#BDBDBD" @click="dateDecrement">
-                <v-icon size="15">fa fa-chevron-circle-left</v-icon>&nbsp;이전
+              <v-btn small outlined width="50" color="#BDBDBD" @click="dateDecrement">
+                <v-icon size="15">fa fa-chevron-circle-left</v-icon>
               </v-btn>&nbsp;&nbsp;
-              <v-btn small outlined width="70" color="#BDBDBD" @click="dateIncrement">
-                다음&nbsp;
+              <v-btn small outlined width="50" color="#BDBDBD" @click="dateIncrement">
                 <v-icon size="15">fa fa-chevron-circle-right</v-icon>
+              </v-btn>&nbsp;&nbsp;
+               <v-btn
+                small
+                outlined
+                width="50"
+                color="#BDBDBD"
+                style="font-size:smaller;"
+                @click="setToday"
+              >
+              Today
               </v-btn>&nbsp;&nbsp;
               <!-- 내 예약 보기 -->
               <!-- <v-btn small outlined width="70" color="primary" @click="show_my_rsv_list = true">내 예약</v-btn> -->
@@ -320,6 +329,11 @@ export default {
         return ["red"];
       }
       return false;
+    },
+    setToday(){
+     this.date = new Date().toISOString().substr(0, 10);
+     this.fetchRsvData();
+     
     },
     // 현재 시간을 출력
     getTimeStamp() {
