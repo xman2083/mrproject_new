@@ -233,7 +233,6 @@ export default {
       renderKey: 0,
       rsvDataRes: {},
       date: new Date().toISOString().substr(0, 10),
-      dateConverted: new Date(),
       menu: false,
       modal: false,
       unavailable_reservation: false,
@@ -725,13 +724,13 @@ export default {
     },
     // 캘린더의 날짜 하루씩 증감
     dateDecrement() {
-      let today = this.dateConverted;
+      let today = new Date(this.date);
       today.setDate(today.getDate() - 1);
       this.date = today.toISOString().substr(0, 10);
       this.fetchRsvData();
     },
     dateIncrement() {
-      let today = this.dateConverted;
+      let today = new Date(this.date);
       today.setDate(today.getDate() + 1);
       this.date = today.toISOString().substr(0, 10);
       this.fetchRsvData();
