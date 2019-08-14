@@ -36,7 +36,9 @@
                 v-model="date"
                 prepend-icon="event"
                 readonly
+                :hint="getWeekDay"
                 v-on="on"
+                persistent-hint
               ></v-text-field>
             </v-flex>
 
@@ -60,7 +62,6 @@
           @input="menu = false"
           locale="ko-kr"
           @change="fetchRsvData"
-          day-format="dd"
         ></v-date-picker>
       </v-menu>
     </v-layout>
@@ -219,6 +220,15 @@ export default {
   },
   data() {
     return {
+      weekday: [
+        "일요일",
+        "월요일",
+        "화요일",
+        "수요일",
+        "목요일",
+        "금요일",
+        "토요일"
+      ],
       renderKey: 0,
       rsvDataRes: {},
       date: new Date().toISOString().substr(0, 10),
@@ -943,7 +953,12 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["getRsvDataStore"])
+    ...mapGetters(["getRsvDataStore"]),
+    getWeekDay() {
+      var today = new Date(this.date).getDay();
+      var todayLabel = this.weekday[today];
+      return todayLabel;
+    }
   },
 
   mounted() {
