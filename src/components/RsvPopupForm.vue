@@ -96,12 +96,28 @@
           <v-flex xs12 sm12 md12>
             <v-text-field color="#fc5185" label="회의 내용" v-model="rsvInput.content" clearable></v-text-field>
           </v-flex>
-          <v-checkbox v-model="checkbox" :label="`반복 예약`"></v-checkbox>
-          <v-flex xs12 sm6 d-flex>
-            <v-select v-if="checkbox" v-model="rsvInput.rsv_type" :items="items"></v-select>
+          <v-checkbox xs4 sm6 d-flex v-model="checkbox" label="반복 예약"></v-checkbox>
+          <div> &nbsp; &nbsp; </div>
+          <v-flex xs8 sm6 d-flex>
+            <v-select  v-if="checkbox" v-model="rsvInput.rsv_type" :items="items" ></v-select>
           </v-flex>
-          <small>*필수 입력 사항 입니다.</small>
+          <v-col cols="12" sm="6">
+          <v-select
+            v-if = "this.rsvInput.rsv_type === 1" 
+            v-model="rsvInput.rsv_typedtl"
+            deletable-chips
+            :items="day"
+            attach
+            chips
+            label="반복주기"
+            multiple
+          ></v-select>
+        </v-col>
+        
+        <small>*필수 입력 사항 입니다.</small>
         </v-layout>
+
+
         <!-- 해당 시간에 예약이 되어 있는 경우 -->
         <v-layout v-if="reserved === true" wrap>
           <v-flex xs3>
@@ -251,8 +267,14 @@ export default {
         counter: value => value.length <= 25 || "최대 25자까지 입력가능합니다."
       },
       items: [{ text: "매일", value: 0 }, { text: "매주", value: 1 }],
+      day: [{ text: "월", value: 0 },
+            { text: "화", value: 1 },
+            { text: "수", value: 2 },
+            { text: "목", value: 3 },
+            { text: "금", value: 4 }],
       checkbox: false,
-      test: ""
+      menu: false
+
     };
   },
   props: [
@@ -285,6 +307,7 @@ export default {
     },
     closeDialog() {
       this.checkbox = false;
+      this.select = "",
       this.$emit("closeDialog");
       this.$emit("clearRsv");
     },
@@ -293,7 +316,9 @@ export default {
     },
     rsvAvailableCheck() {
       this.$emit("rsvAvailableCheck");
-    }
+    },
+   
+  
     // timePicker(status) {
     //   this.$emit("timePicker", status);
     // }

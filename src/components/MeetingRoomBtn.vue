@@ -60,7 +60,6 @@
           @input="menu = false"
           locale="ko-kr"
           @change="fetchRsvData"
-          day-format="dd"
         ></v-date-picker>
       </v-menu>
     </v-layout>
@@ -259,7 +258,11 @@ export default {
         title: "",
         content: "",
         stHour: 0,
-        edHour: 0
+        edHour: 0,
+        rsv_type: "",
+        rsv_typedtl: "",
+        st_dt : "" ,
+        ed_dt : ""
       },
 
       rsvorg: {
@@ -275,7 +278,11 @@ export default {
         title: "",
         content: "",
         stHour: 0,
-        edHour: 0
+        edHour: 0,      
+        rsv_type: "",
+        rsv_typedtl: "",
+        st_dt : "" ,
+        ed_dt : ""
       },
 
       // 회의실 색상 코드
@@ -450,7 +457,7 @@ export default {
       if (this.rsvAvailableCheck()) {
         this.rsvInput.date = this.date.replace(/\-/g, "");
         this.rsvInput.rsv_id =
-          this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
+        this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
         this.rsvInput.rsv_created = this.getTimeStamp();
 
         // 예약 팝업의 시작, 종료 시간을 받아서 rsvInput에 저장 (timeControl method로 시간표현 방식 변경)
