@@ -36,17 +36,32 @@
                 v-model="date"
                 prepend-icon="event"
                 readonly
+                :hint="getWeekDay"
                 v-on="on"
-              ></v-text-field>
+                persistent-hint
+              >
+                <template v-slot:preped-inner>
+                  <v-icon>fa fa-chevron-circle-right</v-icon>
+                </template>
+              </v-text-field>
             </v-flex>
 
             <v-flex xs8 sm8 md10 lg10>
-              <v-btn small outlined width="70" color="#BDBDBD" @click="dateDecrement">
-                <v-icon size="15">fa fa-chevron-circle-left</v-icon>&nbsp;이전
+              <v-btn small outlined width="50" color="#BDBDBD" @click="dateDecrement">
+                <v-icon size="15">fa fa-chevron-circle-left</v-icon>
               </v-btn>&nbsp;&nbsp;
-              <v-btn small outlined width="70" color="#BDBDBD" @click="dateIncrement">
-                다음&nbsp;
+              <v-btn small outlined width="50" color="#BDBDBD" @click="dateIncrement">
                 <v-icon size="15">fa fa-chevron-circle-right</v-icon>
+              </v-btn>&nbsp;&nbsp;
+               <v-btn
+                small
+                outlined
+                width="50"
+                color="#BDBDBD"
+                style="font-size:smaller;"
+                @click="setToday"
+              >
+              Today
               </v-btn>&nbsp;&nbsp;
               <!-- 내 예약 보기 -->
               <!-- <v-btn small outlined width="70" color="primary" @click="show_my_rsv_list = true">내 예약</v-btn> -->
@@ -54,12 +69,17 @@
           </v-layout>
         </template>
         <v-date-picker
+          no-title
           color="#3fc1c9"
+          :allowed-dates="allowedDates"
           style="color:#364f6b;"
           v-model="date"
           @input="menu = false"
-          locale="ko-kr"
+          locale="en-en"
           @change="fetchRsvData"
+          :events="dateFunctionEvents"
+          :date-format="date => new Date(date).getDay()"
+          :formatted-value.sync="formatted"
         ></v-date-picker>
       </v-menu>
     </v-layout>
@@ -202,7 +222,7 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import { getRoomData, RsvDataApi, removeRsvData } from "../api";
+import { getRoomData, RsvDataApi, removeRsvData, getHolidayData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 import Modal from "./Modal.vue";
@@ -218,10 +238,10 @@ export default {
   },
   data() {
     return {
+      weekday: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
       renderKey: 0,
       rsvDataRes: {},
       date: new Date().toISOString().substr(0, 10),
-      dateConverted: new Date(),
       menu: false,
       modal: false,
       unavailable_reservation: false,
@@ -241,6 +261,7 @@ export default {
         st: { HH: "", mm: "" },
         et: { HH: "", mm: "" }
       },
+      formatted: "",
       active: 0,
 
       room_indx: 0,
@@ -305,8 +326,23 @@ export default {
     method() {},
 
     ...mapActions(["updateRsvData", "loadRoomSrc"]),
-    ...mapMutations(["CLEAR_STOREDATA"]),
+    ...mapMutations(["CLEAR_STOREDATA"], ["SET_HOLIDAY_DATA"]),
 
+    // allowedDates: val => parseInt(val.split('-')[2], 10) % 2 === 0,
+    allowedDates: val =>
+      !(new Date(val).getDay() === 0 || new Date(val).getDay() === 6),
+    // dayFormat: val => new Date(val).getDay() === 1,
+    dateFunctionEvents(date) {
+      if (this.$store.state.holiday_data.includes(date)) {
+        return ["red"];
+      }
+      return false;
+    },
+    setToday(){
+     this.date = new Date().toISOString().substr(0, 10);
+     this.fetchRsvData();
+     
+    },
     // 현재 시간을 출력
     getTimeStamp() {
       var d = new Date();
@@ -710,13 +746,13 @@ export default {
     },
     // 캘린더의 날짜 하루씩 증감
     dateDecrement() {
-      let today = this.dateConverted;
+      let today = new Date(this.date);
       today.setDate(today.getDate() - 1);
       this.date = today.toISOString().substr(0, 10);
       this.fetchRsvData();
     },
     dateIncrement() {
-      let today = this.dateConverted;
+      let today = new Date(this.date);
       today.setDate(today.getDate() + 1);
       this.date = today.toISOString().substr(0, 10);
       this.fetchRsvData();
@@ -946,11 +982,31 @@ export default {
         (this.renderKey = 1)
       )
     );
+    await getHolidayData({
+      tel_num: this.$store.state.user.tel_num,
+      token: this.$store.state.token
+    })
+      .then(response => {
+        let data_set = [];
+        for (let i = 0; i < response.data.hldy.length; i++) {
+          data_set.push(response.data.hldy[i][0]);
+        }
+        console.log("holiday:", data_set);
+        this.$store.commit("SET_HOLIDAY_DATA", data_set);
+      })
+      .catch(error => {
+        console.log(error);
+      });
     console.log("created hook complete");
   },
 
   computed: {
-    ...mapGetters(["getRsvDataStore"])
+    ...mapGetters(["getRsvDataStore"]),
+    getWeekDay() {
+      var today = new Date(this.date).getDay();
+      var todayLabel = this.weekday[today];
+      return todayLabel;
+    }
   },
 
   mounted() {

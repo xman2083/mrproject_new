@@ -16,6 +16,7 @@ export default new Vuex.Store({
     token: "",
     rsvdata: {},
     room_src: [[[]]],
+    holiday_data: {},
   },
   getters: {
     isLoggedIn(state) {
@@ -30,6 +31,9 @@ export default new Vuex.Store({
     getRsvDataStore(state) {
       return state.rsvdata;
     },
+    getEventDays(state) {
+      return state.holiday_data;
+    },
   },
   mutations: {
     SET_USER(state, user) {
@@ -38,6 +42,10 @@ export default new Vuex.Store({
     SET_TOKEN(state, token) {
       state.token = token;
     },
+    SET_HOLIDAY_DATA(state, data) {
+      state.holiday_data = data;
+    },
+
     LOGOUT(state) {
       state.user = null;
       state.token = null;

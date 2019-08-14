@@ -77,6 +77,14 @@ function getMenuData(data) {
     console.log(error);
   }
 }
+function getHolidayData(data) {
+  try {
+    return rsv.post("gethldy", JSON.stringify(data));
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 //회원 가입 API
 function signupUser(data) {
   try {
@@ -105,4 +113,12 @@ function getRoomData(data) {
   }
 }
 
-export { loginUser, sendOtp, signupUser, RsvDataApi, getRoomData, getMenuData };
+export {
+  loginUser,
+  sendOtp,
+  signupUser,
+  RsvDataApi,
+  getRoomData,
+  getMenuData,
+  getHolidayData,
+};
