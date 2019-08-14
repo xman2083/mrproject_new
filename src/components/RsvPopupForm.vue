@@ -113,7 +113,49 @@
             multiple
           ></v-select>
         </v-col>
-        
+        <v-menu
+        v-if = "checkbox"
+        v-model="menu"
+        :close-on-content-click="false"
+        :nudge-right="40"
+        transition="scale-transition"
+        offset-y
+        full-width
+      >
+        <template v-slot:activator="{ on }">
+      
+            <v-flex xs12 sm4 d-flex>
+              <v-text-field
+                label = "종료일자"
+                color="#364f6b"
+                style="color:#364f6b"
+                v-model="ed_dt"
+                prepend-icon="event"
+                readonly
+                v-on="on"
+                persistent-hint
+              >
+                <template v-slot:preped-inner>
+                  <v-icon>fa fa-chevron-circle-right</v-icon>
+                </template>
+              </v-text-field>
+            </v-flex>
+       
+        </template>
+        <v-date-picker
+          no-title
+          color="#3fc1c9"
+          :allowed-dates="allowedDates"
+          style="color:#364f6b;"
+          v-model="ed_dt"
+          @input="menu = false"
+          locale="en-en"
+          :events="dateFunctionEvents"
+          :date-format="ed_dt => new Date(ed_dt).getDay()"
+          :formatted-value.sync="formatted"
+        ></v-date-picker>
+      </v-menu>
+
         <small>*필수 입력 사항 입니다.</small>
         </v-layout>
 
@@ -211,7 +253,7 @@
               :readonly="!owner"
             ></v-text-field>
           </v-flex>
-          <v-checkbox v-model="checkbox" :label="`반복예약`"></v-checkbox>
+          <v-checkbox  v-model="checkbox" :label="`반복예약`"></v-checkbox>
           <v-flex xs12 sm6 d-flex>
             <v-select v-if="checkbox" v-model="rsvInput.rsv_type" :items="items"></v-select>
           </v-flex>
@@ -273,7 +315,9 @@ export default {
             { text: "목", value: 3 },
             { text: "금", value: 4 }],
       checkbox: false,
-      menu: false
+      menu: false,
+      ed_dt: new Date().toISOString().substr(0, 10),
+      formatted: ""
 
     };
   },
@@ -285,7 +329,7 @@ export default {
     "dialog",
     "currCell",
     "selected_time",
-    "rsvDataRes"
+    "rsvDataRes",
   ],
   components: {
     VueTimepicker
@@ -297,13 +341,14 @@ export default {
 
   methods: {
     makeReservation() {
-      this.$emit("makeReservation", this.cell_time);
+      console.log(this.ed_dt);
+      this.$emit("makeReservation", this.cell_time,this.ed_dt);
     },
     cnclReservation() {
       this.$emit("cnclReservation");
     },
     updateReservation() {
-      this.$emit("updateReservation", this.cell_time);
+      this.$emit("updateReservation", this.cell_time, this.ed_dt);
     },
     closeDialog() {
       this.checkbox = false;
@@ -317,6 +362,14 @@ export default {
     rsvAvailableCheck() {
       this.$emit("rsvAvailableCheck");
     },
+    dateFunctionEvents(ed_dt) {
+      if (this.$store.state.holiday_data.includes(ed_dt)) {
+        return ["red"];
+      }
+      return false;
+    },
+    allowedDates: val =>
+      !(new Date(val).getDay() === 0 || new Date(val).getDay() === 6),
    
   
     // timePicker(status) {
