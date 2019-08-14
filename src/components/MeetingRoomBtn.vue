@@ -947,6 +947,14 @@ export default {
 
   mounted() {
     console.log("mounted");
+    history.pushState(null, null, location.href);
+    window.onpopstate = function() {
+      history.go(1);
+      console.log('tagName:', document.activeElement.tagName)
+      if (document.activeElement.tagName == "INPUT" || document.activeElement.tagName == "TEXTAREA" ) {
+        history.go(1);
+      }
+    };
   },
 
   beforeUpdate() {
