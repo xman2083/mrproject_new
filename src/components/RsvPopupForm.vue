@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="this.dialog">
+  <v-card v-if="this.dialog" id="modal">
     <v-card-title>
       <v-avatar color="#3fc1c9" size="40">
         <span

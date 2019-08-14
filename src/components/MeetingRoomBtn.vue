@@ -60,6 +60,7 @@
           @input="menu = false"
           locale="ko-kr"
           @change="fetchRsvData"
+          day-format="dd"
         ></v-date-picker>
       </v-menu>
     </v-layout>
@@ -258,8 +259,7 @@ export default {
         title: "",
         content: "",
         stHour: 0,
-        edHour: 0,
-        rsv_type: "",
+        edHour: 0
       },
 
       rsvorg: {
@@ -275,8 +275,7 @@ export default {
         title: "",
         content: "",
         stHour: 0,
-        edHour: 0, 
-        rsv_type: "",
+        edHour: 0
       },
 
       // 회의실 색상 코드
@@ -949,11 +948,12 @@ export default {
 
   mounted() {
     console.log("mounted");
+    // ID가 modal인 엘리먼트가 호출될 경우 백 버튼 기능 비활성화
     history.pushState(null, null, location.href);
     window.onpopstate = function() {
-      history.go(1);
-      console.log('tagName:', document.activeElement.tagName)
-      if (document.activeElement.tagName == "INPUT" || document.activeElement.tagName == "TEXTAREA" ) {
+      // console.log("tag Name:", document.getElementById("modal").tagName);
+      let modal_check = document.getElementById("modal").tagName;
+      if (modal_check != "") {
         history.go(1);
       }
     };
