@@ -53,15 +53,37 @@
               <v-btn small outlined width="50" color="#BDBDBD" @click="dateIncrement">
                 <v-icon size="15">fa fa-chevron-circle-right</v-icon>
               </v-btn>&nbsp;&nbsp;
-               <v-btn
+              <v-btn
                 small
                 outlined
                 width="50"
                 color="#BDBDBD"
                 style="font-size:smaller;"
                 @click="setToday"
+              >Today</v-btn>&nbsp;&nbsp;
+              <!-- <v-switch
+                color="#364f6b"
+                inset
+                persistent-hint
+                v-model="my_reservation_only"
               >
-              Today
+                <template v-slot:label>
+                <div style="font-size:0.8rem; font-weight:normal;">
+                  내 예약만
+                </div>
+              </template>
+              </v-switch>-->
+              <v-btn
+                small
+                outlined
+                width="70"
+                :color="my_reservation_only==true?'#fc5185':'#BDBDBD'"
+                style="font-size:smaller;"
+                @click="fetchRsvData(), my_reservation_only==true?my_reservation_only=false:my_reservation_only=true"
+              >
+                  내 예약&nbsp;
+                  <v-icon size="10" v-if="my_reservation_only">fas fa-circle</v-icon>
+                  <v-icon v-else size="10">far fa-circle</v-icon>
               </v-btn>&nbsp;&nbsp;
               <!-- 내 예약 보기 -->
               <!-- <v-btn small outlined width="70" color="primary" @click="show_my_rsv_list = true">내 예약</v-btn> -->
@@ -78,8 +100,6 @@
           locale="en-en"
           @change="fetchRsvData"
           :events="dateFunctionEvents"
-          :date-format="date => new Date(date).getDay()"
-          :formatted-value.sync="formatted"
         ></v-date-picker>
       </v-menu>
     </v-layout>
@@ -239,6 +259,7 @@ export default {
   data() {
     return {
       weekday: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+      my_reservation_only: false,
       renderKey: 0,
       rsvDataRes: {},
       date: new Date().toISOString().substr(0, 10),
@@ -338,10 +359,9 @@ export default {
       }
       return false;
     },
-    setToday(){
-     this.date = new Date().toISOString().substr(0, 10);
-     this.fetchRsvData();
-     
+    setToday() {
+      this.date = new Date().toISOString().substr(0, 10);
+      this.fetchRsvData();
     },
     // 현재 시간을 출력
     getTimeStamp() {
@@ -945,8 +965,16 @@ export default {
               }
               if (telNum === this.$store.state.user.tel_num) {
                 e.reserved = 3;
-              } else {
+              } else if (
+                telNum != this.$store.state.user.tel_num &&
+                !this.my_reservation_only
+              ) {
                 e.reserved = 2;
+              } else if (
+                telNum != this.$store.state.user.tel_num &&
+                this.my_reservation_only
+              ) {
+                e.reserved = 4;
               }
               // e.reserved = 2;
               e.rsv_key = rsv_key;
@@ -1174,8 +1202,8 @@ export default {
   border-radius: 0px;
   border-left: var(--room-border-left);
   border-right: var(--room-border-right);
-  background: linear-gradient(180deg, white, #665B5B);
-  border-color: #665B5B;
+  background: linear-gradient(180deg, white, #D8D8D8);
+  border-color: #D8D8D8;
 }
 
 .btn-bookedOthers:focus {
