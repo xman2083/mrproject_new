@@ -96,9 +96,12 @@
           <v-flex xs12 sm12 md12>
             <v-text-field color="#fc5185" label="회의 내용" v-model="rsvInput.content" clearable></v-text-field>
           </v-flex>
+          <v-checkbox v-model="checkbox" :label="`반복 예약`"></v-checkbox>
+          <v-flex xs12 sm6 d-flex>
+            <v-select v-if="checkbox" v-model="rsvInput.rsv_type" :items="items"></v-select>
+          </v-flex>
           <small>*필수 입력 사항 입니다.</small>
         </v-layout>
-
         <!-- 해당 시간에 예약이 되어 있는 경우 -->
         <v-layout v-if="reserved === true" wrap>
           <v-flex xs3>
@@ -192,6 +195,10 @@
               :readonly="!owner"
             ></v-text-field>
           </v-flex>
+          <v-checkbox v-model="checkbox" :label="`반복예약`"></v-checkbox>
+          <v-flex xs12 sm6 d-flex>
+            <v-select v-if="checkbox" v-model="rsvInput.rsv_type" :items="items"></v-select>
+          </v-flex>
           <small v-if="owner">*필수 입력 사항 입니다.</small>
         </v-layout>
       </v-container>
@@ -243,7 +250,9 @@ export default {
         required: value => !!value || "필수입력 사항입니다.",
         counter: value => value.length <= 25 || "최대 25자까지 입력가능합니다."
       },
-      check_close: true
+      items: [{ text: "매일", value: 0 }, { text: "매주", value: 1 }],
+      checkbox: false,
+      test: ""
     };
   },
   props: [
@@ -275,6 +284,7 @@ export default {
       this.$emit("updateReservation", this.cell_time);
     },
     closeDialog() {
+      this.checkbox = false;
       this.$emit("closeDialog");
       this.$emit("clearRsv");
     },
@@ -284,6 +294,9 @@ export default {
     rsvAvailableCheck() {
       this.$emit("rsvAvailableCheck");
     }
+    // timePicker(status) {
+    //   this.$emit("timePicker", status);
+    // }
   },
   beforeUpdate() {
     Object.assign(this.cell_time, this.selected_time);

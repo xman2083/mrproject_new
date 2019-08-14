@@ -89,7 +89,7 @@ function signupUser(data) {
 //예약 정보 API
 function RsvDataApi(data) {
   try {
-    return rsv.post("managersvdata", JSON.stringify(data));
+    return rsv.post("repeated-rsv", JSON.stringify(data));
   } catch (error) {
     console.log(error);
     return error;
