@@ -155,9 +155,9 @@
                         <!-- seleted 
                         0: 예약 안됨
                         1: ??? 정의 안함
-                        2: 내가 예약
-                        3: 타인이 예약
-                        4: ??? 미정의-->
+                        2: 타인이 예약
+                        3: 내가 예약
+                        4: 타인이 예약 (색상 회색으로 변경) -->
                         <button
                           type="button"
                           class="btn btn-block"
@@ -394,7 +394,7 @@ export default {
       console.log(hour.rsv_key);
 
       // 선택한 셀이 예약 상태인 경우 해당 rsv_key를 기준으로 예약 정보를 찾아서 rsvInput에 입력
-      if (hour.reserved === 2 || hour.reserved === 3) {
+      if (hour.reserved === 2 || hour.reserved === 3 || hour.reserved === 4) {
         var rsv = this.findRsvData(hour.rsv_key);
         this.rsvInput.room_id = rsv[0];
         this.rsvInput.title = rsv[1];
@@ -496,7 +496,7 @@ export default {
         this.selected_time.st = this.timeControl(this.rsvInput.stHour, "set");
 
         let value =
-          hour.reserved === 2 || hour.reserved === 3
+          hour.reserved === 2 || hour.reserved === 3 || hour.reserved === 4
             ? this.rsvInput.edHour
             : this.timeControl(this.rsvInput.edHour, "add");
         this.selected_time.et = this.timeControl(value, "set");
