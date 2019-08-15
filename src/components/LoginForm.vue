@@ -3,7 +3,7 @@
     <v-content>
       <v-container>
         <v-layout align-center justify-center>
-          <v-flex xs10 sm6 md4>
+          <v-flex xs10 sm6 md4 lg3>
             <v-card class="elevation-12">
               <v-toolbar flat color="#3fc1c9" style="color:white">
                 <v-toolbar-title style="color:#white">Login</v-toolbar-title>
