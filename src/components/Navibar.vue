@@ -4,9 +4,13 @@
       <v-app-bar-nav-icon style="color:#364f6b" @click="drawer = !drawer" v-show="isLoggedIn"></v-app-bar-nav-icon>
       <v-toolbar flat>
         <v-toolbar-title class="text-uppercase">
-          <router-link :to="items[0].route" style="text-decoration:none; color:#364f6b">
-            <span class="font-weight-light">SK</span>
-            <span>telink</span>
+          <router-link
+            :to="items[0].route"
+            style="text-decoration:none; color:#364f6b; font-family: 'Caveat', cursive !important;"
+          >
+            <span>LINKS</span>
+            <!-- <span class="font-weight-light">SK</span>
+            <span>telink</span>-->
           </router-link>
           <!-- <span style="color:#D8D8D8; font-style:italic; font-size:0.9rem;">us</span> -->
         </v-toolbar-title>
@@ -25,8 +29,13 @@
     <v-navigation-drawer app v-model="drawer" class="white" temporary width="200px;">
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title style="color:#364f6b" class="title">LINKS</v-list-item-title>
-          <v-list-item-subtitle style="color:#364f6b;">v 1.0</v-list-item-subtitle>
+          <v-list-item-title
+            style="color:#364f6b; font-family: 'Caveat', cursive !important;"
+            class="title"
+          >LINKS</v-list-item-title>
+          <v-list-item-subtitle
+            style="color:#364f6b; font-family: 'Caveat', cursive !important;"
+          >V 1.0</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
 
