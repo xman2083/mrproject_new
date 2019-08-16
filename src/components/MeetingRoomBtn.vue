@@ -349,21 +349,15 @@ export default {
     ...mapActions(["updateRsvData", "loadRoomSrc"]),
     ...mapMutations(["CLEAR_STOREDATA"], ["SET_HOLIDAY_DATA"]),
 
-    allowedDates (val){
-
+    allowedDates(val) {
       let today = new Date();
-      today.setDate(today.getDate()-1);
+      today.setDate(today.getDate() - 1);
 
-     if (new Date(val) >= today){
-       return true
+      if (new Date(val) >= today) {
+        return true;
       }
-      return false
-     },
-
-      // let today = new Date(this.date);
-      // today.setDate(today.getDate() + 1);
-      // this.date = today.toISOString().substr(0, 10);
-
+      return false;
+    },
     dateFunctionEvents(date) {
       if (this.$store.state.holiday_data.includes(date)) {
         return ["red"];
@@ -710,6 +704,23 @@ export default {
         };
         return false;
       }
+
+      let today = new Date();
+      today.setDate(today.getDate());
+      today = today.toISOString().substr(0, 10);
+      console.log("check this", this.date, today);
+
+      if (this.date >= today) {
+        return true;
+      } else {
+        this.unavailable_reservation = true;
+        this.alert_detail = {
+          type: "rsvErrorFront",
+          message: "과거 날짜로 예약은 불가합니다."
+        };
+        return false;
+      }
+
       if (stHour >= edHour || edHour > "2000") {
         this.unavailable_reservation = true;
         this.alert_detail = {
