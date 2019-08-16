@@ -503,7 +503,7 @@ export default {
       }
     },
     // 예약 정보 저장 메소드
-    makeReservation(cell_time) {
+    makeReservation(cell_time,ed_dt) {
       // console.log("input rsvInput:", value);
       //예약 팝업에서 지정한 시간을 변수로 받아서 selected_time에 할당
       Object.assign(this.selected_time, cell_time);
@@ -522,12 +522,13 @@ export default {
         console.log("makeRsv:", this.rsvInput.stHour, this.rsvInput.edHour);
 
         this.rsvInput.floor_id = this.room_indx;
-
+        this.rsvInput.ed_dt = ed_dt;
         this.stCell = "";
         this.edCell = "";
         this.currCell = [];
         this.dialog = false;
-
+        
+        console.log(this.rsvInput.ed_dt);
         this.clearCellData();
         this.clearSelectionData();
         (this.selected_time = {
@@ -594,7 +595,7 @@ export default {
     },
 
     // 기존 예약 정보 수정
-    updateReservation(cell_time) {
+    updateReservation(cell_time,ed_dt) {
       Object.assign(this.selected_time, cell_time);
       if (this.rsvAvailableCheck()) {
         // this.updateRsvData(this.rsvInput);
@@ -603,6 +604,7 @@ export default {
         console.log(cell_time);
         this.rsvInput.stHour = cell_time.st.HH + cell_time.st.mm;
         this.rsvInput.edHour = cell_time.et.HH + cell_time.et.mm;
+        this.rsvInput.ed_dt = ed_dt;
 
         RsvDataApi({
           tel_num: this.$store.state.user.tel_num,
