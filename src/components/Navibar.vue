@@ -3,11 +3,13 @@
     <v-app-bar flat app>
       <v-app-bar-nav-icon style="color:#364f6b" @click="drawer = !drawer" v-show="isLoggedIn"></v-app-bar-nav-icon>
       <v-toolbar flat>
-      <v-toolbar-title class="text-uppercase" style="color:#364f6b">
-        <span class="font-weight-light" >SK</span>
-        <span>telink</span>
-        <!-- <span style="color:#D8D8D8; font-style:italic; font-size:0.9rem;">us</span> -->
-      </v-toolbar-title>
+        <v-toolbar-title class="text-uppercase">
+          <router-link :to="items[0].route" style="text-decoration:none; color:#364f6b">
+            <span class="font-weight-light">SK</span>
+            <span>telink</span>
+          </router-link>
+          <!-- <span style="color:#D8D8D8; font-style:italic; font-size:0.9rem;">us</span> -->
+        </v-toolbar-title>
       </v-toolbar>
       <v-spacer></v-spacer>
       <v-btn text style="color:#364f6b" v-if="!isLoggedIn">
@@ -23,15 +25,21 @@
     <v-navigation-drawer app v-model="drawer" class="white" temporary width="200px;">
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title style="color:#364f6b" class="title">SKtelink</v-list-item-title>
-          <v-list-item-subtitle style="color:#364f6b">회의실예약</v-list-item-subtitle>
+          <v-list-item-title style="color:#364f6b" class="title">LINKS</v-list-item-title>
+          <v-list-item-subtitle style="color:#364f6b;">v 1.0</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
 
       <v-divider></v-divider>
       <v-list dense nav>
-        <v-list-item style="color:#3fc1c9" v-for="item in items" :key="item.title" router :to="item.route">
-          <v-list-item-icon >
+        <v-list-item
+          style="color:#3fc1c9"
+          v-for="item in items"
+          :key="item.title"
+          router
+          :to="item.route"
+        >
+          <v-list-item-icon>
             <v-icon color="#364f6b">{{ item.icon }}</v-icon>
           </v-list-item-icon>
 
