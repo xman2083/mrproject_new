@@ -81,9 +81,9 @@
                 style="font-size:smaller;"
                 @click="fetchRsvData(), my_reservation_only==true?my_reservation_only=false:my_reservation_only=true"
               >
-                  내 예약&nbsp;
-                  <v-icon size="10" v-if="my_reservation_only">fas fa-circle</v-icon>
-                  <v-icon v-else size="10">far fa-circle</v-icon>
+                내 예약&nbsp;
+                <v-icon size="10" v-if="my_reservation_only">fas fa-circle</v-icon>
+                <v-icon v-else size="10">far fa-circle</v-icon>
               </v-btn>&nbsp;&nbsp;
               <!-- 내 예약 보기 -->
               <!-- <v-btn small outlined width="70" color="primary" @click="show_my_rsv_list = true">내 예약</v-btn> -->
@@ -157,7 +157,7 @@
                         1: ??? 정의 안함
                         2: 타인이 예약
                         3: 내가 예약
-                        4: 타인이 예약 (색상 회색으로 변경) -->
+                        4: 타인이 예약 (색상 회색으로 변경)-->
                         <button
                           type="button"
                           class="btn btn-block"
@@ -303,8 +303,8 @@ export default {
         edHour: 0,
         rsv_type: "",
         rsv_typedtl: "",
-        st_dt : "" ,
-        ed_dt : ""
+        st_dt: "",
+        ed_dt: ""
       },
 
       rsvorg: {
@@ -320,11 +320,11 @@ export default {
         title: "",
         content: "",
         stHour: 0,
-        edHour: 0,      
+        edHour: 0,
         rsv_type: "",
         rsv_typedtl: "",
-        st_dt : "" ,
-        ed_dt : ""
+        st_dt: "",
+        ed_dt: ""
       },
 
       // 회의실 색상 코드
@@ -349,10 +349,21 @@ export default {
     ...mapActions(["updateRsvData", "loadRoomSrc"]),
     ...mapMutations(["CLEAR_STOREDATA"], ["SET_HOLIDAY_DATA"]),
 
-    // allowedDates: val => parseInt(val.split('-')[2], 10) % 2 === 0,
-    allowedDates: val =>
-      !(new Date(val).getDay() === 0 || new Date(val).getDay() === 6),
-    // dayFormat: val => new Date(val).getDay() === 1,
+    allowedDates (val){
+
+      let today = new Date();
+      today.setDate(today.getDate()-1);
+
+     if (new Date(val) >= today){
+       return true
+      }
+      return false
+     },
+
+      // let today = new Date(this.date);
+      // today.setDate(today.getDate() + 1);
+      // this.date = today.toISOString().substr(0, 10);
+
     dateFunctionEvents(date) {
       if (this.$store.state.holiday_data.includes(date)) {
         return ["red"];
@@ -503,7 +514,7 @@ export default {
       }
     },
     // 예약 정보 저장 메소드
-    makeReservation(cell_time,ed_dt) {
+    makeReservation(cell_time, ed_dt) {
       // console.log("input rsvInput:", value);
       //예약 팝업에서 지정한 시간을 변수로 받아서 selected_time에 할당
       Object.assign(this.selected_time, cell_time);
@@ -513,7 +524,7 @@ export default {
       if (this.rsvAvailableCheck()) {
         this.rsvInput.date = this.date.replace(/\-/g, "");
         this.rsvInput.rsv_id =
-        this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
+          this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
         this.rsvInput.rsv_created = this.getTimeStamp();
 
         // 예약 팝업의 시작, 종료 시간을 받아서 rsvInput에 저장 (timeControl method로 시간표현 방식 변경)
@@ -527,7 +538,7 @@ export default {
         this.edCell = "";
         this.currCell = [];
         this.dialog = false;
-        
+
         console.log(this.rsvInput.ed_dt);
         this.clearCellData();
         this.clearSelectionData();
@@ -595,7 +606,7 @@ export default {
     },
 
     // 기존 예약 정보 수정
-    updateReservation(cell_time,ed_dt) {
+    updateReservation(cell_time, ed_dt) {
       Object.assign(this.selected_time, cell_time);
       if (this.rsvAvailableCheck()) {
         // this.updateRsvData(this.rsvInput);
