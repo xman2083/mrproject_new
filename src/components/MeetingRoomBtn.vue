@@ -216,7 +216,6 @@
         @cnclReservation="cnclReservation"
         np
         @updateReservation="updateReservation"
-        @updateRsv="updateRsv"
         @clearRsv="clearRsv"
         @timeControl="timeControl"
         @rsvAvailableCheck="rsvAvailableCheck"
@@ -237,6 +236,15 @@
     <!-- <v-dialog v-model="show_my_rsv_list">
       <my-rsv-list-form @closeMyList="show_my_rsv_list = false" :my_rsv_list="my_rsv_list"></my-rsv-list-form>
     </v-dialog>-->
+    <v-btn @click="loadingSnackBar=!loadingSnackBar">loadingSnackBar</v-btn>
+    <v-dialog v-model="loadingSnackBar" hide-overlay transition="false" persistent width="200">
+      <v-card color="#f5f5f5" dark width="200" height="50">
+        <v-card-title color="white" class="justify-center">
+          <v-progress-linear v-if="!completeSnackBar" indeterminate color="#3fc1c9" class="mb-0"></v-progress-linear>
+          <v-icon v-else style="text-align:center" size="30" color="#3fc1c9">fas fa-check-circle</v-icon>
+        </v-card-title>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -270,6 +278,8 @@ export default {
       timeTable: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
       dialog: false,
       meetingroom_info: false,
+      loadingSnackBar: false,
+      completeSnackBar: false,
       show_my_rsv_list: false,
       my_rsv_list: [],
       time_picker: false,
@@ -516,6 +526,7 @@ export default {
 
       //중복 예약 체크
       if (this.rsvAvailableCheck()) {
+        this.loadingSnackBar = true;
         this.rsvInput.date = this.date.replace(/\-/g, "");
         this.rsvInput.rsv_id =
           this.rsvInput.date + this.rsvInput.room_id + this.rsvInput.stHour;
@@ -555,21 +566,27 @@ export default {
                   type: "rsvErrorDB",
                   message: "기존 예약이 존재합니다."
                 };
+                this.loadingSnackBar = false;
                 console.log("예약 오류", response);
                 this.fetchRsvData();
               } else {
                 console.log("Reservation complete...");
                 console.log("예약 결과:", response);
                 this.fetchRsvData();
+                setTimeout(() => {
+                  this.loadingSnackBar = false;
+                  this.completeSnackBar = true;
+                }, 300);
               }
             })
             .catch(error => {
               console.log(error);
             });
-
         this.clearRsv(); //this.rsvInput = {};
       } else {
-        return console.log("예약 실패"), this.fetchRsvData();
+        console.log("예약 실패");
+        this.loadingSnackBar = false;
+        this.fetchRsvData();
       }
     },
     // 기존 예약 취소
@@ -580,7 +597,7 @@ export default {
 
       // this.deleteRsvData(this.rsvInput);
       this.dialog = false;
-
+      this.loadingSnackBar = true;
       this.clearSelectionData();
 
       RsvDataApi({
@@ -593,8 +610,13 @@ export default {
           console.log(response);
           this.clearRsv();
           this.fetchRsvData();
+          setTimeout(() => {
+            this.loadingSnackBar = false;
+            this.completeSnackBar = true;
+          }, 300);
         })
         .catch(error => {
+          this.loadingSnackBar = false;
           console.log(error);
         });
     },
@@ -605,6 +627,7 @@ export default {
       if (this.rsvAvailableCheck()) {
         // this.updateRsvData(this.rsvInput);
         console.log("updated...");
+        this.loadingSnackBar = true;
 
         console.log(cell_time);
         this.rsvInput.stHour = cell_time.st.HH + cell_time.st.mm;
@@ -626,30 +649,31 @@ export default {
                 type: "rsvUpdateErrorDB",
                 message: "기존 예약이 존재합니다."
               };
+              this.loadingSnackBar = false;
             } else {
               console.log(response);
             }
             this.fetchRsvData();
+            setTimeout(() => {
+              this.loadingSnackBar = false;
+              this.completeSnackBar = true;
+            }, 300);
           })
           .catch(error => {
             console.log(error);
           });
 
         this.dialog = false;
+        this.clearRsv();
         // this.currCell = "";
       } else {
-        return (
-          (this.unavailable_reservation = true),
-          (this.alert_detail = {
-            type: "rsvUpdateError_DB",
-            message: "기존 예약이 존재합니다."
-          })
-        );
+        this.unavailable_reservation = true;
+        this.alert_detail = {
+          type: "rsvUpdateError_DB",
+          message: "기존 예약이 존재합니다."
+        };
+        this.loadingSnackBar = false;
       }
-    },
-    // 셀을 클릭했을 때 예약이 존재하는 경우(키 값이 존재하는 경우) 해당 키값에 해당되는 예약 데이터를 불러와 예약 데이터로로 저장
-    updateRsv() {
-      this.rsvInput = this.getRsvDataStore[this.currCell[1].rsv_key];
     },
 
     clearRsv() {
@@ -1058,6 +1082,21 @@ export default {
       var today = new Date(this.date).getDay();
       var todayLabel = this.weekday[today];
       return todayLabel;
+    }
+  },
+
+  watch: {
+    loadingSnackBar(val) {
+      val &&
+        setTimeout(() => {
+          this.loadingSnackBar = false;
+        }, 3000);
+    },
+    completeSnackBar(val) {
+      val &&
+        setTimeout(() => {
+          this.completeSnackBar = false;
+        }, 500);
     }
   },
 
