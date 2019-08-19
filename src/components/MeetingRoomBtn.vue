@@ -251,7 +251,6 @@
         </v-card-title>
       </v-card>
     </v-dialog>
-    </div>
   </div>
 </template>
 
@@ -363,7 +362,7 @@ export default {
     // clearAllData,
     method() {},
 
-    ...mapActions(["updateRsvData", "loadRoomSrc"]),
+    ...mapActions(["updateRsvData", "loadRoomSrc", "GETUSER"]),
     ...mapMutations(["CLEAR_STOREDATA"], ["SET_HOLIDAY_DATA"]),
 
     allowedDates(val) {
@@ -1060,29 +1059,28 @@ export default {
     },
 
     formatDate(date) {
-      if (date){        
+      if (date) {
         let d = new Date(date);
-        let month = '' + (d.getMonth() + 1);
-        let day = '' + d.getDate();
+        let month = "" + (d.getMonth() + 1);
+        let day = "" + d.getDate();
         let year = d.getFullYear();
-        
-        if (month.length < 2) month = '0' + month;
-        if (day.length < 2) day = '0' + day; 
-        
-        return([year, month, day].join('-'));}
-      else {
+
+        if (month.length < 2) month = "0" + month;
+        if (day.length < 2) day = "0" + day;
+
+        return [year, month, day].join("-");
+      } else {
         let d = new Date();
-        let month = '' + (d.getMonth() + 1);
-        let day = '' + d.getDate();
+        let month = "" + (d.getMonth() + 1);
+        let day = "" + d.getDate();
         let year = d.getFullYear();
-        
-        if (month.length < 2) month = '0' + month;
-        if (day.length < 2) day = '0' + day; 
-        
-        return([year, month, day].join('-'));
+
+        if (month.length < 2) month = "0" + month;
+        if (day.length < 2) day = "0" + day;
+
+        return [year, month, day].join("-");
       }
     }
-
   },
   async created() {
     // console.log("created");
@@ -1113,6 +1111,10 @@ export default {
         console.log(error);
       });
     // console.log("created hook complete");
+    await this.$store.dispatch("GETUSER", {
+      tel_num: this.$store.state.user.tel_num,
+      token: this.$store.state.token
+    });
   },
 
   computed: {

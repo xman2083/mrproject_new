@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import bus from "../utils/bus.js";
+// import bus from "../utils/bus.js";
 import { setInterval, clearInterval } from "timers";
 import CountdownTimer from "./OTPTimer.vue";
 
@@ -105,7 +105,7 @@ export default {
           console.log(response);
           alert(response.data.message);
           if (response.data.statusCode == 200) {
-            bus.$emit("show:toast", response.data.message);
+            // bus.$emit("show:toast", response.data.message);
             this.$router.push("/meetingroombtn");
             this.initForm();
           }
@@ -157,7 +157,7 @@ export default {
       this.timeover = true;
       // this.initForm();
       this.btnText = "SMS 전송";
-      alert("느져쓰");
+      alert("인증 시간이 만료 되었습니다.");
     }
   },
   beforeDestroy: function() {

@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { loginUser, sendOtp } from "../api";
+import { loginUser, sendOtp, getUserData } from "../api";
 import {
   saveAuthToCookie,
   saveUserToCookie,
@@ -37,6 +37,7 @@ export default new Vuex.Store({
   },
   mutations: {
     SET_USER(state, user) {
+      // console.log(state.user, user);
       state.user = user;
     },
     SET_TOKEN(state, token) {
@@ -106,10 +107,14 @@ export default new Vuex.Store({
   actions: {
     async LOGIN({ commit }, data) {
       const response = await loginUser(data);
+      // alert("login data:", response.data.user);
       if (response.data.statusCode == 200) {
         commit("SET_USER", response.data.user);
         commit("SET_TOKEN", response.data.token);
-        saveUserToCookie(JSON.stringify(response.data.user));
+        let user_cookie = {};
+        user_cookie["user_id"] = response.data.user.user_id;
+        user_cookie["tel_num"] = response.data.user.tel_num;
+        saveUserToCookie(JSON.stringify(user_cookie));
         saveAuthToCookie(response.data.token);
       }
       return response;
@@ -121,6 +126,18 @@ export default new Vuex.Store({
     loadRoomSrc(state, roomsrc) {
       console.log("(store) >> loadRoomSrc commit...");
       state.commit("LOAD_ROOMDATA", roomsrc);
+    },
+    async GETUSER({ commit }, data) {
+      const response = await getUserData(data);
+      console.log("user data:", response);
+      if (response.data.statusCode == 200) {
+        let user = {};
+        user["user_id"] = response.data.user[0][0];
+        user["user_name"] = response.data.user[0][1];
+        user["tel_num"] = response.data.user[0][2];
+        user["user_team"] = response.data.user[0][3];
+        commit("SET_USER", user);
+      }
     },
   },
 });

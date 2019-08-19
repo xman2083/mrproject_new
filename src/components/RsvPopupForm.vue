@@ -550,6 +550,7 @@ export default {
         required: value => !!value || "필수입력 사항입니다.",
         counter: value => value.length <= 25 || "최대 25자까지 입력가능합니다."
       },
+      
       items: [{ text: "매일", value: 0 }, { text: "매주", value: 1 }],
       day:[
         { text: "월", value: 2 },
