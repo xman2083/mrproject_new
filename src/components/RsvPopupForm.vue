@@ -97,26 +97,143 @@
             <v-text-field color="#fc5185" label="회의 내용" v-model="rsvInput.content" clearable></v-text-field>
           </v-flex>
           <v-checkbox xs4 sm6 d-flex v-model="checkbox" label="반복 예약"></v-checkbox>
-          <div>&nbsp; &nbsp;</div>
-          <v-flex xs8 sm6 d-flex>
-            <v-select v-if="checkbox" v-model="rsvInput.rsv_type" :items="items"></v-select>
-          </v-flex>
-          <v-col cols="12" sm="6">
-            <v-select
-              v-if="this.rsvInput.rsv_type === 1"
+          
+          <v-expansion-panels v-if="checkbox">
+            <v-expansion-panel>
+             <v-expansion-panel-header v-slot="{ open }">
+              <v-row no-gutters>
+                <v-col cols="4">반복주기</v-col>
+              </v-row>
+             </v-expansion-panel-header>
+           <v-expansion-panel-content>
+             <v-row no-gutters>
+              <v-col cols="5">
+              <v-select
+              v-if="checkbox" 
+              v-model="rsvInput.rsv_type"
+              :items="rept_rsv.items"
+              chips
+              flat
+              solo
+              ></v-select>
+              </v-col>
+              
+              <v-divider
+                vertical
+                class="sm-4"
+              ></v-divider>
+
+              <v-col cols="6">
+              <v-select
+              v-if="this.rsvInput.rsv_type === 1 && checkbox"
               v-model="rsvInput.rsv_typedtl"
               deletable-chips
-              :items="day"
-              attach
+              :items="rept_rsv.day"
               chips
-              label="반복주기"
+              flat
+              solo
               multiple
             ></v-select>
+            </v-col>
+            </v-row>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <v-expansion-panel>
+          <v-expansion-panel-header v-slot="{ open }">
+            <v-row no-gutters>
+            <v-col cols="4">종료일</v-col>
+            <v-col
+              cols="8"
+              class="text--secondary"
+            >
+            <v-fade-transition leave-absolute>
+              <span v-if="open">종료일자를 선택해주세요</span>
+              <v-row
+                v-else
+                no-gutters
+                style="width: 100%"
+              >
+                <v-col cols="6">시작일: {{ date || 'Not set' }}</v-col>
+                <v-col cols="6">종료일: {{ rsvInput.ed_dt || 'Not set' }}</v-col>
+              </v-row>
+            </v-fade-transition>
+          </v-col>
+        </v-row>
+      </v-expansion-panel-header>
+      <v-expansion-panel-content>
+        <v-row
+          justify="space-around"
+          no-gutters
+        >
+          <v-col cols="6">
+            <v-menu
+              ref="startMenu"
+              :close-on-content-click="false"
+              :return-value.sync="date"
+              offset-y
+              full-width
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-model="date"
+                  label="시작일"
+                  prepend-icon="event"
+                  disabled
+                  v-on="on"
+                ></v-text-field>
+              </template>
+            </v-menu>
           </v-col>
 
-          <small>*필수 입력 사항 입니다.</small>
-        </v-layout>
-
+          <v-col cols="6">
+            <v-menu
+              ref="endMenu"
+              :close-on-content-click="false"
+              :return-value.sync="rsvInput.ed_dt"
+              offset-y
+              full-width
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-model="rsvInput.ed_dt"
+                  label="종료일"
+                  prepend-icon="event"
+                  readonly
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="rsvInput.ed_dt"
+                no-title
+                scrollable
+              >
+                <v-spacer></v-spacer>
+                <v-btn
+                  text
+                  color="primary"
+                  @click="$refs.endMenu.isActive = false"
+                >
+                  Cancel
+                </v-btn>
+                <v-btn
+                  text
+                  color="primary"
+                  @click="$refs.endMenu.save(date)"
+                >
+                  OK
+                </v-btn>
+                  </v-date-picker>
+                  </v-menu>
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-layout>
+       <small>*필수 입력 사항 입니다.</small>
         <!-- 해당 시간에 예약이 되어 있는 경우 -->
         <v-layout v-if="reserved === true" wrap>
           <v-flex xs3>
@@ -212,7 +329,7 @@
           </v-flex>
           <v-checkbox v-model="checkbox" :label="`반복예약`"></v-checkbox>
           <v-flex xs12 sm6 d-flex>
-            <v-select v-if="checkbox" v-model="rsvInput.rsv_type" :items="items"></v-select>
+            <v-select v-if="checkbox" v-model="rsvInput.rsv_type" :items="rept_rsv.items"></v-select>
           </v-flex>
           <small v-if="owner">*필수 입력 사항 입니다.</small>
         </v-layout>
@@ -265,16 +382,20 @@ export default {
         required: value => !!value || "필수입력 사항입니다.",
         counter: value => value.length <= 25 || "최대 25자까지 입력가능합니다."
       },
-      items: [{ text: "매일", value: 0 }, { text: "매주", value: 1 }],
-      day: [
+      rept_rsv: {
+        items: [{ text: "매일", value: 0 }, { text: "매주", value: 1 }],
+        day:[
         { text: "월", value: 0 },
         { text: "화", value: 1 },
         { text: "수", value: 2 },
         { text: "목", value: 3 },
         { text: "금", value: 4 }
       ],
+        st_dt: null,
+        ed_dt: null
+      },
       checkbox: false,
-      menu: false
+      default_type: {text:"매주",value:1}
     };
   },
   props: [
