@@ -525,7 +525,7 @@ export default {
       }
     },
     // 예약 정보 저장 메소드
-    makeReservation(cell_time, ed_dt) {
+    makeReservation(cell_time, rept_rsv) {
       // console.log("input rsvInput:", value);
       //예약 팝업에서 지정한 시간을 변수로 받아서 selected_time에 할당
       console.log("received cell_time:", cell_time);
@@ -546,7 +546,10 @@ export default {
         console.log("makeRsv:", this.rsvInput.stHour, this.rsvInput.edHour);
 
         this.rsvInput.floor_id = this.room_indx;
-        this.rsvInput.ed_dt = ed_dt;
+        this.rsvInput.st_dt = rept_rsv.st_dt;
+        this.rsvInput.ed_dt = rept_rsv.ed_dt;
+        this.rsvInput.rsv_type = rept_rsv.rsv_type;
+        this.rsvInput.rsv_typedtl = rept_rsv.rsv_typedtl;
         // this.stCell = "";
         // this.edCell = "";
         // this.currCell = [];
@@ -712,8 +715,10 @@ export default {
         content: "",
         stHour: 0,
         edHour: 0,
-        stTm: "",
-        edTm: ""
+        rsv_type: "",
+        rsv_typedtl: "",
+        st_dt: "",
+        ed_dt: ""
       };
     },
     //셀을 초기화 (예약 정보 및 테두리 css 값 초기화)

@@ -96,13 +96,28 @@
           <v-flex xs12 sm12 md12>
             <v-text-field color="#fc5185" label="회의 내용" v-model="rsvInput.content" clearable></v-text-field>
           </v-flex>
-          <v-checkbox xs4 sm6 d-flex v-model="checkbox" label="반복 예약"></v-checkbox>
+          <v-checkbox xs4 sm6 d-flex v-model="checkbox" v-on:change="onRept" label="반복 예약"></v-checkbox>
           
           <v-expansion-panels v-if="checkbox">
             <v-expansion-panel>
              <v-expansion-panel-header v-slot="{ open }">
               <v-row no-gutters>
                 <v-col cols="4">반복주기</v-col>
+                <v-col
+                cols="8"
+                class="text--secondary"
+                 >
+                <v-fade-transition leave-absolute>
+                  <span v-if="open"  >반복주기를 선택해주세요</span>
+                  <v-row
+                    v-else
+                    no-gutters
+                    style="width: 100%"
+                  >
+                    <v-col cols="6">{{ items[rept_gbn].text || 'Not set' }}</v-col>
+                  </v-row>
+                </v-fade-transition>
+               </v-col>
               </v-row>
              </v-expansion-panel-header>
            <v-expansion-panel-content>
@@ -110,13 +125,15 @@
               <v-col cols="5">
               <v-select
               v-if="checkbox" 
-              v-model="rsvInput.rsv_type"
-              :items="rept_rsv.items"
+              v-model="rept_gbn"
+              :items="items"
               chips
               flat
               solo
+              v-on:change="onChgReptType"
               ></v-select>
               </v-col>
+              
               
               <v-divider
                 vertical
@@ -125,10 +142,10 @@
 
               <v-col cols="6">
               <v-select
-              v-if="this.rsvInput.rsv_type === 1 && checkbox"
-              v-model="rsvInput.rsv_typedtl"
+              v-if="this.rept_rsv.rsv_type === 1 && checkbox"
+              v-model="rept_rsv.rsv_typedtl"
               deletable-chips
-              :items="rept_rsv.day"
+              :items="day"
               chips
               flat
               solo
@@ -154,8 +171,8 @@
                 no-gutters
                 style="width: 100%"
               >
-                <v-col cols="6">시작일: {{ date || 'Not set' }}</v-col>
-                <v-col cols="6">종료일: {{ rsvInput.ed_dt || 'Not set' }}</v-col>
+                <v-col cols="6">시작일: {{ rept_rsv.st_dt || 'Not set' }}</v-col>
+                <v-col cols="6">종료일: {{ rept_rsv.ed_dt || 'Not set' }}</v-col>
               </v-row>
             </v-fade-transition>
           </v-col>
@@ -170,14 +187,14 @@
             <v-menu
               ref="startMenu"
               :close-on-content-click="false"
-              :return-value.sync="date"
+              :return-value.sync="rept_rsv.st_dt"
               offset-y
               full-width
               min-width="290px"
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
-                  v-model="date"
+                  v-model="rept_rsv.st_dt"
                   label="시작일"
                   prepend-icon="event"
                   disabled
@@ -198,7 +215,7 @@
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
-                  v-model="rsvInput.ed_dt"
+                  v-model="rept_rsv.ed_dt"
                   label="종료일"
                   prepend-icon="event"
                   readonly
@@ -206,7 +223,7 @@
                 ></v-text-field>
               </template>
               <v-date-picker
-                v-model="rsvInput.ed_dt"
+                v-model="rept_rsv.ed_dt"
                 no-title
                 scrollable
               >
@@ -221,7 +238,7 @@
                 <v-btn
                   text
                   color="primary"
-                  @click="$refs.endMenu.save(date)"
+                  @click="$refs.endMenu.save(rept_rsv.ed_dt)"
                 >
                   OK
                 </v-btn>
@@ -329,7 +346,7 @@
           </v-flex>
           <v-checkbox v-model="checkbox" :label="`반복예약`"></v-checkbox>
           <v-flex xs12 sm6 d-flex>
-            <v-select v-if="checkbox" v-model="rsvInput.rsv_type" :items="rept_rsv.items"></v-select>
+            <v-select v-if="checkbox" v-model="rept_rsv.rsv_type" :items="items"></v-select>
           </v-flex>
           <small v-if="owner">*필수 입력 사항 입니다.</small>
         </v-layout>
@@ -382,20 +399,22 @@ export default {
         required: value => !!value || "필수입력 사항입니다.",
         counter: value => value.length <= 25 || "최대 25자까지 입력가능합니다."
       },
-      rept_rsv: {
-        items: [{ text: "매일", value: 0 }, { text: "매주", value: 1 }],
-        day:[
+      items: [{ text: "매일", value: 0 }, { text: "매주", value: 1 }],
+      day:[
         { text: "월", value: 0 },
         { text: "화", value: 1 },
         { text: "수", value: 2 },
         { text: "목", value: 3 },
         { text: "금", value: 4 }
       ],
+      rept_rsv: {
+        rsv_type: "",
+        rsv_typedtl: "",
         st_dt: null,
-        ed_dt: null
+        ed_dt: '9999-12-31'
       },
+      rept_gbn: 0,
       checkbox: false,
-      default_type: {text:"매주",value:1}
     };
   },
   props: [
@@ -418,15 +437,16 @@ export default {
 
   methods: {
     makeReservation() {
-      this.$emit("makeReservation", this.cell_time);
+      this.$emit("makeReservation", this.cell_time,this.rept_rsv);
     },
     cnclReservation() {
       this.$emit("cnclReservation");
     },
     updateReservation() {
-      this.$emit("updateReservation", this.cell_time);
+      this.$emit("updateReservation", this.cell_time,this.rept_rsv);
     },
     closeDialog() {
+     
       this.checkbox = false;
       (this.select = ""), this.$emit("closeDialog");
       this.$emit("clearRsv");
@@ -440,6 +460,51 @@ export default {
     // timePicker(status) {
     //   this.$emit("timePicker", status);
     // }
+    ,onChgReptType() {
+      this.rept_rsv.rsv_type = this.rept_gbn;
+    },
+    onRept() {
+      if (this.checkbox) {
+        this.rept_rsv.rsv_type = this.rept_gbn;
+        this.rept_rsv.st_dt = this.date;
+      }
+      else {
+        this.clearRept();
+      }
+    },
+    clearRept() {
+      this.ept_rsv = {
+        rsv_type: "",
+        rsv_typedtl: "",
+        st_dt: null,
+        ed_dt: '9999-12-31'
+      };
+    },
+
+    formatDate(date) {
+      if (date){        
+        let d = new Date(date);
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        let year = d.getFullYear();
+        
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day; 
+        
+        return([year, month, day].join('-'));}
+      else {
+        let d = new Date();
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        let year = d.getFullYear();
+        
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day; 
+        
+        return([year, month, day].join('-'));
+      }
+    }
+    
   },
   beforeUpdate() {
     this.owner = false;
