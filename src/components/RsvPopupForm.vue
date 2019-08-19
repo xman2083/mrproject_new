@@ -12,6 +12,7 @@
         style="color:grey !important;"
       >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
       <span class="grey--text subtitle-1">{{this.date}}</span>
+      {{cell_time}}
     </v-card-title>
 
     <v-divider style="margin:0px;"></v-divider>
@@ -352,11 +353,7 @@ export default {
         this.$emit("clearRsv");
       }
     });
-  },
-  computed: {
-    ...mapGetters(["getRsvDataStore"])
-  },
-  created() {}
+  }
 };
 </script>
 
