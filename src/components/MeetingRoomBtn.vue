@@ -251,8 +251,6 @@
         </v-card-title>
       </v-card>
     </v-dialog>
-    <div>
-      <span style="font-size:10pt; color:grey;">{{ new Date().toISOString().substr(0, 19)}}</span>
     </div>
   </div>
 </template>
@@ -279,7 +277,7 @@ export default {
       my_reservation_only: false,
       renderKey: 0,
       rsvDataRes: {},
-      date: new Date().toISOString().substr(0, 10),
+      date: this.formatDate(),
       menu: false,
       modal: false,
       unavailable_reservation: false,
@@ -384,7 +382,7 @@ export default {
       return false;
     },
     setToday() {
-      this.date = new Date().toISOString().substr(0, 10);
+      this.date = this.formatDate();
       this.fetchRsvData();
     },
     // 현재 시간을 출력
@@ -756,7 +754,7 @@ export default {
 
       let today = new Date();
       today.setDate(today.getDate());
-      today = today.toISOString().substr(0, 10);
+      today = this.formatDate();
       // console.log("check this", this.date, today);
 
       if (this.date < today) {
@@ -827,13 +825,13 @@ export default {
     dateDecrement() {
       let today = new Date(this.date);
       today.setDate(today.getDate() - 1);
-      this.date = today.toISOString().substr(0, 10);
+      this.date = this.formatDate(today);
       this.fetchRsvData();
     },
     dateIncrement() {
       let today = new Date(this.date);
       today.setDate(today.getDate() + 1);
-      this.date = today.toISOString().substr(0, 10);
+      this.date = this.formatDate(today);
       this.fetchRsvData();
     },
     //예약 안내 팝업에서 시작/종료 시각을 증감하는 메소드
@@ -1054,7 +1052,32 @@ export default {
         }
       }
       return rsrt;
+    },
+
+    formatDate(date) {
+      if (date){        
+        let d = new Date(date);
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        let year = d.getFullYear();
+        
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day; 
+        
+        return([year, month, day].join('-'));}
+      else {
+        let d = new Date();
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        let year = d.getFullYear();
+        
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day; 
+        
+        return([year, month, day].join('-'));
+      }
     }
+
   },
   async created() {
     console.log("created");

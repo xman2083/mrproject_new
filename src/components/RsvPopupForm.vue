@@ -12,7 +12,6 @@
         style="color:grey !important;"
       >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
       <span class="grey--text subtitle-1">{{this.date}}</span>
-      {{ rsvInput.rsv_id}}
     </v-card-title>
 
     <v-divider style="margin:0px;"></v-divider>
