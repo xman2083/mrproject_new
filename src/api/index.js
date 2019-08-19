@@ -113,6 +113,15 @@ function getRoomData(data) {
   }
 }
 
+function getUserData(data) {
+  try {
+    return rsv.post("getuserdata", JSON.stringify(data));
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
 export {
   loginUser,
   sendOtp,
@@ -121,4 +130,5 @@ export {
   getRoomData,
   getMenuData,
   getHolidayData,
+  getUserData,
 };

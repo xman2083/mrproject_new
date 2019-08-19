@@ -157,7 +157,7 @@ export default {
       this.timeover = true;
       // this.initForm();
       this.btnText = "SMS 전송";
-      alert("느져쓰");
+      alert("인증 시간이 만료 되었습니다.");
     }
   },
   beforeDestroy: function() {
