@@ -97,7 +97,13 @@ function signupUser(data) {
 //예약 정보 API
 function RsvDataApi(data) {
   try {
-    return rsv.post("repeated-rsv", JSON.stringify(data));
+    console.log(data)
+    if (data.rsvdata.rsv_type == null) {
+      return rsv.post("repeated-rsv", JSON.stringify(data));
+    }
+    else {
+      return rsv.post("managersvrptdata", JSON.stringify(data));
+    }
   } catch (error) {
     console.log(error);
     return error;

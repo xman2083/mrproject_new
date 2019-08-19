@@ -546,8 +546,8 @@ export default {
         console.log("makeRsv:", this.rsvInput.stHour, this.rsvInput.edHour);
 
         this.rsvInput.floor_id = this.room_indx;
-        this.rsvInput.st_dt = rept_rsv.st_dt;
-        this.rsvInput.ed_dt = rept_rsv.ed_dt;
+        this.rsvInput.st_dt = rept_rsv.st_dt.replace(/\-/g, "");
+        this.rsvInput.ed_dt = rept_rsv.ed_dt.replace(/\-/g, "");
         this.rsvInput.rsv_type = rept_rsv.rsv_type;
         this.rsvInput.rsv_typedtl = rept_rsv.rsv_typedtl;
         // this.stCell = "";
