@@ -239,7 +239,14 @@
     <v-dialog v-model="loadingSnackBar" hide-overlay transition="false" persistent width="200">
       <v-card color="#f5f5f5" dark width="200" height="50">
         <v-card-title color="white" class="justify-center">
-          <v-progress-linear v-if="!completeSnackBar" indeterminate color="#3fc1c9" class="mb-0"></v-progress-linear>
+          <v-progress-linear
+            v-if="!completeSnackBar"
+            indeterminate
+            color="#3fc1c9"
+            height="6"
+            rounded
+            class="mb-0"
+          ></v-progress-linear>
           <v-icon v-else style="text-align:center" size="30" color="#3fc1c9">fas fa-check-circle</v-icon>
         </v-card-title>
       </v-card>
@@ -579,7 +586,7 @@ export default {
               setTimeout(() => {
                 this.loadingSnackBar = false;
                 this.completeSnackBar = true;
-              }, 300);
+              }, 500);
               this.stCell = "";
               this.edCell = "";
               this.currCell = [];
@@ -629,7 +636,7 @@ export default {
           setTimeout(() => {
             this.loadingSnackBar = false;
             this.completeSnackBar = true;
-          }, 300);
+          }, 500);
         })
         .catch(error => {
           this.loadingSnackBar = false;
@@ -673,7 +680,7 @@ export default {
             setTimeout(() => {
               this.loadingSnackBar = false;
               this.completeSnackBar = true;
-            }, 300);
+            }, 500);
           })
           .catch(error => {
             console.log(error);
@@ -773,16 +780,17 @@ export default {
         for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
           if (this.rooms[this.room_indx][i].room_id === this.rsvInput.room_id) {
             room_check = this.rooms[this.room_indx][i];
-            console.log(room_check)
+            console.log(room_check);
           }
         }
         for (var x = 0; x < 24; x++) {
           if (
             this.rsvInput.stHour <= room_check.hours[x].index &&
             room_check.hours[x].index <=
-              this.timeControl(this.rsvInput.edHour, "sub") && room_check.hours[x].rsv_id &&
-            room_check.hours[x].rsv_id != rsv_id && 
-            this.rsvInput.telNum.replace(/\-/g, "") != 
+              this.timeControl(this.rsvInput.edHour, "sub") &&
+            room_check.hours[x].rsv_id &&
+            room_check.hours[x].rsv_id != rsv_id &&
+            this.rsvInput.telNum.replace(/\-/g, "") !=
               this.$store.state.user.tel_num
           ) {
             this.unavailable_reservation = true;
