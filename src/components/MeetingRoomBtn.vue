@@ -1080,7 +1080,7 @@ export default {
 
   },
   async created() {
-    console.log("created");
+    // console.log("created");
     this.fetchRsvData(
       await this.createRoom(
         await this.loadRoomSrc(
@@ -1107,7 +1107,7 @@ export default {
       .catch(error => {
         console.log(error);
       });
-    console.log("created hook complete");
+    // console.log("created hook complete");
   },
 
   computed: {
@@ -1134,7 +1134,7 @@ export default {
   },
 
   mounted() {
-    console.log("mounted");
+    // console.log("mounted");
     // ID가 modal인 엘리먼트가 호출될 경우 백 버튼 기능 비활성화
     history.pushState(null, null, location.href);
     window.onpopstate = function() {
@@ -1147,7 +1147,7 @@ export default {
   },
 
   beforeUpdate() {
-    console.log("beforeUpadate");
+    // console.log("beforeUpadate");
   }
 };
 /*

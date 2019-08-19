@@ -323,7 +323,7 @@ export default {
   beforeUpdate() {
     this.owner = false;
     // console.log(this.currCell);
-    console.log("RsvPopupForm >> beforeUpdate");
+    // console.log("RsvPopupForm >> beforeUpdate");
     if (this.dialog) {
       if (
         this.currCell[1].reserved === 2 ||
@@ -344,7 +344,7 @@ export default {
   },
   mounted() {
     Object.assign(this.cell_time, this.selected_time);
-    console.log("RsvPopupForm >> mounted");
+    // console.log("RsvPopupForm >> mounted");
     // Close modal with 'esc' key
     document.addEventListener("keydown", e => {
       if (e.keyCode == 27) {
