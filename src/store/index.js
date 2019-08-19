@@ -129,12 +129,13 @@ export default new Vuex.Store({
     },
     async GETUSER({ commit }, data) {
       const response = await getUserData(data);
-      // console.log("user data:", response);
+      console.log("user data:", response);
       if (response.data.statusCode == 200) {
         let user = {};
         user["user_id"] = response.data.user[0][0];
         user["user_name"] = response.data.user[0][1];
         user["tel_num"] = response.data.user[0][2];
+        user["user_team"] = response.data.user[0][3];
         commit("SET_USER", user);
       }
     },
