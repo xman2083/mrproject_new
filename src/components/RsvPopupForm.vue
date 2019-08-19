@@ -12,7 +12,6 @@
         style="color:grey !important;"
       >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
       <span class="grey--text subtitle-1">{{this.date}}</span>
-      {{cell_time}}
     </v-card-title>
 
     <v-divider style="margin:0px;"></v-divider>
@@ -438,16 +437,14 @@ export default {
     rsvAvailableCheck() {
       this.$emit("rsvAvailableCheck");
     }
-
     // timePicker(status) {
     //   this.$emit("timePicker", status);
     // }
   },
   beforeUpdate() {
-    Object.assign(this.cell_time, this.selected_time);
     this.owner = false;
-    console.log(this.currCell);
-    console.log("RsvPopupForm >> beforeUpdate");
+    // console.log(this.currCell);
+    // console.log("RsvPopupForm >> beforeUpdate");
     if (this.dialog) {
       if (
         this.currCell[1].reserved === 2 ||
@@ -467,6 +464,8 @@ export default {
     }
   },
   mounted() {
+    Object.assign(this.cell_time, this.selected_time);
+    // console.log("RsvPopupForm >> mounted");
     // Close modal with 'esc' key
     document.addEventListener("keydown", e => {
       if (e.keyCode == 27) {
@@ -474,6 +473,11 @@ export default {
         this.$emit("clearRsv");
       }
     });
+  },
+  watch: {
+    dialog() {
+      Object.assign(this.cell_time, this.selected_time);
+    }
   }
 };
 </script>

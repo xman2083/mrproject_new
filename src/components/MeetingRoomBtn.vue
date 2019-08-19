@@ -239,13 +239,18 @@
     <v-dialog v-model="loadingSnackBar" hide-overlay transition="false" persistent width="200">
       <v-card color="#f5f5f5" dark width="200" height="50">
         <v-card-title color="white" class="justify-center">
-          <v-progress-linear v-if="!completeSnackBar" indeterminate color="#3fc1c9" class="mb-0"></v-progress-linear>
+          <v-progress-linear
+            v-if="!completeSnackBar"
+            indeterminate
+            color="#3fc1c9"
+            height="6"
+            rounded
+            class="mb-0"
+          ></v-progress-linear>
           <v-icon v-else style="text-align:center" size="30" color="#3fc1c9">fas fa-check-circle</v-icon>
         </v-card-title>
       </v-card>
     </v-dialog>
-    <div>
-      <span style="font-size:10pt; color:grey;">{{ new Date().toISOString().substr(0, 19)}}</span>
     </div>
   </div>
 </template>
@@ -272,7 +277,7 @@ export default {
       my_reservation_only: false,
       renderKey: 0,
       rsvDataRes: {},
-      date: new Date().toISOString().substr(0, 10),
+      date: this.formatDate(),
       menu: false,
       modal: false,
       unavailable_reservation: false,
@@ -377,7 +382,7 @@ export default {
       return false;
     },
     setToday() {
-      this.date = new Date().toISOString().substr(0, 10);
+      this.date = this.formatDate();
       this.fetchRsvData();
     },
     // 현재 시간을 출력
@@ -407,12 +412,12 @@ export default {
       this.rsvInput.telNum = this.$store.state.user.tel_num;
       this.currRoom = room;
       this.currCell = [room, hour];
-      console.log("cellClick", this.currCell);
-      console.log(hour.rsv_key);
+      console.log("cellClick:", this.currCell);
+      // console.log("rsv_id:", hour.rsv_id);
 
-      // 선택한 셀이 예약 상태인 경우 해당 rsv_key를 기준으로 예약 정보를 찾아서 rsvInput에 입력
+      // 선택한 셀이 예약 상태인 경우 해당 rsv_id를 기준으로 예약 정보를 찾아서 rsvInput에 입력
       if (hour.reserved === 2 || hour.reserved === 3 || hour.reserved === 4) {
-        var rsv = this.findRsvData(hour.rsv_key);
+        var rsv = this.findRsvData(hour.rsv_id);
         this.rsvInput.room_id = rsv[0];
         this.rsvInput.title = rsv[1];
         this.rsvInput.content = rsv[2];
@@ -579,7 +584,7 @@ export default {
               setTimeout(() => {
                 this.loadingSnackBar = false;
                 this.completeSnackBar = true;
-              }, 300);
+              }, 500);
               this.stCell = "";
               this.edCell = "";
               this.currCell = [];
@@ -629,7 +634,7 @@ export default {
           setTimeout(() => {
             this.loadingSnackBar = false;
             this.completeSnackBar = true;
-          }, 300);
+          }, 500);
         })
         .catch(error => {
           this.loadingSnackBar = false;
@@ -640,7 +645,7 @@ export default {
     // 기존 예약 정보 수정
     updateReservation(cell_time, ed_dt) {
       Object.assign(this.selected_time, cell_time);
-      if (this.rsvAvailableCheck()) {
+      if (this.rsvAvailableCheck(this.rsvInput.rsv_id)) {
         // this.updateRsvData(this.rsvInput);
         console.log("updated...");
         this.loadingSnackBar = true;
@@ -673,7 +678,7 @@ export default {
             setTimeout(() => {
               this.loadingSnackBar = false;
               this.completeSnackBar = true;
-            }, 300);
+            }, 500);
           })
           .catch(error => {
             console.log(error);
@@ -718,7 +723,7 @@ export default {
           e.reserved = 0;
           e.border_right = "false";
           e.border_left = "false";
-          e.rsv_key = "";
+          e.rsv_id = "";
         });
       }
     },
@@ -732,7 +737,8 @@ export default {
       }
     },
     // 예약 가능한 상태인지 조회 (가능: true / 불가능: false 리턴)
-    rsvAvailableCheck() {
+    rsvAvailableCheck(rsv_id) {
+      console.log("rsv_id:", rsv_id);
       let stHour = this.timeControl(this.selected_time.st, "get");
       let edHour = this.timeControl(this.selected_time.et, "get");
       // console.log("selected_time:", this.selected_time);
@@ -748,7 +754,7 @@ export default {
 
       let today = new Date();
       today.setDate(today.getDate());
-      today = today.toISOString().substr(0, 10);
+      today = this.formatDate();
       // console.log("check this", this.date, today);
 
       if (this.date < today) {
@@ -772,24 +778,28 @@ export default {
         for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
           if (this.rooms[this.room_indx][i].room_id === this.rsvInput.room_id) {
             room_check = this.rooms[this.room_indx][i];
+            console.log(room_check);
           }
         }
         for (var x = 0; x < 24; x++) {
           if (
             this.rsvInput.stHour <= room_check.hours[x].index &&
             room_check.hours[x].index <=
-              this.timeControl(this.rsvInput.edHour, "sub")
+              this.timeControl(this.rsvInput.edHour, "sub") &&
+            room_check.hours[x].rsv_id &&
+            room_check.hours[x].rsv_id != rsv_id &&
+            this.rsvInput.telNum.replace(/\-/g, "") !=
+              this.$store.state.user.tel_num
           ) {
             this.unavailable_reservation = true;
             this.alert_detail = {
               type: "rsvErrorFront",
-              message: "기존 예약이 존재합니다."
+              message: "!!!!기존 예약이 존재합니다."
             };
             return false;
           }
         }
       }
-
       return true;
     },
 
@@ -815,13 +825,13 @@ export default {
     dateDecrement() {
       let today = new Date(this.date);
       today.setDate(today.getDate() - 1);
-      this.date = today.toISOString().substr(0, 10);
+      this.date = this.formatDate(today);
       this.fetchRsvData();
     },
     dateIncrement() {
       let today = new Date(this.date);
       today.setDate(today.getDate() + 1);
-      this.date = today.toISOString().substr(0, 10);
+      this.date = this.formatDate(today);
       this.fetchRsvData();
     },
     //예약 안내 팝업에서 시작/종료 시각을 증감하는 메소드
@@ -921,7 +931,7 @@ export default {
                 user_name: "",
                 border_right: false,
                 border_left: false,
-                rsv_key: ""
+                rsv_id: ""
               }))
           }))
         );
@@ -986,7 +996,7 @@ export default {
         var stHour = rsv_data[3];
         var edHour = this.timeControl(rsv_data[4], "sub");
         var rsv_date = rsv_data[5];
-        var rsv_key = rsv_data[6];
+        var rsv_id = rsv_data[6];
         var user_name = rsv_data[8];
         var telNum = rsv_data[9];
         if (telNum === this.$store.state.user.tel_num) {
@@ -1022,7 +1032,7 @@ export default {
                 e.reserved = 4;
               }
               // e.reserved = 2;
-              e.rsv_key = rsv_key;
+              e.rsv_id = rsv_id;
               e.st_index = stHour;
               e.ed_index = edHour;
               e.user_name = user_name;
@@ -1042,10 +1052,35 @@ export default {
         }
       }
       return rsrt;
+    },
+
+    formatDate(date) {
+      if (date){        
+        let d = new Date(date);
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        let year = d.getFullYear();
+        
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day; 
+        
+        return([year, month, day].join('-'));}
+      else {
+        let d = new Date();
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        let year = d.getFullYear();
+        
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day; 
+        
+        return([year, month, day].join('-'));
+      }
     }
+
   },
   async created() {
-    console.log("created");
+    // console.log("created");
     this.fetchRsvData(
       await this.createRoom(
         await this.loadRoomSrc(
@@ -1072,7 +1107,7 @@ export default {
       .catch(error => {
         console.log(error);
       });
-    console.log("created hook complete");
+    // console.log("created hook complete");
   },
 
   computed: {
@@ -1099,7 +1134,7 @@ export default {
   },
 
   mounted() {
-    console.log("mounted");
+    // console.log("mounted");
     // ID가 modal인 엘리먼트가 호출될 경우 백 버튼 기능 비활성화
     history.pushState(null, null, location.href);
     window.onpopstate = function() {
@@ -1112,7 +1147,7 @@ export default {
   },
 
   beforeUpdate() {
-    console.log("beforeUpadate");
+    // console.log("beforeUpadate");
   }
 };
 /*
