@@ -98,7 +98,7 @@ function signupUser(data) {
 function RsvDataApi(data) {
   try {
     console.log(data)
-    if (data.rsvdata.rsv_type == null) {
+    if (data.rsvdata.rsv_type == 0 || data.rsvdata.rsv_type == 1) {
       return rsv.post("repeated-rsv", JSON.stringify(data));
     }
     else {
