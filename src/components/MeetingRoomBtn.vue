@@ -1107,6 +1107,10 @@ export default {
         console.log(error);
       });
     // console.log("created hook complete");
+    await this.$store.dispatch("GETUSER", {
+      tel_num: this.$store.state.user.tel_num,
+      token: this.$store.state.token
+    });
   },
 
   computed: {
