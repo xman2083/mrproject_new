@@ -97,11 +97,10 @@ function signupUser(data) {
 //예약 정보 API
 function RsvDataApi(data) {
   try {
-    console.log(data)
+    console.log(data);
     if (data.rsvdata.rsv_type == null) {
       return rsv.post("repeated-rsv", JSON.stringify(data));
-    }
-    else {
+    } else {
       return rsv.post("managersvrptdata", JSON.stringify(data));
     }
   } catch (error) {
@@ -128,6 +127,15 @@ function getUserData(data) {
   }
 }
 
+function getMyRsvData(data) {
+  try {
+    return rsv.post("getmyrsvdata", JSON.stringify(data));
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
 export {
   loginUser,
   sendOtp,
@@ -137,4 +145,5 @@ export {
   getMenuData,
   getHolidayData,
   getUserData,
+  getMyRsvData,
 };

@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title>나의 예약 리스트</v-card-title>
+    <!-- <v-card-title>나의 예약 리스트</v-card-title>
     <v-subheader>REPORTS</v-subheader>
     <v-list-item-group v-model="item" color="primary">
       <v-list-item v-for="(item, i) in my_rsv_list" :key="i">
@@ -18,7 +18,7 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn color="indigo" dark @click="closePopup">닫기</v-btn>
-    </v-card-actions>
+    </v-card-actions>-->
     <!-- 
         this.rsvInput.title = rsv[1];
         this.rsvInput.content = rsv[2];
@@ -31,25 +31,38 @@
         this.rsvInput.date = rsv[5];
         this.rsvInput.room_id = rsv[0];
     -->
+    <span>my rsv :</span>
+    <v-btn @click="fetch">click</v-btn>
+    {{ this.$store.state.myrsv }}
   </v-card>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapActions } from "vuex";
 export default {
-  props: ["my_rsv_list"],
   methods: {
-    closePopup() {
-      this.$emit("closeMyList");
+    ...mapMutations(["SET_TODAY"]),
+    formatDate() {
+      let d = new Date();
+      let month = "" + (d.getMonth() + 1);
+      let day = "" + d.getDate();
+      let year = d.getFullYear();
+
+      if (month.length < 2) month = "0" + month;
+      if (day.length < 2) day = "0" + day;
+
+      return [year, month, day].join("");
+    },
+
+    async fetch() {
+      let date = await this.formatDate();
+      await this.SET_TODAY(date);
+      this.$store.dispatch("GETMYRSV", {
+        tel_num: this.$store.state.user.tel_num,
+        token: this.$store.state.token,
+        user: this.$store.state.user
+      });
     }
-  },
-  mounted() {
-    document.addEventListener("keydown", e => {
-      if (e.keyCode == 27) {
-        this.$emit("closeDialog");
-        this.$emit("clearRsv");
-      }
-    });
   }
 };
 </script>

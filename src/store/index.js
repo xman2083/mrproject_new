@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { loginUser, sendOtp, getUserData } from "../api";
+import { loginUser, sendOtp, getUserData, getMyRsvData } from "../api";
 import {
   saveAuthToCookie,
   saveUserToCookie,
@@ -17,6 +17,7 @@ export default new Vuex.Store({
     rsvdata: {},
     room_src: [[[]]],
     holiday_data: {},
+    myrsv: {},
   },
   getters: {
     isLoggedIn(state) {
@@ -52,6 +53,14 @@ export default new Vuex.Store({
       state.token = null;
       deleteCookie("til_auth");
       deleteCookie("til_user");
+    },
+
+    SET_MY_RSV(state, myrsv) {
+      state.myrsv = myrsv;
+    },
+
+    SET_TODAY(state, date) {
+      state.user["date"] = date;
     },
 
     LOAD_ROOMDATA(state, payload) {
@@ -137,6 +146,13 @@ export default new Vuex.Store({
         user["tel_num"] = response.data.user[0][2];
         user["user_team"] = response.data.user[0][3];
         commit("SET_USER", user);
+      }
+    },
+    async GETMYRSV({ commit }, data) {
+      const response = await getMyRsvData(data);
+      console.log("my rsv:", response);
+      if (response.data.statusCode == 200) {
+        commit("SET_MY_RSV", data);
       }
     },
   },
