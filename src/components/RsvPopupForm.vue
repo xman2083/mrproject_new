@@ -402,6 +402,7 @@
                 flat
                 solo
                 multiple
+                :readonly="!owner"
               ></v-select>
             </v-col>
             </v-row>
