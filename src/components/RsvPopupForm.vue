@@ -17,6 +17,8 @@
     <v-divider style="margin:0px;"></v-divider>
     <v-card-text style="padding:0;">
       <v-container grid-list-md>
+
+
         <!-- 해당 시간에 예약이 안되어 있는 경우 -->
         <v-layout v-if="reserved === false" wrap>
           <v-flex style="align-content:center;" xs3>
@@ -250,6 +252,8 @@
         </v-expansion-panels>
       </v-layout>
        <small>*필수 입력 사항 입니다.</small>
+
+
         <!-- 해당 시간에 예약이 되어 있는 경우 -->
         <v-layout v-if="reserved === true" wrap>
           <v-flex xs3>
@@ -497,9 +501,7 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
-       
-       
-       
+    
         </v-layout>
       </v-container>
     </v-card-text>
@@ -616,15 +618,19 @@ export default {
       this.rept_rsv.rsv_type = this.rept_gbn;
     },
     onRept() {
-      console.log("AAA", this.rept_gbn);
-      console.log("BBB", this.rept_rsv);
       if (this.checkbox) {
         this.rept_rsv.rsv_type = this.rept_gbn;
         this.rept_rsv.st_dt = this.date;
-        var arr1 = this.date.split('-');
-        var dat1 = new Date(arr1[0], arr1[1], arr1[2]);
-        this.rept_rsv.ed_dt = dat1.getFullYear() + "-" + dat1.getMonth() + "-" + (dat1.getDate() + 7) ;
+        
+        //종료일자 default값 +7일로 지정 
+        let arr1 = this.date.split('-');
+            arr1[1] = arr1[1]- 1;
+        let dat1 = new Date(arr1[0], arr1[1], arr1[2]);
+
+        this.rept_rsv.ed_dt = dat1.setDate(dat1.getDate() + 7) ;
+        this.rept_rsv.ed_dt = this.formatDate(this.rept_rsv.ed_dt);
       }
+
       else {
         this.clearRept();
       }
@@ -637,7 +643,29 @@ export default {
         ed_dt: null
       };
     },
-    
+    formatDate(date) {
+      if (date){        
+        let d = new Date(date);
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        let year = d.getFullYear();
+        
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day; 
+        
+        return([year, month, day].join('-'));}
+      else {
+        let d = new Date();
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        let year = d.getFullYear();
+        
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day; 
+        
+        return([year, month, day].join('-'));
+      }
+    }
   },
   beforeUpdate() {
     this.owner = false;
