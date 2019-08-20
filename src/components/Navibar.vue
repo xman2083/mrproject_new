@@ -74,6 +74,11 @@ export default {
           icon: "fas fa-calendar-alt",
           route: "/meetingroombtn"
         },
+        {
+          title: "나의 예약 보기",
+          icon: "fas fa-clipboard-list",
+          route: "/myreservations"
+        },
         // { title: "공지사항", icon: "info", route: "/notice" },
         { title: "식단표", icon: "fas fa-utensils", route: "/RstrMenu" }
       ]
