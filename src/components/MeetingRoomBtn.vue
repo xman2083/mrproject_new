@@ -583,7 +583,7 @@ export default {
               setTimeout(() => {
                 this.loadingSnackBar = false;
                 this.completeSnackBar = true;
-              }, 500);
+              }, 300);
               this.stCell = "";
               this.edCell = "";
               this.currCell = [];
@@ -633,7 +633,7 @@ export default {
           setTimeout(() => {
             this.loadingSnackBar = false;
             this.completeSnackBar = true;
-          }, 500);
+          }, 300);
         })
         .catch(error => {
           this.loadingSnackBar = false;
@@ -677,7 +677,7 @@ export default {
             setTimeout(() => {
               this.loadingSnackBar = false;
               this.completeSnackBar = true;
-            }, 500);
+            }, 300);
           })
           .catch(error => {
             console.log(error);
@@ -1131,7 +1131,7 @@ export default {
       val &&
         setTimeout(() => {
           this.completeSnackBar = false;
-        }, 500);
+        }, 300);
     }
   },
 
@@ -1178,6 +1178,9 @@ export default {
 }
 
 .btn-emptyCell {
+    outline: none;
+  transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s;
   padding: 0px;
   height: 30px;
   border-left: 1px dotted #f00;
@@ -1188,6 +1191,15 @@ export default {
   border-color: #D8D8D8;
 }
 
+.btn-emptyCell:hover {
+  padding: 0px;
+  height: 30px;
+  color: #BDBDBD;
+  border-radius: 0px;
+  background-color: #F5F6CE;
+  border-color: #D7DF01;
+}
+
 .btn-emptyCell:focus {
   padding: 0px;
   height: 30px;
@@ -1195,15 +1207,6 @@ export default {
   border-radius: 0px;
   background-color: #E6E6E6;
   border-color: #E6E6E6;
-}
-
-.btn-emptyCell:hover {
-  padding: 0px;
-  height: 30px;
-  color: #BDBDBD;
-  border-radius: 0px;
-  background-color: #e6e6e6;
-  border-color: #e6e6e6;
 }
 
 .btn-emptyCell:active {
@@ -1216,42 +1219,48 @@ export default {
 }
 
 .btn-clickedCell {
+  outline: none;
   padding: 0px;
   height: 30px;
   color: #BDBDBD;
   border-radius: 0px;
   background-color: #F5F6CE;
   border-color: #D7DF01;
+  transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s;
 }
-
-.btn-clickedCell:focus {
-  padding: 0px;
-  height: 30px;
-  color: #BDBDBD;
-  border-radius: 0px;
-  background-color: #F5F6CE;
-  border-color: #F5F6CE;
-}
-
+// 마우스 오버 했을 때
 .btn-clickedCell:hover {
   padding: 0px;
   height: 30px;
   color: #BDBDBD;
   border-radius: 0px;
   background-color: #F3F781;
-  border-color: #F3F781;
+  border-color: #AEB404;
 }
-
+// 클릭 후 활성화 상태일 때
+.btn-clickedCell:focus {
+  padding: 0px;
+  height: 30px;
+  color: #BDBDBD;
+  border-radius: 0px;
+  background-color: #F5DA81;
+  border-color: #FE9A2E;
+}
+// 클릭 시 잠깐 동작할 때
 .btn-clickedCell:active {
   padding: 0px;
   height: 30px;
   color: #BDBDBD;
   border-radius: 0px;
   background-color: #F3F781;
-  border-color: #F3F781;
+  border-color: #AEB404;
 }
 
 .btn-bookedCell {
+  outline: none;
+  transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s;
   padding: 0px;
   height: 30px;
   color: #fff;
@@ -1264,15 +1273,6 @@ export default {
   border-color: var(--room-color-set);
 }
 
-.btn-bookedCell:focus {
-  padding: 0px;
-  height: 30px;
-  color: #fff;
-  border-radius: 0px;
-  background-color: #64A8F2;
-  border-color: #64A8F2;
-}
-
 .btn-bookedCell:hover {
   padding: 0px;
   height: 30px;
@@ -1280,6 +1280,15 @@ export default {
   border-radius: 0px;
   background-color: #4071A4;
   border-color: #4071A4;
+}
+
+.btn-bookedCell:focus {
+  padding: 0px;
+  height: 30px;
+  color: #fff;
+  border-radius: 0px;
+  background-color: #64A8F2;
+  border-color: #64A8F2;
 }
 
 .btn-bookedCell:active {
@@ -1292,6 +1301,9 @@ export default {
 }
 
 .btn-bookedOthers {
+  outline: none;
+  transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s;
   padding: 0px;
   height: 30px;
   color: #fff;
@@ -1302,15 +1314,6 @@ export default {
   border-color: #D8D8D8;
 }
 
-.btn-bookedOthers:focus {
-  padding: 0px;
-  height: 30px;
-  color: #fff;
-  border-radius: 0px;
-  background-color: #64A8F2;
-  border-color: #64A8F2;
-}
-
 .btn-bookedOthers:hover {
   padding: 0px;
   height: 30px;
@@ -1318,6 +1321,15 @@ export default {
   border-radius: 0px;
   background-color: #4071A4;
   border-color: #4071A4;
+}
+
+.btn-bookedOthers:focus {
+  padding: 0px;
+  height: 30px;
+  color: #fff;
+  border-radius: 0px;
+  background-color: #64A8F2;
+  border-color: #64A8F2;
 }
 
 .btn-bookedOthers:active {
