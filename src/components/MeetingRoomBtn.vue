@@ -251,6 +251,7 @@
         </v-card-title>
       </v-card>
     </v-dialog>
+    </div>
   </div>
 </template>
 
@@ -362,7 +363,7 @@ export default {
     // clearAllData,
     method() {},
 
-    ...mapActions(["updateRsvData", "loadRoomSrc", "GETUSER"]),
+    ...mapActions(["updateRsvData", "loadRoomSrc"]),
     ...mapMutations(["CLEAR_STOREDATA"], ["SET_HOLIDAY_DATA"]),
 
     allowedDates(val) {
@@ -396,13 +397,12 @@ export default {
         ("0" + d.getSeconds()).slice(-2);
 
       return s;
-    },
+    }, 
 
     onRoomBtnClick(room) {
       this.meetingroom_info = true;
       this.currRoom = room;
       this.currRoom.img_src = require("../assets/" + room.room_id + ".gif");
-      console.log("AAAAAAAA", this.currRoom);
     },
     // 셀 선택 메소드로 셀 선택 시 해당 셀 객체의 정보를 기준으로 조건 충족 시 예약 팝업 활성화
     cellClick(room, hour) {
@@ -1054,28 +1054,29 @@ export default {
     },
 
     formatDate(date) {
-      if (date) {
+      if (date){        
         let d = new Date(date);
-        let month = "" + (d.getMonth() + 1);
-        let day = "" + d.getDate();
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
         let year = d.getFullYear();
-
-        if (month.length < 2) month = "0" + month;
-        if (day.length < 2) day = "0" + day;
-
-        return [year, month, day].join("-");
-      } else {
+        
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day; 
+        
+        return([year, month, day].join('-'));}
+      else {
         let d = new Date();
-        let month = "" + (d.getMonth() + 1);
-        let day = "" + d.getDate();
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
         let year = d.getFullYear();
-
-        if (month.length < 2) month = "0" + month;
-        if (day.length < 2) day = "0" + day;
-
-        return [year, month, day].join("-");
+        
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day; 
+        
+        return([year, month, day].join('-'));
       }
     }
+
   },
   async created() {
     // console.log("created");
@@ -1106,10 +1107,6 @@ export default {
         console.log(error);
       });
     // console.log("created hook complete");
-    await this.$store.dispatch("GETUSER", {
-      tel_num: this.$store.state.user.tel_num,
-      token: this.$store.state.token
-    });
   },
 
   computed: {
