@@ -85,8 +85,6 @@
                 <v-icon size="10" v-if="my_reservation_only">fas fa-circle</v-icon>
                 <v-icon v-else size="10">far fa-circle</v-icon>
               </v-btn>&nbsp;&nbsp;
-              <!-- 내 예약 보기 -->
-              <!-- <v-btn small outlined width="70" color="primary" @click="show_my_rsv_list = true">내 예약</v-btn> -->
             </v-flex>
           </v-layout>
         </template>
@@ -233,9 +231,6 @@
     <v-dialog v-model="unavailable_reservation" persistent max-width="250px">
       <modal :alert_detail="alert_detail" @closeModal="closeModal"></modal>
     </v-dialog>
-    <!-- <v-dialog v-model="show_my_rsv_list">
-      <my-rsv-list-form @closeMyList="show_my_rsv_list = false" :my_rsv_list="my_rsv_list"></my-rsv-list-form>
-    </v-dialog>-->
     <v-dialog v-model="loadingSnackBar" hide-overlay transition="false" persistent width="200">
       <v-card color="#f5f5f5" dark width="200" height="50">
         <v-card-title color="white" class="justify-center">
@@ -261,7 +256,7 @@ import { getRoomData, RsvDataApi, removeRsvData, getHolidayData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 import Modal from "./Modal.vue";
-import MyRsvListForm from "./MyRsvListForm.vue";
+import MyReservations from "./MyReservations.vue";
 // import ConstantValues from '../utils/constant-values.js'
 
 export default {
@@ -269,7 +264,7 @@ export default {
     RsvPopupForm,
     MeetingRoomInfo,
     Modal,
-    MyRsvListForm
+    MyReservations
   },
   data() {
     return {
@@ -287,8 +282,6 @@ export default {
       meetingroom_info: false,
       loadingSnackBar: false,
       completeSnackBar: false,
-      show_my_rsv_list: false,
-      my_rsv_list: [],
       time_picker: false,
       currRoom: "",
       currCell: "",
@@ -1004,9 +997,7 @@ export default {
         var rsv_id = rsv_data[6];
         var user_name = rsv_data[8];
         var telNum = rsv_data[9];
-        if (telNum === this.$store.state.user.tel_num) {
-          this.my_rsv_list.push(rsv_data);
-        }
+  
         // console.log("예약건:", rsv_data);
 
         //if (rsv_date === this.date) {
