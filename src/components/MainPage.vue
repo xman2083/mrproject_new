@@ -1,6 +1,6 @@
 <template>
   <span>
-    <div class="layer">
+    <div class="layer" v-if="show">
       <h3 style="color:#3fc1c9">{{this.$store.state.user.user_name}}님 안녕하세요!</h3>
       <p style="color:#364f6b">
         <br />SKtelink 회의실 예약 & 식단표 조회 페이지 입니다.
@@ -15,13 +15,22 @@
 
 <script>
 export default {
+  data() {
+    return {
+      show: false
+    };
+  },
   methods: {},
 
   async created() {
-    await this.$store.dispatch("GETUSER", {
-      tel_num: this.$store.state.user.tel_num,
-      token: this.$store.state.token
-    });
+    await this.$store
+      .dispatch("GETUSER", {
+        tel_num: this.$store.state.user.tel_num,
+        token: this.$store.state.token
+      })
+      .then(response => {
+        return (this.show = true);
+      });
   }
 };
 </script>
