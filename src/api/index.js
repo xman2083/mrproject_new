@@ -99,9 +99,9 @@ function RsvDataApi(data) {
   try {
     console.log(data);
     if (data.rsvdata.rsv_type == 0 || data.rsvdata.rsv_type == 1) {
-      return rsv.post("repeated-rsv", JSON.stringify(data));
-    } else {
       return rsv.post("managersvrptdata", JSON.stringify(data));
+    } else {
+      return rsv.post("managersvdata", JSON.stringify(data));
     }
   } catch (error) {
     console.log(error);

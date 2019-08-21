@@ -57,6 +57,7 @@ export default {
     async fetch() {
       let date = await this.formatDate();
       await this.SET_TODAY(date);
+      console.log(date);
       this.$store.dispatch("GETMYRSV", {
         tel_num: this.$store.state.user.tel_num,
         token: this.$store.state.token,
