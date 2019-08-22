@@ -547,7 +547,7 @@ import { mask } from "vue-the-mask";
 export default {
   data() {
     return {
-      menu: false,
+      menu: true,
       reserved: false,
       owner: false,
       mask: "###-####-####",

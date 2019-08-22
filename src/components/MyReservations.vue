@@ -11,7 +11,7 @@
         <v-list-item-group flat>
           <template v-for="(item,i) in myrsv">
             <v-list-item :key="i">
-              <v-list-item-avatar>
+              <v-list-item-avatar @click="show(item)">
                 <v-avatar v-if="item[12] == '0' || item[12] == '1'" color="#3fc1c9" size="40">
                   <span class="white--text" style="font-size:small;">반복</span>
                 </v-avatar>
@@ -69,6 +69,7 @@ import { mapMutations, mapActions, mapState } from "vuex";
 import { RsvDataApi } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import Modal from "./Modal.vue";
+import { log } from "util";
 
 export default {
   data() {
@@ -123,6 +124,9 @@ export default {
     Modal
   },
   methods: {
+    show(item) {
+      console.log(item);
+    },
     formatDate() {
       let d = new Date();
       let month = "" + (d.getMonth() + 1);
@@ -168,9 +172,14 @@ export default {
       this.rsvInput.user_name = rsv[8];
       this.rsvInput.telNum = rsv[9];
       this.rsvInput.rsv_created = rsv[10];
+      this.rsvInput.rsv_type = rsv[12];
+      this.rsvInput.rsv_typeftl = rsv[13];
+      this.rsvInput.st_dt = rsv[5];
+      this.rsvInput.ed_dt = rsv[15];
 
       this.loadingSnackBar = true;
 
+      console.log("@@@@@", this.rsvInput);
       RsvDataApi({
         tel_num: this.$store.state.user.tel_num,
         token: this.$store.state.token,

@@ -98,14 +98,14 @@ function signupUser(data) {
 function RsvDataApi(data) {
   try {
     console.log("rsv input in API", data);
-    if (
-      (data.rsvdata.rsv_type == "0" || data.rsvdata.rsv_type == "1") &&
-      data.rsvdata.httpMethod != "SELECT"
-    ) {
-      return rsv.post("managersvrptdata", JSON.stringify(data));
-    } else if (data.rsvdata.httpMethod == "SELECT") {
+    if (data.httpMethod == "SELECT") {
+      console.log("managersvdata");
+      return rsv.post("managersvdata", JSON.stringify(data));
+    } else if (data.rsvdata.rsv_type == "0" || data.rsvdata.rsv_type == "1") {
+      console.log("managersvrptdata");
       return rsv.post("managersvrptdata", JSON.stringify(data));
     } else {
+      console.log("managersvdata");
       return rsv.post("managersvdata", JSON.stringify(data));
     }
   } catch (error) {

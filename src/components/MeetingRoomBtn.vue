@@ -404,7 +404,7 @@ export default {
       this.rsvInput.telNum = this.$store.state.user.tel_num;
       this.currRoom = room;
       this.currCell = [room, hour];
-      console.log("cellClick:", this.currCell);
+      // console.log("cellClick:", this.currCell);
       // console.log("rsv_id:", hour.rsv_id);
 
       // 선택한 셀이 예약 상태인 경우 해당 rsv_id를 기준으로 예약 정보를 찾아서 rsvInput에 입력
@@ -417,10 +417,14 @@ export default {
         this.rsvInput.edHour = rsv[4];
         this.rsvInput.date = rsv[5];
         this.rsvInput.rsv_id = rsv[6];
-
+        this.rsvInput.user_id = this.$store.state.user.user_id;
         this.rsvInput.user_name = rsv[8];
         this.rsvInput.telNum = rsv[9];
         this.rsvInput.rsv_created = rsv[10];
+        this.rsvInput.rsv_type = rsv[12];
+        this.rsvInput.rsv_typeftl = rsv[13];
+        this.rsvInput.st_dt = rsv[5];
+        this.rsvInput.ed_dt = rsv[15];
 
         Object.assign(this.rsvorg, this.rsvInput);
         this.dialog = true;
@@ -957,9 +961,6 @@ export default {
     // API로 람다 함수 호출하여 response를 drawRooms에 전달
     fetchRsvData() {
       this.clearCellData();
-
-      let rsv_datas = { data: { rsv: [] } };
-
       RsvDataApi({
         tel_num: this.$store.state.user.tel_num,
         token: this.$store.state.token,
@@ -969,19 +970,15 @@ export default {
         },
         httpMethod: "SELECT"
       }).then(response => {
+                console.log("예약 정보 로딩", response);
         this.drawRooms(response);
-        console.log("예약 정보 로딩", response);
       });
     },
     // 예약 정보를 받아서 화면 처리
     drawRooms(rsv_datas) {
       this.rsvDataRes = rsv_datas.data.rsv;
-      // console.log("AAA", rsv_datas);
-      // console.log("rooms", this.rooms);
-      // console.log("indx", this.room_indx);
-      // console.log(this.rsv_datas.data.rsv.length);
+
       for (var rsv_data of rsv_datas.data.rsv) {
-        // console.log("rsv_data:", rsv_data);
         var room_name = rsv_data[7];
         var stHour = rsv_data[3];
         var edHour = this.timeControl(rsv_data[4], "sub");
