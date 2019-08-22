@@ -2,12 +2,13 @@
   <nav>
     <v-app-bar flat app>
       <v-app-bar-nav-icon style="color:#364f6b" @click="drawer = !drawer" v-show="isLoggedIn"></v-app-bar-nav-icon>
-      <v-toolbar flat>
-        <v-toolbar-title class="text-uppercase">
+      <v-toolbar style="margin-left:0px;" flat>
+        <v-toolbar-title>
           <router-link
             :to="items[0].route"
             style="text-decoration:none; color:#364f6b; font-family: 'Caveat', cursive !important;"
           >
+            <!-- <img class="mb-1 mr-2" style="width:20px;" src="../assets/logo2.png"></img> -->
             <span>LINKS</span>
             <!-- <span class="font-weight-light">SK</span>
             <span>telink</span>-->

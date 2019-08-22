@@ -240,9 +240,9 @@
             color="#3fc1c9"
             height="6"
             rounded
-            class="mb-0"
+            class="mt-1"
           ></v-progress-linear>
-          <v-icon v-else style="text-align:center" size="30" color="#3fc1c9">fas fa-check-circle</v-icon>
+          <v-icon v-else style="text-align:center" size="25" color="#3fc1c9">fas fa-check-circle</v-icon>
         </v-card-title>
       </v-card>
     </v-dialog>
@@ -523,6 +523,7 @@ export default {
       console.log("received cell_time:", cell_time);
       Object.assign(this.selected_time, cell_time);
       console.log("selected_time:", this.selected_time);
+      console.log("rept_rsv:", rept_rsv)
 
       //중복 예약 체크
       if (this.rsvAvailableCheck()) {
@@ -535,30 +536,18 @@ export default {
         // 예약 팝업의 시작, 종료 시간을 받아서 rsvInput에 저장 (timeControl method로 시간표현 방식 변경)
         this.rsvInput.stHour = this.timeControl(this.selected_time.st, "get");
         this.rsvInput.edHour = this.timeControl(this.selected_time.et, "get");
-        console.log("makeRsv:", this.rsvInput.stHour, this.rsvInput.edHour);
+
 
         this.rsvInput.floor_id = this.room_indx;
-          if (this.rsvInput.st_dt) {
+        // 반복 예약일 경우
+          if (rept_rsv.st_dt) {
             this.rsvInput.st_dt = rept_rsv.st_dt.replace(/\-/g, "");
             this.rsvInput.ed_dt = rept_rsv.ed_dt.replace(/\-/g, "");
             this.rsvInput.rsv_type = rept_rsv.rsv_type;
             this.rsvInput.rsv_typedtl = rept_rsv.rsv_typedtl;
 
           }
-        
-        // this.stCell = "";
-        // this.edCell = "";
-        // this.currCell = [];
-        // this.dialog = false;
 
-        // console.log(this.rsvInput.ed_dt);
-        // this.clearCellData();
-        // this.clearSelectionData();
-        // (this.selected_time = {
-        //   st: { HH: "", mm: "" },
-        //   et: { HH: "", mm: "" }
-        // }),
-        //  회의실 정보 post
         RsvDataApi({
           tel_num: this.$store.state.user.tel_num,
           token: this.$store.state.token,
@@ -1126,7 +1115,7 @@ export default {
       val &&
         setTimeout(() => {
           this.loadingSnackBar = false;
-        }, 3000);
+        }, 5000);
     },
     completeSnackBar(val) {
       val &&

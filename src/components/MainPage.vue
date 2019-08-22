@@ -1,6 +1,8 @@
 <template>
   <span>
     <div class="layer" v-if="show">
+      <!-- <div style="justify-center;"><img class="center" style="width:50px;" src="../assets/logo2.png"></img>
+      </div>-->
       <h3 style="color:#3fc1c9">{{this.$store.state.user.user_name}}님 안녕하세요!</h3>
       <p style="color:#364f6b">
         <br />SKtelink 회의실 예약 & 식단표 조회 페이지 입니다.

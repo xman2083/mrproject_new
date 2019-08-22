@@ -39,7 +39,7 @@ export default new Vuex.Store({
   mutations: {
     SET_USER(state, user) {
       // console.log(state.user, user);
-      state.user = user;
+      Object.assign(state.user, user);
     },
     SET_TOKEN(state, token) {
       state.token = token;
@@ -152,7 +152,7 @@ export default new Vuex.Store({
       const response = await getMyRsvData(data);
       console.log("my rsv:", response);
       if (response.data.statusCode == 200) {
-        commit("SET_MY_RSV", data);
+        commit("SET_MY_RSV", response.data.rsv);
       }
     },
   },

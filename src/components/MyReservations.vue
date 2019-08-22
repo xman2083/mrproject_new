@@ -1,47 +1,128 @@
 <template>
-  <v-card>
-    <!-- <v-card-title>나의 예약 리스트</v-card-title>
-    <v-subheader>REPORTS</v-subheader>
-    <v-list-item-group v-model="item" color="primary">
-      <v-list-item v-for="(item, i) in my_rsv_list" :key="i">
-        <v-list-item-avatar>
-          <v-btn></v-btn>
-
-          <v-divider dense vertical></v-divider>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title v-html="item[1]"></v-list-item-title>
-          <v-list-item-subtitle v-html="item[2]"></v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-    </v-list-item-group>
-    <v-card-actions>
-      <v-spacer></v-spacer>
-      <v-btn color="indigo" dark @click="closePopup">닫기</v-btn>
-    </v-card-actions>-->
-    <!-- 
-        this.rsvInput.title = rsv[1];
-        this.rsvInput.content = rsv[2];
-        this.rsvInput.stHour = rsv[3];
-        this.rsvInput.edHour = rsv[4];
-        this.rsvInput.rsv_id = rsv[6];
-        this.rsvInput.rsv_created = rsv[10];
-        this.rsvInput.user_name = rsv[8];
-        this.rsvInput.telNum = rsv[9];
-        this.rsvInput.date = rsv[5];
-        this.rsvInput.room_id = rsv[0];
-    -->
-    <span>my rsv :</span>
-    <v-btn @click="fetch">click</v-btn>
-    {{ this.$store.state.myrsv }}
-  </v-card>
+  <div>
+    <v-card class="ma-5" hover max-width="600">
+      <v-card-title>
+        <span style="font-size:1.2rem; color:#364f6b !important">
+          <v-icon size="15" class="pa-1" color="#364f6b">fas fa-check</v-icon>나의 예약 리스트
+        </span>
+      </v-card-title>
+      <v-divider class="ml-5 mr-5"></v-divider>
+      <v-list>
+        <v-list-item-group flat>
+          <template v-for="(item,i) in myrsv">
+            <v-list-item :key="i">
+              <v-list-item-avatar>
+                <v-avatar v-if="item[12] == '0' || item[12] == '1'" color="#3fc1c9" size="40">
+                  <span class="white--text" style="font-size:small;">반복</span>
+                </v-avatar>
+                <v-avatar v-else color="#364f6b" size="40">
+                  <span
+                    class="white--text"
+                    style="font-size:small;"
+                  >{{item[5].replace(/(.{2})/g,"$1-").substring(6,11)}}</span>
+                </v-avatar>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title v-text="item[1]"></v-list-item-title>
+                <v-list-item-subtitle>{{item[3].replace(/(.{2})/g,"$1:").substring(0,5)}} ~ {{item[4].replace(/(.{2})/g,"$1:").substring(0,5)}} | {{item[7]}}</v-list-item-subtitle>
+              </v-list-item-content>
+              <v-list-item-icon>
+                <v-btn color="#fc5185" small dark depressed>
+                  <span style="font-size:smaller" @click="cnclReservation(item)">취소</span>
+                </v-btn>&nbsp;&nbsp;
+                <v-btn color="#364f6b" small dark depressed>
+                  <span style="font-size:smaller">수정</span>
+                </v-btn>
+              </v-list-item-icon>
+            </v-list-item>
+            <v-divider inset></v-divider>
+          </template>
+        </v-list-item-group>
+      </v-list>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+      </v-card-actions>
+    </v-card>
+    <rsv-popup-form></rsv-popup-form>
+    <v-dialog v-model="loadingSnackBar" hide-overlay transition="false" persistent width="200">
+      <v-card color="#f5f5f5" dark width="200" height="50">
+        <v-card-title color="white" class="justify-center">
+          <v-progress-linear
+            v-if="!completeSnackBar"
+            indeterminate
+            color="#3fc1c9"
+            height="6"
+            rounded
+            class="mt-1"
+          ></v-progress-linear>
+          <v-icon v-else style="text-align:center" size="25" color="#3fc1c9">fas fa-check-circle</v-icon>
+        </v-card-title>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="unavailable_reservation" persistent max-width="250px">
+      <modal :alert_detail="alert_detail" @closeModal="closeModal"></modal>
+    </v-dialog>
+  </div>
 </template>
-
 <script>
-import { mapMutations, mapActions } from "vuex";
+import { mapMutations, mapActions, mapState } from "vuex";
+import { RsvDataApi } from "../api";
+import RsvPopupForm from "./RsvPopupForm.vue";
+import Modal from "./Modal.vue";
+
 export default {
+  data() {
+    return {
+      loadingSnackBar: false,
+      completeSnackBar: false,
+      alert_detail: { type: "", message: "" },
+      unavailable_reservation: false,
+      rsvInput: {
+        date: "",
+        user_id: "",
+        user_name: "",
+        telNum: "",
+        room_id: "",
+        rsv_id: "",
+        rsv_created: "",
+        room_name: "",
+        floor_id: "",
+        title: "",
+        content: "",
+        stHour: 0,
+        edHour: 0,
+        rsv_type: "",
+        rsv_typedtl: "",
+        st_dt: "",
+        ed_dt: ""
+      },
+
+      rsvorg: {
+        date: "",
+        user_id: "",
+        user_name: "",
+        telNum: "",
+        room_id: "",
+        rsv_id: "",
+        rsv_created: "",
+        room_name: "",
+        floor_id: "",
+        title: "",
+        content: "",
+        stHour: 0,
+        edHour: 0,
+        rsv_type: "",
+        rsv_typedtl: "",
+        st_dt: "",
+        ed_dt: ""
+      }
+    };
+  },
+  components: {
+    RsvPopupForm,
+    Modal
+  },
   methods: {
-    ...mapMutations(["SET_TODAY"]),
     formatDate() {
       let d = new Date();
       let month = "" + (d.getMonth() + 1);
@@ -54,15 +135,108 @@ export default {
       return [year, month, day].join("");
     },
 
-    async fetch() {
-      let date = await this.formatDate();
-      await this.SET_TODAY(date);
-      console.log(date);
+    clearRsv() {
+      this.rsvInput = {
+        date: "",
+        user_id: "",
+        user_name: "",
+        telNum: "",
+        room_id: "",
+        rsv_id: "",
+        rsv_created: "",
+        room_name: "",
+        floor_id: "",
+        title: "",
+        content: "",
+        stHour: 0,
+        edHour: 0,
+        rsv_type: "",
+        rsv_typedtl: "",
+        st_dt: "",
+        ed_dt: ""
+      };
+    },
+
+    cnclReservation(rsv) {
+      this.rsvInput.room_id = rsv[0];
+      this.rsvInput.title = rsv[1];
+      this.rsvInput.content = rsv[2];
+      this.rsvInput.stHour = rsv[3];
+      this.rsvInput.edHour = rsv[4];
+      this.rsvInput.date = rsv[5];
+      this.rsvInput.user_id = this.$store.state.user.user_id;
+      this.rsvInput.user_name = rsv[8];
+      this.rsvInput.telNum = rsv[9];
+      this.rsvInput.rsv_created = rsv[10];
+
+      this.loadingSnackBar = true;
+
+      RsvDataApi({
+        tel_num: this.$store.state.user.tel_num,
+        token: this.$store.state.token,
+        rsvdata: this.rsvInput,
+        httpMethod: "DELETE"
+      })
+        .then(response => {
+          console.log(response);
+          this.fetchRsvData();
+          this.clearRsv();
+
+          setTimeout(() => {
+            this.loadingSnackBar = false;
+            this.completeSnackBar = true;
+          }, 300);
+        })
+        .catch(error => {
+          this.loadingSnackBar = false;
+          console.log(error);
+          this.unavailable_reservation = true;
+          this.alert_detail = {
+            type: "myRsvCancelError",
+            message: "취소 오류가 발생했습니다."
+          };
+        });
+    },
+
+    fetchRsvData() {
       this.$store.dispatch("GETMYRSV", {
         tel_num: this.$store.state.user.tel_num,
         token: this.$store.state.token,
         user: this.$store.state.user
       });
+    },
+    closeModal() {
+      this.unavailable_reservation = false;
+      this.alert_detail.message = "";
+    }
+  },
+  async created() {
+    let date = await this.formatDate();
+    await this.$store.commit("SET_TODAY", date);
+    console.log(date);
+    await this.fetchRsvData();
+    await this.$store.dispatch("GETUSER", {
+      tel_num: this.$store.state.user.tel_num,
+      token: this.$store.state.token
+    });
+  },
+
+  computed: {
+    ...mapState(["myrsv"])
+  },
+
+  watch: {
+    loadingSnackBar(val) {
+      val &&
+        setTimeout(() => {
+          this.loadingSnackBar = false;
+        }, 5000);
+    },
+    completeSnackBar(val) {
+      val &&
+        setTimeout(() => {
+          this.completeSnackBar = false;
+        }, 300);
     }
   }
 };

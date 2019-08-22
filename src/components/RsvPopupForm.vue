@@ -207,7 +207,7 @@
 
           <v-col cols="6">
             <v-menu
-              ref="endMenu"
+              v-model="menu"
               :close-on-content-click="false"
               :return-value.sync="rsvInput.ed_dt"
               offset-y
@@ -227,9 +227,10 @@
                 v-model="rept_rsv.ed_dt"
                 no-title
                 scrollable
+                @input="menu = false"
               >
                 <v-spacer></v-spacer>
-                <v-btn
+                <!-- <v-btn
                   text
                   color="primary"
                   @click="$refs.endMenu.isActive = false"
@@ -241,7 +242,7 @@
                   color="primary"
                   @click="$refs.endMenu.save(rept_rsv.ed_dt)"
                 >
-                  OK
+                  OK -->
                 </v-btn>
                   </v-date-picker>
                   </v-menu>
@@ -459,7 +460,7 @@
 
           <v-col cols="6">
             <v-menu
-              ref="endMenu"
+              v-model="model"
               :close-on-content-click="false"
               :return-value.sync="rsvInput.ed_dt"
               offset-y
@@ -479,9 +480,10 @@
                 v-model="rept_rsv.ed_dt"
                 no-title
                 scrollable
+                @input="menu = false"
               >
                 <v-spacer></v-spacer>
-                <v-btn
+                <!-- <v-btn
                   text
                   color="primary"
                   @click="$refs.endMenu.isActive = false"
@@ -494,7 +496,7 @@
                   @click="$refs.endMenu.save(rept_rsv.ed_dt)"
                 >
                   OK
-                </v-btn>
+                </v-btn> -->
                   </v-date-picker>
                   </v-menu>
                 </v-col>
@@ -545,6 +547,7 @@ import { mask } from "vue-the-mask";
 export default {
   data() {
     return {
+      menu: false,
       reserved: false,
       owner: false,
       mask: "###-####-####",
