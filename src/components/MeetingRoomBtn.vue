@@ -563,7 +563,7 @@ export default {
             if (response.data.statusCode == 409) {
               this.unavailable_reservation = true;
               this.alert_detail = {
-                type: "rsvErrorDB",
+                type: "error",
                 message: "기존 예약이 존재합니다."
               };
               this.loadingSnackBar = false;
@@ -659,7 +659,7 @@ export default {
             if (response.data.statusCode == 409) {
               this.unavailable_reservation = true;
               this.alert_detail = {
-                type: "rsvUpdateErrorDB",
+                type: "error",
                 message: "기존 예약이 존재합니다."
               };
               this.loadingSnackBar = false;
@@ -682,7 +682,7 @@ export default {
       } else {
         this.unavailable_reservation = true;
         this.alert_detail = {
-          type: "rsvUpdateError_DB",
+          type: "error",
           message: "기존 예약이 존재합니다."
         };
         this.loadingSnackBar = false;
@@ -740,7 +740,7 @@ export default {
       if (this.rsvInput.title === "") {
         this.unavailable_reservation = true;
         this.alert_detail = {
-          type: "rsvErrorFront",
+          type: "error",
           message: "회의 주제를 입력 해주세요."
         };
         return false;
@@ -754,7 +754,7 @@ export default {
       if (this.date < today) {
         this.unavailable_reservation = true;
         this.alert_detail = {
-          type: "rsvErrorFront",
+          type: "error",
           message: "과거 날짜로 예약은 불가합니다."
         };
         return false;
@@ -763,7 +763,7 @@ export default {
       if (stHour >= edHour || edHour > "2000") {
         this.unavailable_reservation = true;
         this.alert_detail = {
-          type: "rsvErrorFront",
+          type: "error",
           message: "예약 시간을 확인해주세요."
         };
         return false;
@@ -787,7 +787,7 @@ export default {
           ) {
             this.unavailable_reservation = true;
             this.alert_detail = {
-              type: "rsvErrorFront",
+              type: "error",
               message: "!!!!기존 예약이 존재합니다."
             };
             return false;
@@ -945,6 +945,7 @@ export default {
     closeModal() {
       this.unavailable_reservation = false;
       this.alert_detail.message = "";
+      this.aelrt_detail.type = "";
     },
     timePicker(status) {
       if (status === "on") {

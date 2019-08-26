@@ -7,36 +7,35 @@
         </span>
       </v-card-title>
       <v-divider class="ml-5 mr-5"></v-divider>
-      <v-list>
-        <v-list-item-group flat>
-          <template v-for="(item,i) in myrsv">
-            <v-list-item :key="i">
-              <v-list-item-avatar @click="show(item)">
-                <v-avatar v-if="item[12] == '0' || item[12] == '1'" color="#3fc1c9" size="40">
-                  <span class="white--text" style="font-size:small;">반복</span>
-                </v-avatar>
-                <v-avatar v-else color="#364f6b" size="40">
-                  <span
-                    class="white--text"
-                    style="font-size:small;"
-                  >{{item[5].replace(/(.{2})/g,"$1-").substring(6,11)}}</span>
-                </v-avatar>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title v-text="item[1]"></v-list-item-title>
-                <v-list-item-subtitle>{{item[3].replace(/(.{2})/g,"$1:").substring(0,5)}} ~ {{item[4].replace(/(.{2})/g,"$1:").substring(0,5)}} | {{item[7]}}</v-list-item-subtitle>
-              </v-list-item-content>
-              <v-list-item-icon>
-                <v-btn color="#fc5185" small dark depressed>
-                  <span style="font-size:smaller" @click="cnclReservation(item)">취소</span>
-                </v-btn>&nbsp;&nbsp;
-                <v-btn color="#364f6b" small dark depressed>
-                  <span style="font-size:smaller">수정</span>
-                </v-btn>
-              </v-list-item-icon>
-            </v-list-item>
-            <v-divider inset></v-divider>
-          </template>
+      <v-list flat>
+        <v-list-item-group v-for="(item,i) in myrsv" :key="i" no-action>
+          <v-list-item>
+            <v-list-item-avatar @click="show(item)">
+              <v-avatar v-if="item[12] == '0' || item[12] == '1'" color="#3fc1c9" size="40">
+                <span class="white--text" style="font-size:small;">반복</span>
+              </v-avatar>
+              <v-avatar v-else color="#364f6b" size="40">
+                <span
+                  class="white--text"
+                  style="font-size:small;"
+                >{{item[5].replace(/(.{2})/g,"$1-").substring(6,11)}}</span>
+              </v-avatar>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-icon></v-icon>
+              <v-list-item-title v-text="item[1]"></v-list-item-title>
+              <v-list-item-subtitle>{{item[3].replace(/(.{2})/g,"$1:").substring(0,5)}} ~ {{item[4].replace(/(.{2})/g,"$1:").substring(0,5)}} | {{item[7]}}</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-icon>
+              <v-btn color="#fc5185" small dark depressed>
+                <span style="font-size:smaller" @click="cnclCheck(item)">취소</span>
+              </v-btn>&nbsp;&nbsp;
+              <v-btn color="#364f6b" small dark depressed>
+                <span style="font-size:smaller">수정</span>
+              </v-btn>
+            </v-list-item-icon>
+          </v-list-item>
+          <v-divider inset class="mr-5"></v-divider>
         </v-list-item-group>
       </v-list>
       <v-card-actions>
@@ -78,6 +77,7 @@ export default {
       completeSnackBar: false,
       alert_detail: { type: "", message: "" },
       unavailable_reservation: false,
+      rsv_temp: {},
       rsvInput: {
         date: "",
         user_id: "",
@@ -161,7 +161,19 @@ export default {
       };
     },
 
-    cnclReservation(rsv) {
+    cnclCheck(item) {
+      this.unavailable_reservation = true;
+      this.alert_detail = {
+        type: "check",
+        message: "예약을 취소하시겠습니까?"
+      };
+      Object.assign(this.rsv_temp, item);
+      // console.log("!@@@@@@@",this.rsv_temp);
+    },
+
+    cnclReservation() {
+      let rsv = {};
+      Object.assign(rsv, this.rsv_temp);
       this.rsvInput.room_id = rsv[0];
       this.rsvInput.title = rsv[1];
       this.rsvInput.content = rsv[2];
@@ -179,7 +191,7 @@ export default {
 
       this.loadingSnackBar = true;
 
-      console.log("@@@@@", this.rsvInput);
+      // console.log("@@@@@", this.rsvInput);
       RsvDataApi({
         tel_num: this.$store.state.user.tel_num,
         token: this.$store.state.token,
@@ -190,6 +202,7 @@ export default {
           console.log(response);
           this.fetchRsvData();
           this.clearRsv();
+          this.rsv_temp = {};
 
           setTimeout(() => {
             this.loadingSnackBar = false;
@@ -201,7 +214,7 @@ export default {
           console.log(error);
           this.unavailable_reservation = true;
           this.alert_detail = {
-            type: "myRsvCancelError",
+            type: "Error",
             message: "취소 오류가 발생했습니다."
           };
         });
@@ -214,9 +227,13 @@ export default {
         user: this.$store.state.user
       });
     },
-    closeModal() {
+    closeModal(check) {
       this.unavailable_reservation = false;
+      this.alert_detail.type = "";
       this.alert_detail.message = "";
+      if (check) {
+        this.cnclReservation();
+      }
     }
   },
   async created() {
