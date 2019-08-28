@@ -294,6 +294,7 @@ export default {
       },
       formatted: "",
       active: 0,
+      
 
       room_indx: 0,
 
@@ -422,10 +423,10 @@ export default {
         this.rsvInput.telNum = rsv[9];
         this.rsvInput.rsv_created = rsv[10];
         this.rsvInput.rsv_type = rsv[12];
-        this.rsvInput.rsv_typeftl = rsv[13];
+        this.rsvInput.rsv_typedtl = rsv[13];
         this.rsvInput.st_dt = rsv[5];
         this.rsvInput.ed_dt = rsv[15];
-
+        
         Object.assign(this.rsvorg, this.rsvInput);
         this.dialog = true;
       } else {
@@ -704,7 +705,7 @@ export default {
         content: "",
         stHour: 0,
         edHour: 0,
-        rsv_type : "",
+        rsv_type: "",
         rsv_typedtl: "",
         st_dt: "",
         ed_dt: ""

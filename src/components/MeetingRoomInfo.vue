@@ -18,9 +18,7 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn @click="closeMrPopup" dark depressed color="#364f6b">닫기</v-btn>
-
     </v-card-actions>
-
   </v-card>
 </template>
 
@@ -29,7 +27,7 @@ export default {
   data() {
     return {
       show: false,
-      src_path: ''
+      src_path: ""
     };
   },
   methods: {
@@ -43,7 +41,7 @@ export default {
       if (e.keyCode == 27) {
         this.$emit("closeMrPopup");
       }
-    }); 
+    });
   }
 };
 </script>

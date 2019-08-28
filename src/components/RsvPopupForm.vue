@@ -98,36 +98,17 @@
               <v-text-field color="#fc5185" label="회의 내용" v-model="rsvInput.content" clearable></v-text-field>
             </v-flex>
             <v-checkbox v-model="checkbox" v-on:change="onRept" label="반복 예약" color="#3fc1c9"></v-checkbox>
-            <v-expansion-panels v-if="checkbox">
+            <v-expansion-panels v-if="checkbox" accordion>
               <v-expansion-panel>
-                <v-expansion-panel-header v-slot="{ open }" class="pa-0 pl-5">
+                <v-expansion-panel-header v-slot="{ open }" class="pt-0 pb-0">
                   <v-radio-group v-model="rept_rsv.rsv_type" row>
                     <v-radio label="매일" value="0" color="#3fc1c9"></v-radio>
                     <v-radio label="매주" value="1" color="#3fc1c9"></v-radio>
                   </v-radio-group>
-
-                  <!-- <v-row no-gutters>
-                <v-col cols="4">반복주기</v-col>
-                <v-col
-                cols="8"
-                class="text--secondary"
-                 >
-                <v-fade-transition leave-absolute>
-                  <span v-if="open">반복주기를 선택해주세요</span>
-                  <v-row
-                    v-else
-                    no-gutters
-                    style="width: 100%"
-                  >
-                    <v-col cols="6">{{ items[rept_gbn].text || 'Not set' }}</v-col>
-                  </v-row>
-                </v-fade-transition>
-               </v-col>
-                  </v-row>-->
                 </v-expansion-panel-header>
                 <v-expansion-panel-content v-if="rept_rsv.rsv_type == 1 && checkbox">
                   <v-row>
-                    {{rept_rsv.rsv_typedtl}}
+                    <!-- {{rept_rsv.rsv_typedtl}} -->
                     <v-checkbox
                       v-for="i in day"
                       v-model="rept_rsv.rsv_typedtl"
@@ -135,39 +116,9 @@
                       :value="i.value"
                       :key="i.text"
                       color="#3fc1c9"
+                      class="ml-5 mt-0 mb-0 pb-0"
                     ></v-checkbox>
                   </v-row>
-                  <!-- <v-checkbox v-model="rept_rsv.rsv_typedtl" label="월" :value="2" ></v-checkbox>
-                            <v-checkbox v-model="rept_rsv.rsv_typedtl" label="화" :value=3></v-checkbox>
-                  </v-row>-->
-                  <!-- <v-select
-              v-if="checkbox" 
-              v-model="rept_gbn"
-              :items="items"
-              chips
-              flat
-              solo
-              v-on:change="onChgReptType"
-              ></v-select>
-              
-              <v-divider
-                vertical
-                class="sm-4"
-              ></v-divider>
-
-              <v-col cols="6">
-              <v-select
-              v-if="this.rept_rsv.rsv_type === 1 && checkbox"
-              v-model="rept_rsv.rsv_typedtl"
-              deletable-chips
-              :items="day"
-              chips
-              flat
-              solo
-              multiple
-            ></v-select>
-            </v-col>
-                  </v-row>-->
                 </v-expansion-panel-content>
               </v-expansion-panel>
 
@@ -235,20 +186,6 @@
                           @input="menu = false"
                         >
                           <v-spacer></v-spacer>
-                          <!-- <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.endMenu.isActive = false"
-                >
-                  Cancel
-                </v-btn>
-                <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.endMenu.save(rept_rsv.ed_dt)"
-                >
-                  OK
-                          </v-btn>-->
                         </v-date-picker>
                       </v-menu>
                     </v-col>
@@ -257,7 +194,6 @@
               </v-expansion-panel>
             </v-expansion-panels>
           </v-layout>
-          <small>*필수 입력 사항 입니다.</small>
 
           <!-- 해당 시간에 예약이 되어 있는 경우 -->
           <v-layout v-if="reserved === true" wrap>
@@ -353,52 +289,35 @@
               ></v-text-field>
             </v-flex>
 
-            <v-checkbox xs4 sm6 d-flex v-model="checkbox" v-on:change="onRept" label="반복 예약"></v-checkbox>
+            <v-checkbox
+              xs4
+              sm6
+              d-flex
+              v-model="checkbox"
+              v-on:change="onRept"
+              label="반복 예약"
+              color="#3fc1c9"
+            ></v-checkbox>
             <v-expansion-panels v-if="checkbox">
               <v-expansion-panel>
-                <v-expansion-panel-header v-slot="{ open }">
-                  <v-row no-gutters>
-                    <v-col cols="4">반복주기</v-col>
-                    <v-col cols="8" class="text--secondary">
-                      <v-fade-transition leave-absolute>
-                        <span v-if="open">반복주기를 선택해주세요</span>
-                        <v-row v-else no-gutters style="width: 100%">
-                          <v-col cols="6">{{ items[rept_gbn].text || 'Not set' }}</v-col>
-                        </v-row>
-                      </v-fade-transition>
-                    </v-col>
-                  </v-row>
+                <v-expansion-panel-header v-slot="{ open }" class="pt-0 pb-0">
+                  <v-radio-group v-model="rept_rsv.rsv_type" row>
+                    <v-radio label="매일" value="0" color="#3fc1c9"></v-radio>
+                    <v-radio label="매주" value="1" color="#3fc1c9"></v-radio>
+                  </v-radio-group>
                 </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <v-row no-gutters>
-                    <v-col cols="5">
-                      <v-select
-                        v-if="checkbox"
-                        v-model="rept_gbn"
-                        :items="items"
-                        chips
-                        flat
-                        solo
-                        v-on:change="onChgReptType"
-                        :readonly="!owner"
-                      ></v-select>
-                    </v-col>
-
-                    <v-divider vertical class="sm-4"></v-divider>
-
-                    <v-col cols="6">
-                      <v-select
-                        v-if="this.rept_rsv.rsv_type === 1 && checkbox"
-                        v-model="rept_rsv.rsv_typedtl"
-                        deletable-chips
-                        :items="day"
-                        chips
-                        flat
-                        solo
-                        multiple
-                        :readonly="!owner"
-                      ></v-select>
-                    </v-col>
+                <v-expansion-panel-content v-if="rept_rsv.rsv_type == 1 && checkbox">
+                  <v-row>
+                    <!-- {{rept_rsv.rsv_typedtl}} -->
+                    <v-checkbox
+                      v-for="i in day"
+                      v-model="rept_rsv.rsv_typedtl"
+                      :label="i.text"
+                      :value="i.value"
+                      :key="i.text"
+                      color="#3fc1c9"
+                      class="ml-5 mt-0 mb-0 pb-0"
+                    ></v-checkbox>
                   </v-row>
                 </v-expansion-panel-content>
               </v-expansion-panel>
@@ -467,20 +386,6 @@
                           :events="dateFunctionEvents"
                         >
                           <v-spacer></v-spacer>
-                          <!-- <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.endMenu.isActive = false"
-                >
-                  Cancel
-                </v-btn>
-                <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.endMenu.save(rept_rsv.ed_dt)"
-                >
-                  OK
-                          </v-btn>-->
                         </v-date-picker>
                       </v-menu>
                     </v-col>
@@ -489,6 +394,7 @@
               </v-expansion-panel>
             </v-expansion-panels>
           </v-layout>
+          <small>*필수 입력 사항 입니다.</small>
         </v-container>
       </v-card-text>
       <v-card-actions>
@@ -503,7 +409,7 @@
           dark
         >예약 취소</v-btn>
         <v-btn
-          v-if="currCell !== '' && (currCell[1].reserved === 3) && owner"
+          v-if="currCell !== '' && (currCell[1].reserved === 3) && owner && this.rsvInput.rsv_type!= 1"
           color="#364f6b"
           dark
           width="80"
@@ -563,7 +469,7 @@ export default {
         st_dt: null,
         ed_dt: null
       },
-      rept_gbn: 0,
+      // rept_gbn: 0,
       checkbox: false
     };
   },
@@ -590,9 +496,7 @@ export default {
     makeReservation() {
       this.$emit("makeReservation", this.cell_time, this.rept_rsv);
     },
-    // cnclReservation() {
-    //   this.$emit("cnclReservation");
-    // },
+
     updateReservation() {
       this.$emit("updateReservation", this.cell_time, this.rept_rsv);
     },
@@ -622,6 +526,7 @@ export default {
     rsvAvailableCheck() {
       this.$emit("rsvAvailableCheck");
     },
+
     // timePicker(status) {
     //   this.$emit("timePicker", status);
     // }
@@ -630,7 +535,7 @@ export default {
     // },
     onRept() {
       if (this.checkbox) {
-        this.rept_rsv.rsv_type = this.rept_gbn;
+        // this.rept_rsv.rsv_type = this.rept_gbn;
         this.rept_rsv.st_dt = this.date;
 
         //종료일자 default값 +7일로 지정
@@ -649,7 +554,7 @@ export default {
       this.checkbox = false;
       this.rept_rsv = {
         rsv_type: "",
-        rsv_typedtl: "",
+        rsv_typedtl: [],
         st_dt: null,
         ed_dt: null
       };
@@ -715,6 +620,7 @@ export default {
     // Close modal with 'esc' key
     document.addEventListener("keydown", e => {
       if (e.keyCode == 27) {
+        this.clearRept();
         this.$emit("closeDialog");
         this.$emit("clearRsv");
       }
