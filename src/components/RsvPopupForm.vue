@@ -14,6 +14,8 @@
         >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
         <span class="grey--text subtitle-1">{{this.date}}</span>
         <span class="grey--text subtitle-1">{{this.rsvInput}}</span>
+        <span class="grey--text subtitle-1">{{this.rept_rsv}}</span>
+        <v-btn @click="getRept">click</v-btn>
       </v-card-title>
 
       <v-divider style="margin:0px;"></v-divider>
@@ -98,8 +100,8 @@
             <v-flex xs12 sm12 md12>
               <v-text-field color="#fc5185" label="회의 내용" v-model="rsvInput.content" clearable></v-text-field>
             </v-flex>
-            <v-checkbox v-model="checkbox" v-on:change="onRept" label="반복 예약" color="#3fc1c9"></v-checkbox>
-            <v-expansion-panels v-if="checkbox" accordion>
+            <v-checkbox v-model="checkbox" @change="onRept" label="반복 예약" color="#3fc1c9"></v-checkbox>
+            <v-expansion-panels v-if="checkbox" accordion v-model="panel" multiple>
               <v-expansion-panel>
                 <v-expansion-panel-header v-slot="{ open }" class="pt-0 pb-0">
                   <v-radio-group v-model="rept_rsv.rsv_type" row>
@@ -107,7 +109,7 @@
                     <v-radio label="매주" value="1" color="#3fc1c9"></v-radio>
                   </v-radio-group>
                 </v-expansion-panel-header>
-                <v-expansion-panel-content v-if="rept_rsv.rsv_type == 1 && checkbox">
+                <v-expansion-panel-content v-if="rept_rsv.rsv_type == 1">
                   <v-row>
                     <!-- {{rept_rsv.rsv_typedtl}} -->
                     <v-checkbox
@@ -295,11 +297,11 @@
               sm6
               d-flex
               v-model="checkbox"
-              v-on:change="onRept"
+              @change="onRept"
               label="반복 예약"
               color="#3fc1c9"
             ></v-checkbox>
-            <v-expansion-panels v-if="checkbox" accordion>
+            <v-expansion-panels v-if="checkbox" accordion v-model="panel" multiple>
               <v-expansion-panel>
                 <v-expansion-panel-header v-slot="{ open }" class="pt-0 pb-0">
                   <v-radio-group v-model="rept_rsv.rsv_type" row>
@@ -307,7 +309,7 @@
                     <v-radio label="매주" value="1" color="#3fc1c9"></v-radio>
                   </v-radio-group>
                 </v-expansion-panel-header>
-                <v-expansion-panel-content v-if="rept_rsv.rsv_type == 1 && checkbox">
+                <v-expansion-panel-content v-if="rept_rsv.rsv_type == 1">
                   <v-row>
                     <!-- {{rept_rsv.rsv_typedtl}} -->
                     <v-checkbox
@@ -446,11 +448,13 @@ export default {
       model: "",
       reserved: false,
       rsv_temp: {},
+      rpt_checker: true,
       owner: false,
       mask: "###-####-####",
       cell_time: {},
       alert_detail: { type: "", message: "" },
       unavailable_reservation: false,
+      panel: [0],
       rules: {
         required: value => !!value || "필수입력 사항입니다.",
         counter: value => value.length <= 25 || "최대 25자까지 입력가능합니다."
@@ -465,8 +469,8 @@ export default {
         { text: "금", value: 6 }
       ],
       rept_rsv: {
-        rsv_type: "",
-        rsv_typedtl: [],
+        rsv_type: this.rsvInput.rsv_type || "0",
+        rsv_typedtl: this.rsvInput.rsv_typedtl || [],
         st_dt: null,
         ed_dt: null
       },
@@ -534,8 +538,9 @@ export default {
     // onChgReptType() {
     //   this.rept_rsv.rsv_type = this.rept_gbn;
     // },
+    // 체크 박스가 켜져 있고 rept에 시작 날짜가 없는 경우 시작날짜를 오늘로 설정, 종료일자를 일주일 후로 설정 함
     onRept() {
-      if (this.checkbox) {
+      if (this.checkbox && !this.rept_rsv.st_dt) {
         // this.rept_rsv.rsv_type = this.rept_gbn;
         this.rept_rsv.st_dt = this.date;
 
@@ -544,21 +549,32 @@ export default {
         arr1[1] = arr1[1] - 1;
         let dat1 = new Date(arr1[0], arr1[1], arr1[2]);
 
-        this.rept_rsv.ed_dt = dat1.setDate(dat1.getDate() + 7);
-        this.rept_rsv.ed_dt = this.formatDate(this.rept_rsv.ed_dt);
+        this.rept_rsv.ed_dt = this.formatDate(dat1.setDate(dat1.getDate() + 7));
       } else {
         this.clearRept();
       }
     },
     clearRept() {
-      this.rept_rsv.rsv_type = 0;
       this.checkbox = false;
       this.rept_rsv = {
-        rsv_type: "",
+        rsv_type: "0",
         rsv_typedtl: [],
         st_dt: null,
         ed_dt: null
       };
+    },
+    // 반복 예약 정보를 불러오는 메소드
+    getRept() {
+      this.rept_rsv.rsv_type = this.rsvInput.rsv_type || "0";
+      if (this.rsvInput.rsv_typedtl) {
+        this.rept_rsv.rsv_typedtl = JSON.parse(this.rsvInput.rsv_typedtl);
+      }
+      this.rept_rsv.st_dt = this.rsvInput.st_dt || null;
+      this.rept_rsv.ed_dt = this.rsvInput.ed_dt || null;
+      // 반복 예약 데이터가 있을 경우
+      if (this.rsvInput.st_dt) {
+        this.checkbox = true;
+      }
     },
 
     cnclCheck() {
@@ -614,6 +630,10 @@ export default {
         this.owner = true;
       }
     }
+    if (this.rpt_checker && this.dialog) {
+      this.getRept();
+      this.rpt_checker = false;
+    }
   },
   mounted() {
     Object.assign(this.cell_time, this.selected_time);
@@ -624,6 +644,7 @@ export default {
         this.clearRept();
         this.$emit("closeDialog");
         this.$emit("clearRsv");
+        this.rpt_checker = true;
       }
     });
   },

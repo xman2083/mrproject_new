@@ -424,8 +424,8 @@ export default {
         this.rsvInput.rsv_created = rsv[10];
         this.rsvInput.rsv_type = rsv[12];
         this.rsvInput.rsv_typedtl = rsv[13];
-        this.rsvInput.st_dt = rsv[5];
-        this.rsvInput.ed_dt = rsv[15];
+        this.rsvInput.st_dt = rsv[15];
+        this.rsvInput.ed_dt = rsv[16];
         
         Object.assign(this.rsvorg, this.rsvInput);
         this.dialog = true;

@@ -97,7 +97,7 @@ function signupUser(data) {
 //예약 정보 API
 function RsvDataApi(data) {
   try {
-    console.log("rsv input in API", data);
+    // console.log("rsv input in API", data);
     if (data.httpMethod == "SELECT") {
       console.log("managersvdata");
       return rsv.post("managersvdata", JSON.stringify(data));
