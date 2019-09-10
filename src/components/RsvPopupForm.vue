@@ -13,6 +13,7 @@
           style="color:grey !important;"
         >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
         <span class="grey--text subtitle-1">{{this.date}}</span>
+        <span class="grey--text subtitle-1">{{this.rsvInput}}</span>
       </v-card-title>
 
       <v-divider style="margin:0px;"></v-divider>
@@ -298,7 +299,7 @@
               label="반복 예약"
               color="#3fc1c9"
             ></v-checkbox>
-            <v-expansion-panels v-if="checkbox">
+            <v-expansion-panels v-if="checkbox" accordion>
               <v-expansion-panel>
                 <v-expansion-panel-header v-slot="{ open }" class="pt-0 pb-0">
                   <v-radio-group v-model="rept_rsv.rsv_type" row>
