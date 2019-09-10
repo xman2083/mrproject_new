@@ -30,8 +30,8 @@
               <v-btn color="#fc5185" small dark depressed>
                 <span style="font-size:smaller" @click="cnclCheck(item)">취소</span>
               </v-btn>&nbsp;&nbsp;
-              <v-btn color="#364f6b" small depressed disabled>
-                <span style="font-size:smaller">수정</span>
+              <v-btn color="#364f6b" small dark depressed>
+                <span style="font-size:smaller">상세</span>
               </v-btn>
             </v-list-item-icon>
           </v-list-item>

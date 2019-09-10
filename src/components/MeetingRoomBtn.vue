@@ -636,7 +636,7 @@ export default {
     },
 
     // 기존 예약 정보 수정
-    updateReservation(cell_time, ed_dt) {
+    updateReservation(cell_time, rept_rsv) {
       Object.assign(this.selected_time, cell_time);
       if (this.rsvAvailableCheck(this.rsvInput.rsv_id)) {
         // this.updateRsvData(this.rsvInput);
@@ -646,7 +646,15 @@ export default {
         console.log(cell_time);
         this.rsvInput.stHour = cell_time.st.HH + cell_time.st.mm;
         this.rsvInput.edHour = cell_time.et.HH + cell_time.et.mm;
-        this.rsvInput.ed_dt = ed_dt;
+        // this.rsvInput.ed_dt = ed_dt;
+
+        if (rept_rsv.st_dt) {
+            this.rsvInput.st_dt = rept_rsv.st_dt.replace(/\-/g, "");
+            this.rsvInput.ed_dt = rept_rsv.ed_dt.replace(/\-/g, "");
+            this.rsvInput.rsv_type = rept_rsv.rsv_type;
+            this.rsvInput.rsv_typedtl = rept_rsv.rsv_typedtl;
+
+          }
 
         RsvDataApi({
           tel_num: this.$store.state.user.tel_num,
@@ -945,8 +953,8 @@ export default {
     },
     closeModal() {
       this.unavailable_reservation = false;
-      this.alert_detail.message = "";
-      this.aelrt_detail.type = "";
+      // this.alert_detail.message = "";
+      // this.alert_detail.type = "";
     },
     timePicker(status) {
       if (status === "on") {

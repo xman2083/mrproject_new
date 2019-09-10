@@ -12,10 +12,9 @@
           class="headline"
           style="color:grey !important;"
         >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
-        <span class="grey--text subtitle-1">{{this.date}}</span>
+        <!-- <span class="grey--text subtitle-1">{{this.date}}</span>
         <span class="grey--text subtitle-1">{{this.rsvInput}}</span>
-        <span class="grey--text subtitle-1">{{this.rept_rsv}}</span>
-        <v-btn @click="getRept">click</v-btn>
+        <span class="grey--text subtitle-1">{{this.rept_rsv}}</span>-->
       </v-card-title>
 
       <v-divider style="margin:0px;"></v-divider>
@@ -412,7 +411,7 @@
           dark
         >예약 취소</v-btn>
         <v-btn
-          v-if="currCell !== '' && (currCell[1].reserved === 3) && owner && this.rsvInput.rsv_type!= 1"
+          v-if="currCell !== '' && (currCell[1].reserved === 3) && owner"
           color="#364f6b"
           dark
           width="80"
