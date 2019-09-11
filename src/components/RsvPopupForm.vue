@@ -480,7 +480,6 @@ export default {
   props: [
     "rsvInput",
     "room_indx",
-    "rooms",
     "date",
     "dialog",
     "currCell",
@@ -518,8 +517,8 @@ export default {
     },
     closeModal(check) {
       this.unavailable_reservation = false;
-      this.alert_detail.type = "";
-      this.alert_detail.message = "";
+      // this.alert_detail.type = "";
+      // this.alert_detail.message = "";
       if (check) {
         this.$emit("cnclReservation");
       }
