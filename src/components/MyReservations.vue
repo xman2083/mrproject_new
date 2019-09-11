@@ -28,7 +28,7 @@
             </v-list-item-content>
             <v-list-item-icon>
               <v-btn color="#fc5185" small dark depressed>
-                <span style="font-size:smaller" @click="cnclCheck(item)">취소</span>
+                <span style="font-size:smaller" @click="cnclCheck('check',item)">취소</span>
               </v-btn>&nbsp;&nbsp;
               <v-btn color="#364f6b" small dark depressed>
                 <span style="font-size:smaller" @click="showDialog(item)">상세</span>
@@ -48,7 +48,8 @@
         :dialog="dialog"
         :room_indx="room_indx"
         :date="date"
-        :rooms="rooms"
+        :currCell="currCell"
+        :selected_time="selected_time"
         @closeDialog="closeDialog"
         @cnclReservation="cnclReservation"
         np
@@ -56,7 +57,6 @@
         @clearRsv="clearRsv"
         @timeControl="timeControl"
         @timePicker="timePicker"
-        @rsvAvailableCheck="rsvAvailableCheck"
       ></rsv-popup-form>
     </v-dialog>
     <v-dialog v-model="loadingSnackBar" hide-overlay transition="false" persistent width="200">
@@ -81,7 +81,7 @@
 </template>
 <script>
 import { mapMutations, mapActions, mapState } from "vuex";
-import { RsvDataApi } from "../api";
+import { RsvDataApi, getRoomData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import Modal from "./Modal.vue";
 import { log } from "util";
@@ -97,7 +97,11 @@ export default {
       rsv_temp: {},
       room_indx: 0,
       date: "",
-      rooms: [],
+      currCell: [{ name: "" }, { reserved: 3 }],
+      selected_time: {
+        st: { HH: "", mm: "" },
+        et: { HH: "", mm: "" }
+      },
       rsvInput: {
         date: "",
         user_id: "",
@@ -181,34 +185,38 @@ export default {
       };
     },
 
-    cnclCheck(item) {
+    cnclCheck(check, item) {
       this.unavailable_reservation = true;
       this.alert_detail = {
-        type: "check",
+        type: check,
         message: "예약을 취소하시겠습니까?"
       };
       Object.assign(this.rsv_temp, item);
       // console.log("!@@@@@@@",this.rsv_temp);
     },
 
-    cnclReservation() {
-      let rsv = {};
-      Object.assign(rsv, this.rsv_temp);
-      this.rsvInput.room_id = rsv[0];
-      this.rsvInput.title = rsv[1];
-      this.rsvInput.content = rsv[2];
-      this.rsvInput.stHour = rsv[3];
-      this.rsvInput.edHour = rsv[4];
-      this.rsvInput.date = rsv[5];
-      this.rsvInput.user_id = this.$store.state.user.user_id;
-      this.rsvInput.user_name = rsv[8];
-      this.rsvInput.telNum = rsv[9];
-      this.rsvInput.rsv_created = rsv[10];
-      this.rsvInput.rsv_type = rsv[12];
-      this.rsvInput.rsv_typeftl = rsv[13];
-      this.rsvInput.st_dt = rsv[15];
-      this.rsvInput.ed_dt = rsv[16];
-
+    cnclReservation(t_rsv) {
+      if (!t_rsv) {
+        let rsv = {};
+        Object.assign(rsv, this.rsv_temp);
+        this.rsvInput.room_id = rsv[0];
+        this.rsvInput.title = rsv[1];
+        this.rsvInput.content = rsv[2];
+        this.rsvInput.stHour = rsv[3];
+        this.rsvInput.edHour = rsv[4];
+        this.rsvInput.date = rsv[5];
+        this.rsvInput.user_id = this.$store.state.user.user_id;
+        this.rsvInput.user_name = rsv[8];
+        this.rsvInput.telNum = rsv[9];
+        this.rsvInput.rsv_created = rsv[10];
+        this.rsvInput.rsv_type = rsv[12];
+        this.rsvInput.rsv_typedtl = rsv[13];
+        this.rsvInput.st_dt = rsv[15];
+        this.rsvInput.ed_dt = rsv[16];
+      } else {
+        console.log("t_rsv");
+        Object.assign(this.rsvInput, t_rsv);
+      }
       this.loadingSnackBar = true;
 
       // console.log("@@@@@", this.rsvInput);
@@ -222,6 +230,7 @@ export default {
           console.log(response);
           this.fetchRsvData();
           this.clearRsv();
+          this.dialog = false;
           this.rsv_temp = {};
 
           setTimeout(() => {
@@ -242,7 +251,7 @@ export default {
 
     updateReservation(cell_time, rept_rsv) {
       Object.assign(this.selected_time, cell_time);
-      if (this.rsvAvailableCheck(this.rsvInput.rsv_id)) {
+      if (this.rsvAvailableCheck()) {
         // this.updateRsvData(this.rsvInput);
         console.log("updated...");
         this.loadingSnackBar = true;
@@ -303,7 +312,30 @@ export default {
 
     showDialog(item) {
       this.date = item[5];
-      this.room_indx = 0;
+      this.room_id = item[0];
+      this.room_indx = this.findRoomInfo(item[0], "floor");
+      this.currCell[0].name = this.findRoomInfo(item[0]);
+
+      this.rsvInput.room_id = item[0];
+      this.rsvInput.title = item[1];
+      this.rsvInput.content = item[2];
+      this.rsvInput.stHour = item[3];
+      this.rsvInput.edHour = item[4];
+      this.rsvInput.date = item[5];
+      this.rsvInput.user_id = this.$store.state.user.user_id;
+      this.rsvInput.user_name = item[8];
+      this.rsvInput.telNum = item[9];
+      this.rsvInput.rsv_created = item[10];
+      this.rsvInput.rsv_type = item[12];
+      this.rsvInput.rsv_typedtl = item[13];
+      this.rsvInput.st_dt = item[15];
+      this.rsvInput.ed_dt = item[16];
+      Object.assign(this.rsvorg, this.rsvInput);
+
+      // console.log(this.currCell, this.room_indx);
+      this.selected_time.st = this.timeControl(this.rsvInput.stHour, "set");
+      this.selected_time.et = this.timeControl(this.rsvInput.edHour, "set");
+
       this.dialog = true;
     },
 
@@ -325,6 +357,46 @@ export default {
       if (check) {
         this.cnclReservation();
       }
+    },
+
+    rsvAvailableCheck() {
+      let stHour = this.timeControl(this.selected_time.st, "get");
+      let edHour = this.timeControl(this.selected_time.et, "get");
+      // console.log("selected_time:", this.selected_time);
+
+      if (this.rsvInput.title === "") {
+        this.unavailable_reservation = true;
+        this.alert_detail = {
+          type: "error",
+          message: "회의 주제를 입력 해주세요."
+        };
+        return false;
+      }
+
+      let today = new Date();
+      today.setDate(today.getDate());
+      today = this.formatDate();
+      // console.log("check this", this.date, today);
+
+      if (this.date < today) {
+        this.unavailable_reservation = true;
+        this.alert_detail = {
+          type: "error",
+          message: "과거 날짜로 예약은 불가합니다."
+        };
+        return false;
+      }
+
+      if (stHour >= edHour || edHour > "2000") {
+        this.unavailable_reservation = true;
+        this.alert_detail = {
+          type: "error",
+          message: "예약 시간을 확인해주세요."
+        };
+        return false;
+      }
+
+      return true;
     },
 
     timeControl(val, con) {
@@ -366,71 +438,33 @@ export default {
         this.time_picker = false;
       }
     },
+    pad(n, width) {
+      n = n + "";
+      return n.length >= width
+        ? n
+        : new Array(width - n.length + 1).join("0") + n;
+    },
 
-    rsvAvailableCheck(rsv_id) {
-      console.log("rsv_id:", rsv_id);
-      let stHour = this.timeControl(this.selected_time.st, "get");
-      let edHour = this.timeControl(this.selected_time.et, "get");
-      // console.log("selected_time:", this.selected_time);
-
-      if (this.rsvInput.title === "") {
-        this.unavailable_reservation = true;
-        this.alert_detail = {
-          type: "error",
-          message: "회의 주제를 입력 해주세요."
-        };
-        return false;
+    findRoomInfo(room_id, type) {
+      if (!this.$store.state.room_src[0][0][0]) {
+        getRoomData({
+          tel_num: this.$store.state.user.tel_num,
+          token: this.$store.state.token
+        }).then(response => console.log(response));
       }
-
-      let today = new Date();
-      today.setDate(today.getDate());
-      today = this.formatDate();
-      // console.log("check this", this.date, today);
-
-      if (this.date < today) {
-        this.unavailable_reservation = true;
-        this.alert_detail = {
-          type: "error",
-          message: "과거 날짜로 예약은 불가합니다."
-        };
-        return false;
-      }
-
-      if (stHour >= edHour || edHour > "2000") {
-        this.unavailable_reservation = true;
-        this.alert_detail = {
-          type: "error",
-          message: "예약 시간을 확인해주세요."
-        };
-        return false;
-      } else {
-        var room_check = [];
-        for (var i = 0; i < this.rooms[this.room_indx].length; i++) {
-          if (this.rooms[this.room_indx][i].room_id === this.rsvInput.room_id) {
-            room_check = this.rooms[this.room_indx][i];
-            console.log(room_check);
-          }
-        }
-        for (var x = 0; x < 24; x++) {
-          if (
-            this.rsvInput.stHour <= room_check.hours[x].index &&
-            room_check.hours[x].index <=
-              this.timeControl(this.rsvInput.edHour, "sub") &&
-            room_check.hours[x].rsv_id &&
-            room_check.hours[x].rsv_id != rsv_id &&
-            this.rsvInput.telNum.replace(/\-/g, "") !=
-              this.$store.state.user.tel_num
-          ) {
-            this.unavailable_reservation = true;
-            this.alert_detail = {
-              type: "error",
-              message: "!!!!기존 예약이 존재합니다."
-            };
-            return false;
+      // console.log("room_src", this.$store.state.room_src.length);
+      for (var i = 0; i < this.$store.state.room_src.length; i++) {
+        // console.log("i", i);
+        for (var x = 0; x < this.$store.state.room_src[i][1].length; x++) {
+          // console.log("x", x);
+          // console.log(this.$store.state.room_src[i][1][x][1]);
+          if (this.$store.state.room_src[i][1][x][1] === room_id) {
+            return type === "floor"
+              ? i
+              : this.$store.state.room_src[i][1][x][0];
           }
         }
       }
-      return true;
     }
   },
   async created() {

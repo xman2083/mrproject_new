@@ -12,9 +12,9 @@
           class="headline"
           style="color:grey !important;"
         >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
-        <!-- <span class="grey--text subtitle-1">{{this.date}}</span>
+        <span class="grey--text subtitle-1">{{this.date}}</span>
         <span class="grey--text subtitle-1">{{this.rsvInput}}</span>
-        <span class="grey--text subtitle-1">{{this.rept_rsv}}</span>-->
+        <span class="grey--text subtitle-1">{{this.rept_rsv}}</span>
       </v-card-title>
 
       <v-divider style="margin:0px;"></v-divider>
@@ -164,7 +164,7 @@
 
                     <v-col cols="6">
                       <v-menu
-                        v-model="menu"
+                        v-model="open_picker"
                         :close-on-content-click="false"
                         :return-value.sync="rsvInput.ed_dt"
                         offset-y
@@ -185,7 +185,7 @@
                           no-title
                           scrollable
                           :events="dateFunctionEvents"
-                          @input="menu = false"
+                          @input="open_picker = false"
                         >
                           <v-spacer></v-spacer>
                         </v-date-picker>
@@ -299,13 +299,14 @@
               @change="onRept"
               label="반복 예약"
               color="#3fc1c9"
+              disabled
             ></v-checkbox>
             <v-expansion-panels v-if="checkbox" accordion v-model="panel" multiple>
               <v-expansion-panel>
                 <v-expansion-panel-header v-slot="{ open }" class="pt-0 pb-0">
                   <v-radio-group v-model="rept_rsv.rsv_type" row>
-                    <v-radio label="매일" value="0" color="#3fc1c9"></v-radio>
-                    <v-radio label="매주" value="1" color="#3fc1c9"></v-radio>
+                    <v-radio :disabled="!owner" label="매일" value="0" color="#3fc1c9"></v-radio>
+                    <v-radio :disabled="!owner" label="매주" value="1" color="#3fc1c9"></v-radio>
                   </v-radio-group>
                 </v-expansion-panel-header>
                 <v-expansion-panel-content v-if="rept_rsv.rsv_type == 1">
@@ -364,27 +365,28 @@
 
                     <v-col cols="6">
                       <v-menu
-                        v-model="model"
+                        v-model="open_picker"
                         :close-on-content-click="false"
                         :return-value.sync="rsvInput.ed_dt"
                         offset-y
                         full-width
                         min-width="290px"
                       >
-                        <template v-slot:activator="{ owner }">
+                        <template v-slot:activator="{ on }">
                           <v-text-field
                             v-model="rept_rsv.ed_dt"
                             label="종료일"
                             prepend-icon="event"
                             readonly
-                            v-on="owner"
+                            v-on="on"
+                            :disabled="!owner"
                           ></v-text-field>
                         </template>
                         <v-date-picker
                           v-model="rept_rsv.ed_dt"
                           no-title
                           scrollable
-                          @input="menu = false"
+                          @input="open_picker = false"
                           :events="dateFunctionEvents"
                         >
                           <v-spacer></v-spacer>
@@ -443,8 +445,7 @@ import Modal from "./Modal.vue";
 export default {
   data() {
     return {
-      menu: true,
-      model: "",
+      open_picker: false,
       reserved: false,
       rsv_temp: {},
       rpt_checker: true,
@@ -512,7 +513,8 @@ export default {
     },
     closeDialog() {
       this.checkbox = false;
-      (this.select = ""), this.$emit("closeDialog");
+      this.rpt_checker = true;
+      this.$emit("closeDialog");
       this.$emit("clearRsv");
     },
     closeModal(check) {
@@ -520,7 +522,7 @@ export default {
       // this.alert_detail.type = "";
       // this.alert_detail.message = "";
       if (check) {
-        this.$emit("cnclReservation");
+        this.$emit("cnclReservation", this.rsvInput);
       }
     },
     timeControl(val, cal) {
@@ -567,18 +569,38 @@ export default {
       if (this.rsvInput.rsv_typedtl) {
         this.rept_rsv.rsv_typedtl = JSON.parse(this.rsvInput.rsv_typedtl);
       }
-      this.rept_rsv.st_dt = this.rsvInput.st_dt || null;
-      this.rept_rsv.ed_dt = this.rsvInput.ed_dt || null;
+
+      var st_dt = "";
+      st_dt = this.rsvInput.st_dt;
+      st_dt =
+        st_dt.substring(0, 4) +
+        "-" +
+        st_dt.substring(4, 6) +
+        "-" +
+        st_dt.substring(6, 8);
+
+      var ed_dt = "";
+      ed_dt = this.rsvInput.ed_dt;
+      ed_dt =
+        ed_dt.substring(0, 4) +
+        "-" +
+        ed_dt.substring(4, 6) +
+        "-" +
+        ed_dt.substring(6, 8);
+
+      this.rept_rsv.st_dt = this.rsvInput.st_dt ? st_dt : null;
+      this.rept_rsv.ed_dt = this.rsvInput.ed_dt ? ed_dt : null;
       // 반복 예약 데이터가 있을 경우
+
       if (this.rsvInput.st_dt) {
         this.checkbox = true;
       }
     },
 
-    cnclCheck() {
+    cnclCheck(check) {
       this.unavailable_reservation = true;
       this.alert_detail = {
-        type: "check",
+        type: check,
         message: "예약을 취소하시겠습니까?"
       };
     },
@@ -643,6 +665,7 @@ export default {
         this.$emit("closeDialog");
         this.$emit("clearRsv");
         this.rpt_checker = true;
+        this.open_picker = false;
       }
     });
   },

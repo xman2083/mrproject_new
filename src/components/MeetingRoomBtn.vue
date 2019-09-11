@@ -205,7 +205,6 @@
         :date="date"
         :dialog="dialog"
         :currCell="currCell"
-        :currRoom="currRoom"
         :selected_time="selected_time"
         :rsvDataRes="rsvDataRes"
         @closeDialog="closeDialog"
@@ -582,7 +581,7 @@ export default {
               this.currCell = [];
               this.dialog = false;
 
-              console.log(this.rsvInput.ed_dt);
+              // console.log(this.rsvInput.ed_dt);
               this.clearCellData();
               this.clearSelectionData();
               this.clearRsv();
