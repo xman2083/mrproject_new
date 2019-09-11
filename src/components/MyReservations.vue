@@ -26,14 +26,17 @@
               <v-list-item-title v-text="item[1]"></v-list-item-title>
               <v-list-item-subtitle>{{item[3].replace(/(.{2})/g,"$1:").substring(0,5)}} ~ {{item[4].replace(/(.{2})/g,"$1:").substring(0,5)}} | {{item[7]}}</v-list-item-subtitle>
             </v-list-item-content>
-            <v-list-item-icon>
-              <v-btn color="#fc5185" small dark depressed>
-                <span style="font-size:smaller" @click="cnclCheck('check',item)">취소</span>
+            <div>
+              <v-btn color="#d8d8d8" small dark depressed @click="onRoomBtnClick(item)">
+                <span style="font-size:smaller">약도</span>
               </v-btn>&nbsp;&nbsp;
-              <v-btn color="#364f6b" small dark depressed>
-                <span style="font-size:smaller" @click="showDialog(item)">상세</span>
+              <v-btn color="#fc5185" small dark depressed @click="cnclCheck('check',item)">
+                <span style="font-size:smaller">취소</span>
+              </v-btn>&nbsp;&nbsp;
+              <v-btn color="#364f6b" small dark depressed @click="showDialog(item)">
+                <span style="font-size:smaller">상세</span>
               </v-btn>
-            </v-list-item-icon>
+            </div>
           </v-list-item>
           <v-divider inset class="mr-5"></v-divider>
         </v-list-item-group>
@@ -77,6 +80,14 @@
     <v-dialog v-model="unavailable_reservation" persistent max-width="250px">
       <modal :alert_detail="alert_detail" @closeModal="closeModal"></modal>
     </v-dialog>
+    <v-dialog v-model="meetingroom_info" persistent max-width="600px">
+      <meeting-room-info
+        :rsvInput="rsvInput"
+        :room_indx="room_indx"
+        :currRoom="currRoom"
+        @closeMrPopup="closeMrPopup"
+      ></meeting-room-info>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -84,6 +95,7 @@ import { mapMutations, mapActions, mapState } from "vuex";
 import { RsvDataApi, getRoomData } from "../api";
 import RsvPopupForm from "./RsvPopupForm.vue";
 import Modal from "./Modal.vue";
+import MeetingRoomInfo from "./MeetingRoomInfo.vue";
 import { log } from "util";
 
 export default {
@@ -91,6 +103,8 @@ export default {
     return {
       loadingSnackBar: false,
       completeSnackBar: false,
+      meetingroom_info: false,
+      currRoom: {},
       dialog: false,
       alert_detail: { type: "", message: "" },
       unavailable_reservation: false,
@@ -145,11 +159,22 @@ export default {
   },
   components: {
     RsvPopupForm,
-    Modal
+    Modal,
+    MeetingRoomInfo
   },
   methods: {
+    ...mapActions(["loadRoomSrc"]),
     show(item) {
       console.log(item);
+    },
+    onRoomBtnClick(item) {
+      this.meetingroom_info = true;
+      this.currRoom.name = this.findRoomInfo(item[0]);
+      this.currRoom.img_src = require("../assets/" + item[0] + ".gif");
+      console.log("sdsdsd", this.currRoom);
+    },
+    closeMrPopup() {
+      this.meetingroom_info = false;
     },
     formatDate() {
       let d = new Date();
@@ -476,6 +501,12 @@ export default {
       tel_num: this.$store.state.user.tel_num,
       token: this.$store.state.token
     });
+    await this.loadRoomSrc(
+      await getRoomData({
+        tel_num: this.$store.state.user.tel_num,
+        token: this.$store.state.token
+      })
+    );
   },
 
   computed: {

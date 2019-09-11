@@ -12,9 +12,9 @@
           class="headline"
           style="color:grey !important;"
         >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
-        <span class="grey--text subtitle-1">{{this.date}}</span>
+        <!-- <span class="grey--text subtitle-1">{{this.date}}</span>
         <span class="grey--text subtitle-1">{{this.rsvInput}}</span>
-        <span class="grey--text subtitle-1">{{this.rept_rsv}}</span>
+        <span class="grey--text subtitle-1">{{this.rept_rsv}}</span>-->
       </v-card-title>
 
       <v-divider style="margin:0px;"></v-divider>
