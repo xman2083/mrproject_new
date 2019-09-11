@@ -206,7 +206,6 @@
         :dialog="dialog"
         :currCell="currCell"
         :currRoom="currRoom"
-        :rooms="rooms"
         :selected_time="selected_time"
         :rsvDataRes="rsvDataRes"
         @closeDialog="closeDialog"
