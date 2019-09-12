@@ -245,7 +245,6 @@
       </v-card>
     </v-dialog>
     </div>
-  </div>
 </template>
 
 <script>
@@ -547,8 +546,11 @@ export default {
             this.rsvInput.st_dt = rept_rsv.st_dt.replace(/\-/g, "");
             this.rsvInput.ed_dt = rept_rsv.ed_dt.replace(/\-/g, "");
             this.rsvInput.rsv_type = rept_rsv.rsv_type;
+            if (this.rsvInput.rsv_type == '1'){
             this.rsvInput.rsv_typedtl = rept_rsv.rsv_typedtl;
-
+            }else {
+              this.rsvInput.rsv_typedtl = [];
+            }
           }
 
         RsvDataApi({
@@ -650,8 +652,11 @@ export default {
             this.rsvInput.st_dt = rept_rsv.st_dt.replace(/\-/g, "");
             this.rsvInput.ed_dt = rept_rsv.ed_dt.replace(/\-/g, "");
             this.rsvInput.rsv_type = rept_rsv.rsv_type;
+            if (this.rsvInput.rsv_type == "1"){
             this.rsvInput.rsv_typedtl = rept_rsv.rsv_typedtl;
-
+            } else {
+              this.rsvInput.rsv_typedtl = [];
+            }
           }
 
         RsvDataApi({

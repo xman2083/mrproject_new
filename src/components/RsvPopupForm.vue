@@ -514,6 +514,7 @@ export default {
     closeDialog() {
       this.checkbox = false;
       this.rpt_checker = true;
+      this.clearRept();
       this.$emit("closeDialog");
       this.$emit("clearRsv");
     },

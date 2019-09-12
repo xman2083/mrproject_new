@@ -24,16 +24,35 @@
             <v-list-item-content>
               <v-icon></v-icon>
               <v-list-item-title v-text="item[1]"></v-list-item-title>
-              <v-list-item-subtitle>{{item[3].replace(/(.{2})/g,"$1:").substring(0,5)}} ~ {{item[4].replace(/(.{2})/g,"$1:").substring(0,5)}} | {{item[7]}}</v-list-item-subtitle>
+              <v-list-item-subtitle>
+                {{item[3].replace(/(.{2})/g,"$1:").substring(0,5)}} ~ {{item[4].replace(/(.{2})/g,"$1:").substring(0,5)}} |
+                <span
+                  @click="onRoomBtnClick(item)"
+                >
+                  {{item[7]}}
+                  <v-icon size="10">fas fa-search</v-icon>
+                </span>
+              </v-list-item-subtitle>
             </v-list-item-content>
             <div>
-              <v-btn color="#d8d8d8" small dark depressed @click="onRoomBtnClick(item)">
-                <span style="font-size:smaller">약도</span>
-              </v-btn>&nbsp;&nbsp;
-              <v-btn color="#fc5185" small dark depressed @click="cnclCheck('check',item)">
+              <v-btn
+                color="#fc5185"
+                small
+                style="min-width:0px !important; width:35px"
+                dark
+                depressed
+                @click="cnclCheck('check',item)"
+              >
                 <span style="font-size:smaller">취소</span>
-              </v-btn>&nbsp;&nbsp;
-              <v-btn color="#364f6b" small dark depressed @click="showDialog(item)">
+              </v-btn>&nbsp;
+              <v-btn
+                color="#364f6b"
+                small
+                style="min-width:0px !important; width:35px"
+                dark
+                depressed
+                @click="showDialog(item)"
+              >
                 <span style="font-size:smaller">상세</span>
               </v-btn>
             </div>
@@ -85,6 +104,7 @@
         :rsvInput="rsvInput"
         :room_indx="room_indx"
         :currRoom="currRoom"
+        :refresh="refresh"
         @closeMrPopup="closeMrPopup"
       ></meeting-room-info>
     </v-dialog>
@@ -104,6 +124,7 @@ export default {
       loadingSnackBar: false,
       completeSnackBar: false,
       meetingroom_info: false,
+      refresh: 0,
       currRoom: {},
       dialog: false,
       alert_detail: { type: "", message: "" },
@@ -167,10 +188,11 @@ export default {
     show(item) {
       console.log(item);
     },
-    onRoomBtnClick(item) {
-      this.meetingroom_info = true;
+    async onRoomBtnClick(item) {
       this.currRoom.name = this.findRoomInfo(item[0]);
       this.currRoom.img_src = require("../assets/" + item[0] + ".gif");
+      this.refresh += 1;
+      this.meetingroom_info = true;
       console.log("sdsdsd", this.currRoom);
     },
     closeMrPopup() {
@@ -401,7 +423,6 @@ export default {
       let today = new Date();
       today.setDate(today.getDate());
       today = this.formatDate();
-      // console.log("check this", this.date, today);
 
       if (this.date < today) {
         this.unavailable_reservation = true;
@@ -434,7 +455,6 @@ export default {
         var hour = val.substring(0, 2);
         var minute = val.substring(2, 4);
       }
-      // console.log("in timeControl:", hour, "/", minute);
       if (con === "add" && minute === "00") {
         minute = "30";
       } else if (con === "add" && minute === "30") {
@@ -477,12 +497,8 @@ export default {
           token: this.$store.state.token
         }).then(response => console.log(response));
       }
-      // console.log("room_src", this.$store.state.room_src.length);
       for (var i = 0; i < this.$store.state.room_src.length; i++) {
-        // console.log("i", i);
         for (var x = 0; x < this.$store.state.room_src[i][1].length; x++) {
-          // console.log("x", x);
-          // console.log(this.$store.state.room_src[i][1][x][1]);
           if (this.$store.state.room_src[i][1][x][1] === room_id) {
             return type === "floor"
               ? i

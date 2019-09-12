@@ -3,6 +3,7 @@
     <v-card-title>
       <v-avatar color="#3fc1c9" size="40">
         <span
+          :key="refresh"
           class="white--text"
           style="font-size:small;"
         >{{this.$store.state.room_src[room_indx][0]}}</span>
@@ -35,7 +36,7 @@ export default {
       this.$emit("closeMrPopup");
     }
   },
-  props: ["room_indx", "rsvInput", "currRoom"],
+  props: ["room_indx", "rsvInput", "currRoom", "refresh"],
   mounted() {
     document.addEventListener("keydown", e => {
       if (e.keyCode == 27) {

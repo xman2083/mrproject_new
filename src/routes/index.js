@@ -8,7 +8,6 @@ import Login from "../views/Login.vue";
 import noticeView from "../views/noticeView.vue";
 import mainView from "../views/mainView.vue";
 import RstrMenuView from "../views/RstrMenuView.vue";
-import Chart from "../components/Chart.vue";
 import MyReservations from "../views/MyReservations.vue";
 
 Vue.use(Router);
@@ -62,14 +61,6 @@ export default new Router({
       path: "/rstrmenu",
       name: "rstrmenu",
       component: RstrMenuView,
-      beforeEnter(to, from, next) {
-        store.getters["isLoggedIn"] ? next() : next("/login");
-      },
-    },
-    {
-      path: "/chart",
-      name: "chart",
-      component: Chart,
       beforeEnter(to, from, next) {
         store.getters["isLoggedIn"] ? next() : next("/login");
       },
