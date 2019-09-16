@@ -15,7 +15,6 @@
         <!-- <span class="grey--text subtitle-1">{{this.date}}</span> -->
         <!-- <span class="grey--text subtitle-1">{{this.rsvInput}}</span> -->
         <span class="grey--text subtitle-1">{{this.rept_rsv}}</span>
-        <span class="grey--text subtitle-1">{{this.converted_typedtl}}</span>
         <!-- <v-btn @click="convertRept">click</v-btn> -->
       </v-card-title>
 
@@ -329,6 +328,7 @@
                       color="#3fc1c9"
                       class="ml-2 mt-0 mb-0 pb-0"
                       style="font-size:10px; !important"
+                      :disabled="!owner"
                     ></v-checkbox>
                   </v-row>
                 </v-expansion-panel-content>
@@ -466,7 +466,7 @@ export default {
       rpt_checker: true,
       owner: false,
       mask: "###-####-####",
-      converted_typedtl: [0, 0, 0, 0, 0],
+      // converted_typedtl: [0, 0, 0, 0, 0],
       cell_time: {},
       alert_detail: { type: "", message: "" },
       unavailable_reservation: false,
@@ -521,7 +521,7 @@ export default {
       if (
         (this.rept_rsv.rsv_type == 1 &&
           this.rept_rsv.rsv_typedtl.length == 0) ||
-        (dtl_check[0] == 0 && this.rept_rsv.rsv_typedtl.length == 1)
+        (dtl_check[0] == 0 && dtl_check.length == 1)
       ) {
         this.unavailable_reservation = true;
         this.alert_detail = {
@@ -530,6 +530,7 @@ export default {
         };
       } else {
         this.convertRept();
+        console.log("rept:", this.rept_rsv.rsv_typedtl);
         this.$emit("makeReservation", this.cell_time, this.rept_rsv);
       }
     },
@@ -539,10 +540,13 @@ export default {
         if (a.indexOf(b) < 0) a.push(b);
         return a;
       }, []);
+      console.log(this.rept_rsv.rsv_typedtl.length);
+      console.log(this.rept_rsv.rsv_typedtl);
+      console.log(this.rept_rsv.rsv_type);
       if (
         (this.rept_rsv.rsv_type == 1 &&
           this.rept_rsv.rsv_typedtl.length == 0) ||
-        (dtl_check[0] == 0 && this.rept_rsv.rsv_typedtl.length == 1)
+        (dtl_check[0] == 0 && dtl_check.length == 1)
       ) {
         this.unavailable_reservation = true;
         this.alert_detail = {
@@ -551,6 +555,7 @@ export default {
         };
       } else {
         this.convertRept();
+        console.log("rept:", this.rept_rsv.rsv_typedtl);
         this.$emit("updateReservation", this.cell_time, this.rept_rsv);
       }
     },
@@ -574,6 +579,7 @@ export default {
       // this.alert_detail.message = "";
       if (check === "check") {
         this.$emit("cnclReservation", this.rsvInput);
+        this.clearRept();
       }
     },
     timeControl(val, cal) {
@@ -681,29 +687,29 @@ export default {
     },
     // 예약 자리수 변환 메소드
     convertRept() {
+      var converted_typedtl = [0, 0, 0, 0, 0];
       var cvt = this.rept_rsv.rsv_typedtl;
       // console.log(cvt);
       for (var i in cvt) {
         // console.log(cvt[i]);
         if (cvt[i] === 2) {
-          this.converted_typedtl[0] = 2;
+          converted_typedtl[0] = 2;
         }
         if (cvt[i] === 3) {
-          this.converted_typedtl[1] = 3;
+          converted_typedtl[1] = 3;
         }
         if (cvt[i] === 4) {
-          this.converted_typedtl[2] = 4;
+          converted_typedtl[2] = 4;
         }
         if (cvt[i] === 5) {
-          this.converted_typedtl[3] = 5;
+          converted_typedtl[3] = 5;
         }
         if (cvt[i] === 6) {
-          this.converted_typedtl[4] = 6;
+          converted_typedtl[4] = 6;
         }
       }
-      // console.log(this.converted_typedtl);
-      Object.assign(this.rept_rsv.rsv_typedtl, this.converted_typedtl);
-      this.converted_typedtl = [0, 0, 0, 0, 0];
+      this.rept_rsv.rsv_typedtl = [];
+      Object.assign(this.rept_rsv.rsv_typedtl, converted_typedtl);
     }
   },
   beforeUpdate() {
