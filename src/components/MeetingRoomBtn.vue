@@ -565,7 +565,7 @@ export default {
               this.unavailable_reservation = true;
               this.alert_detail = {
                 type: "error",
-                message: "기존 예약이 존재합니다."
+                message: "이 존재합니다."
               };
               this.loadingSnackBar = false;
               console.log("예약 오류", response);
@@ -695,7 +695,7 @@ export default {
         this.unavailable_reservation = true;
         this.alert_detail = {
           type: "error",
-          message: "기존 예약이 존재합니다."
+          message: "예약 처리 오류"
         };
         this.loadingSnackBar = false;
       }

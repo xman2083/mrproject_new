@@ -100,7 +100,7 @@
               <v-text-field color="#fc5185" label="회의 내용" v-model="rsvInput.content" clearable></v-text-field>
             </v-flex>
             <v-checkbox v-model="checkbox" @change="onRept" label="반복 예약" color="#3fc1c9"></v-checkbox>
-            <v-expansion-panels v-if="checkbox" accordion v-model="panel" multiple>
+            <v-expansion-panels v-if="checkbox" accordion v-model="panel">
               <v-expansion-panel>
                 <v-expansion-panel-header v-slot="{ open }" class="pt-0 pb-0">
                   <v-radio-group v-model="rept_rsv.rsv_type" row>
@@ -118,7 +118,7 @@
                       :value="i.value"
                       :key="i.text"
                       color="#3fc1c9"
-                      class="ml-5 mt-0 mb-0 pb-0"
+                      class="ml-2 mt-0 mb-0 pb-0"
                     ></v-checkbox>
                   </v-row>
                 </v-expansion-panel-content>
@@ -127,13 +127,19 @@
               <v-expansion-panel>
                 <v-expansion-panel-header v-slot="{ open }">
                   <v-row no-gutters>
-                    <v-col cols="4">종료일</v-col>
-                    <v-col cols="8" class="text--secondary">
+                    <v-col cols="3">기간</v-col>
+                    <v-col cols="9" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <span v-if="open">종료일자를 선택해주세요</span>
                         <v-row v-else no-gutters style="width: 100%">
-                          <v-col cols="6">시작일: {{ rept_rsv.st_dt || 'Not set' }}</v-col>
-                          <v-col cols="6">종료일: {{ rept_rsv.ed_dt || 'Not set' }}</v-col>
+                          <v-col cols="6">
+                            <div class="d-none d-sm-inline">시작일:</div>
+                            {{ rept_rsv.st_dt || 'Not set' }}
+                          </v-col>
+                          <v-col cols="6">
+                            <div class="d-none d-sm-inline">종료일:</div>
+                            {{ rept_rsv.ed_dt || 'Not set' }}
+                          </v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>
@@ -301,7 +307,7 @@
               color="#3fc1c9"
               disabled
             ></v-checkbox>
-            <v-expansion-panels v-if="checkbox" accordion v-model="panel" multiple>
+            <v-expansion-panels v-if="checkbox" accordion v-model="panel">
               <v-expansion-panel>
                 <v-expansion-panel-header v-slot="{ open }" class="pt-0 pb-0">
                   <v-radio-group v-model="rept_rsv.rsv_type" row>
@@ -309,7 +315,7 @@
                     <v-radio :disabled="!owner" label="매주" value="1" color="#3fc1c9"></v-radio>
                   </v-radio-group>
                 </v-expansion-panel-header>
-                <v-expansion-panel-content v-if="rept_rsv.rsv_type == 1">
+                <v-expansion-panel-content v-if="rept_rsv.rsv_type == 1" class="pb-0">
                   <v-row>
                     <!-- {{rept_rsv.rsv_typedtl}} -->
                     <v-checkbox
@@ -319,7 +325,8 @@
                       :value="i.value"
                       :key="i.text"
                       color="#3fc1c9"
-                      class="ml-5 mt-0 mb-0 pb-0"
+                      class="ml-2 mt-0 mb-0 pb-0"
+                      style="font-size:10px; !important"
                     ></v-checkbox>
                   </v-row>
                 </v-expansion-panel-content>
@@ -328,13 +335,19 @@
               <v-expansion-panel>
                 <v-expansion-panel-header v-slot="{ open }">
                   <v-row no-gutters>
-                    <v-col cols="4">종료일</v-col>
-                    <v-col cols="8" class="text--secondary">
+                    <v-col cols="3">기간</v-col>
+                    <v-col cols="9" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <span v-if="open">종료일자를 선택해주세요</span>
                         <v-row v-else no-gutters style="width: 100%">
-                          <v-col cols="6">시작일: {{ rept_rsv.st_dt || 'Not set' }}</v-col>
-                          <v-col cols="6">종료일: {{ rept_rsv.ed_dt || 'Not set' }}</v-col>
+                          <v-col cols="6">
+                            <div class="d-none d-sm-inline">시작일:</div>
+                            {{ rept_rsv.st_dt || 'Not set' }}
+                          </v-col>
+                          <v-col cols="6">
+                            <div class="d-none d-sm-inline">종료일:</div>
+                            {{ rept_rsv.ed_dt || 'Not set' }}
+                          </v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>
