@@ -12,9 +12,11 @@
           class="headline"
           style="color:grey !important;"
         >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
-        <!-- <span class="grey--text subtitle-1">{{this.date}}</span>
-        <span class="grey--text subtitle-1">{{this.rsvInput}}</span>
-        <span class="grey--text subtitle-1">{{this.rept_rsv}}</span>-->
+        <!-- <span class="grey--text subtitle-1">{{this.date}}</span> -->
+        <!-- <span class="grey--text subtitle-1">{{this.rsvInput}}</span> -->
+        <!-- <span class="grey--text subtitle-1">{{this.rept_rsv}}</span> -->
+        <!-- <span class="grey--text subtitle-1">{{this.converted_typedtl}}</span> -->
+        <v-btn @click="convertRept">click</v-btn>
       </v-card-title>
 
       <v-divider style="margin:0px;"></v-divider>
@@ -464,6 +466,7 @@ export default {
       rpt_checker: true,
       owner: false,
       mask: "###-####-####",
+      converted_typedtl: [0, 0, 0, 0, 0],
       cell_time: {},
       alert_detail: { type: "", message: "" },
       unavailable_reservation: false,
@@ -483,7 +486,7 @@ export default {
       ],
       rept_rsv: {
         rsv_type: this.rsvInput.rsv_type || "0",
-        rsv_typedtl: this.rsvInput.rsv_typedtl || [],
+        rsv_typedtl: this.rsvInput.rsv_typedtl || [0, 0, 0, 0, 0],
         st_dt: null,
         ed_dt: null
       },
@@ -511,11 +514,35 @@ export default {
 
   methods: {
     makeReservation() {
-      this.$emit("makeReservation", this.cell_time, this.rept_rsv);
+      if (
+        this.rept_rsv.rsv_type == 1 &&
+        this.rept_rsv.rsv_typedtl.length == 0
+      ) {
+        this.unavailable_reservation = true;
+        this.alert_detail = {
+          type: "error",
+          message: "반복하실 요일을 선택해주세요."
+        };
+      } else {
+        this.convertRept();
+        this.$emit("makeReservation", this.cell_time, this.rept_rsv);
+      }
     },
 
     updateReservation() {
-      this.$emit("updateReservation", this.cell_time, this.rept_rsv);
+      if (
+        this.rept_rsv.rsv_type == 1 &&
+        this.rept_rsv.rsv_typedtl.length == 0
+      ) {
+        this.unavailable_reservation = true;
+        this.alert_detail = {
+          type: "error",
+          message: "반복하실 요일을 선택해주세요."
+        };
+      } else {
+        this.convertRept();
+        this.$emit("updateReservation", this.cell_time, this.rept_rsv);
+      }
     },
 
     dateFunctionEvents(date) {
@@ -535,7 +562,7 @@ export default {
       this.unavailable_reservation = false;
       // this.alert_detail.type = "";
       // this.alert_detail.message = "";
-      if (check) {
+      if (check === "check") {
         this.$emit("cnclReservation", this.rsvInput);
       }
     },
@@ -641,6 +668,31 @@ export default {
 
         return [year, month, day].join("-");
       }
+    },
+    // 예약 자리수 변환 메소드
+    convertRept() {
+      var cvt = this.rept_rsv.rsv_typedtl;
+      // console.log(cvt);
+      for (var i in cvt) {
+        // console.log(cvt[i]);
+        if (cvt[i] === 2) {
+          this.converted_typedtl[0] = 2;
+        }
+        if (cvt[i] === 3) {
+          this.converted_typedtl[1] = 3;
+        }
+        if (cvt[i] === 4) {
+          this.converted_typedtl[2] = 4;
+        }
+        if (cvt[i] === 5) {
+          this.converted_typedtl[3] = 5;
+        }
+        if (cvt[i] === 6) {
+          this.converted_typedtl[4] = 6;
+        }
+      }
+      // console.log(this.converted_typedtl);
+      Object.assign(this.rept_rsv.rsv_typedtl, this.converted_typedtl);
     }
   },
   beforeUpdate() {
