@@ -12,9 +12,10 @@
           class="headline"
           style="color:grey !important;"
         >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
-        <!-- <span class="grey--text subtitle-1">{{this.date}}</span>
-        <span class="grey--text subtitle-1">{{this.rsvInput}}</span>
-        <span class="grey--text subtitle-1">{{this.rept_rsv}}</span>-->
+        <!-- <span class="grey--text subtitle-1">{{this.date}}</span> -->
+        <!-- <span class="grey--text subtitle-1">{{this.rsvInput}}</span> -->
+        <!-- <span class="grey--text subtitle-1">{{this.rept_rsv}}</span> -->
+        <!-- <v-btn @click="convertRept">click</v-btn> -->
       </v-card-title>
 
       <v-divider style="margin:0px;"></v-divider>
@@ -118,7 +119,7 @@
                 
             </v-flex>
             <v-checkbox v-model="checkbox" @change="onRept" label="반복 예약" color="#3fc1c9"></v-checkbox>
-            <v-expansion-panels v-if="checkbox" accordion v-model="panel" multiple>
+            <v-expansion-panels v-if="checkbox" accordion v-model="panel">
               <v-expansion-panel>
                 <v-expansion-panel-header v-slot="{ open }" class="pt-0 pb-0">
                   <v-radio-group v-model="rept_rsv.rsv_type" row>
@@ -136,7 +137,7 @@
                       :value="i.value"
                       :key="i.text"
                       color="#3fc1c9"
-                      class="ml-5 mt-0 mb-0 pb-0"
+                      class="ml-2 mt-0 mb-0 pb-0"
                     ></v-checkbox>
                   </v-row>
                 </v-expansion-panel-content>
@@ -145,13 +146,19 @@
               <v-expansion-panel>
                 <v-expansion-panel-header v-slot="{ open }">
                   <v-row no-gutters>
-                    <v-col cols="4">종료일</v-col>
-                    <v-col cols="8" class="text--secondary">
+                    <v-col cols="3">기간</v-col>
+                    <v-col cols="9" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <span v-if="open">종료일자를 선택해주세요</span>
                         <v-row v-else no-gutters style="width: 100%">
-                          <v-col cols="6">시작일: {{ rept_rsv.st_dt || 'Not set' }}</v-col>
-                          <v-col cols="6">종료일: {{ rept_rsv.ed_dt || 'Not set' }}</v-col>
+                          <v-col cols="6">
+                            <div class="d-none d-sm-inline">시작일:</div>
+                            {{ rept_rsv.st_dt || 'Not set' }}
+                          </v-col>
+                          <v-col cols="6">
+                            <div class="d-none d-sm-inline">종료일:</div>
+                            {{ rept_rsv.ed_dt || 'Not set' }}
+                          </v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>
@@ -319,7 +326,7 @@
               color="#3fc1c9"
               disabled
             ></v-checkbox>
-            <v-expansion-panels v-if="checkbox" accordion v-model="panel" multiple>
+            <v-expansion-panels v-if="checkbox" accordion v-model="panel">
               <v-expansion-panel>
                 <v-expansion-panel-header v-slot="{ open }" class="pt-0 pb-0">
                   <v-radio-group v-model="rept_rsv.rsv_type" row>
@@ -327,7 +334,7 @@
                     <v-radio :disabled="!owner" label="매주" value="1" color="#3fc1c9"></v-radio>
                   </v-radio-group>
                 </v-expansion-panel-header>
-                <v-expansion-panel-content v-if="rept_rsv.rsv_type == 1">
+                <v-expansion-panel-content v-if="rept_rsv.rsv_type == 1" class="pb-0">
                   <v-row>
                     <!-- {{rept_rsv.rsv_typedtl}} -->
                     <v-checkbox
@@ -338,6 +345,7 @@
                       :key="i.text"
                       color="#3fc1c9"
                       class="ml-5 mt-0 mb-0 pb-0"
+                      style="font-size:10px; !important"
                       :disabled="!owner"
                     ></v-checkbox>
                   </v-row>
@@ -347,13 +355,19 @@
               <v-expansion-panel>
                 <v-expansion-panel-header v-slot="{ open }">
                   <v-row no-gutters>
-                    <v-col cols="4">종료일</v-col>
-                    <v-col cols="8" class="text--secondary">
+                    <v-col cols="3">기간</v-col>
+                    <v-col cols="9" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <span v-if="open">종료일자를 선택해주세요</span>
                         <v-row v-else no-gutters style="width: 100%">
-                          <v-col cols="6">시작일: {{ rept_rsv.st_dt || 'Not set' }}</v-col>
-                          <v-col cols="6">종료일: {{ rept_rsv.ed_dt || 'Not set' }}</v-col>
+                          <v-col cols="6">
+                            <div class="d-none d-sm-inline">시작일:</div>
+                            {{ rept_rsv.st_dt || 'Not set' }}
+                          </v-col>
+                          <v-col cols="6">
+                            <div class="d-none d-sm-inline">종료일:</div>
+                            {{ rept_rsv.ed_dt || 'Not set' }}
+                          </v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>
@@ -471,6 +485,7 @@ export default {
       rpt_checker: true,
       owner: false,
       mask: "###-####-####",
+      // converted_typedtl: [0, 0, 0, 0, 0],
       cell_time: {},
       alert_detail: { type: "", message: "" },
       unavailable_reservation: false,
@@ -531,11 +546,51 @@ export default {
 
   methods: {
     makeReservation() {
-      this.$emit("makeReservation", this.cell_time, this.rept_rsv);
+      var dtl_check = this.rept_rsv.rsv_typedtl.reduce(function(a, b) {
+        if (a.indexOf(b) < 0) a.push(b);
+        return a;
+      }, []);
+      if (
+        (this.rept_rsv.rsv_type == 1 &&
+          this.rept_rsv.rsv_typedtl.length == 0) ||
+        (this.rept_rsv.rsv_type == 1 &&
+          dtl_check[0] == 0 &&
+          dtl_check.length == 1)
+      ) {
+        this.unavailable_reservation = true;
+        this.alert_detail = {
+          type: "error",
+          message: "반복하실 요일을 선택해주세요."
+        };
+      } else {
+        this.convertRept();
+        console.log("rept:", this.rept_rsv.rsv_typedtl);
+        this.$emit("makeReservation", this.cell_time, this.rept_rsv);
+      }
     },
 
     updateReservation() {
-      this.$emit("updateReservation", this.cell_time, this.rept_rsv);
+      var dtl_check = this.rept_rsv.rsv_typedtl.reduce(function(a, b) {
+        if (a.indexOf(b) < 0) a.push(b);
+        return a;
+      }, []);
+      if (
+        (this.rept_rsv.rsv_type == 1 &&
+          this.rept_rsv.rsv_typedtl.length == 0) ||
+        (this.rept_rsv.rsv_type == 1 &&
+          dtl_check[0] == 0 &&
+          dtl_check.length == 1)
+      ) {
+        this.unavailable_reservation = true;
+        this.alert_detail = {
+          type: "error",
+          message: "반복하실 요일을 선택해주세요."
+        };
+      } else {
+        this.convertRept();
+        console.log("rept:", this.rept_rsv.rsv_typedtl);
+        this.$emit("updateReservation", this.cell_time, this.rept_rsv);
+      }
     },
 
     dateFunctionEvents(date) {
@@ -555,8 +610,9 @@ export default {
       this.unavailable_reservation = false;
       // this.alert_detail.type = "";
       // this.alert_detail.message = "";
-      if (check) {
+      if (check === "check") {
         this.$emit("cnclReservation", this.rsvInput);
+        this.clearRept();
       }
     },
     timeControl(val, cal) {
