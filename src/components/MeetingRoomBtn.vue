@@ -244,7 +244,7 @@
         </v-card-title>
       </v-card>
     </v-dialog>
-    </div>
+  </div>
 </template>
 
 <script>
@@ -291,7 +291,6 @@ export default {
       },
       formatted: "",
       active: 0,
-      
 
       room_indx: 0,
 
@@ -388,7 +387,7 @@ export default {
         ("0" + d.getSeconds()).slice(-2);
 
       return s;
-    }, 
+    },
 
     onRoomBtnClick(room) {
       this.meetingroom_info = true;
@@ -423,7 +422,7 @@ export default {
         this.rsvInput.rsv_typedtl = rsv[13];
         this.rsvInput.st_dt = rsv[15];
         this.rsvInput.ed_dt = rsv[16];
-        
+
         Object.assign(this.rsvorg, this.rsvInput);
         this.dialog = true;
       } else {
@@ -525,7 +524,7 @@ export default {
       console.log("received cell_time:", cell_time);
       Object.assign(this.selected_time, cell_time);
       console.log("selected_time:", this.selected_time);
-      console.log("rept_rsv:", rept_rsv)
+      console.log("rept_rsv:", rept_rsv);
 
       //중복 예약 체크
       if (this.rsvAvailableCheck()) {
@@ -539,19 +538,18 @@ export default {
         this.rsvInput.stHour = this.timeControl(this.selected_time.st, "get");
         this.rsvInput.edHour = this.timeControl(this.selected_time.et, "get");
 
-
         this.rsvInput.floor_id = this.room_indx;
         // 반복 예약일 경우
-          if (rept_rsv.st_dt) {
-            this.rsvInput.st_dt = rept_rsv.st_dt.replace(/\-/g, "");
-            this.rsvInput.ed_dt = rept_rsv.ed_dt.replace(/\-/g, "");
-            this.rsvInput.rsv_type = rept_rsv.rsv_type;
-            if (this.rsvInput.rsv_type == '1'){
+        if (rept_rsv.st_dt) {
+          this.rsvInput.st_dt = rept_rsv.st_dt.replace(/\-/g, "");
+          this.rsvInput.ed_dt = rept_rsv.ed_dt.replace(/\-/g, "");
+          this.rsvInput.rsv_type = rept_rsv.rsv_type;
+          if (this.rsvInput.rsv_type == "1") {
             this.rsvInput.rsv_typedtl = rept_rsv.rsv_typedtl;
-            }else {
-              this.rsvInput.rsv_typedtl = [];
-            }
+          } else {
+            this.rsvInput.rsv_typedtl = [];
           }
+        }
 
         RsvDataApi({
           tel_num: this.$store.state.user.tel_num,
@@ -565,7 +563,7 @@ export default {
               this.unavailable_reservation = true;
               this.alert_detail = {
                 type: "error",
-                message: "이 존재합니다."
+                message: "기존 예약이 존재합니다."
               };
               this.loadingSnackBar = false;
               console.log("예약 오류", response);
@@ -649,15 +647,15 @@ export default {
         // this.rsvInput.ed_dt = ed_dt;
 
         if (rept_rsv.st_dt) {
-            this.rsvInput.st_dt = rept_rsv.st_dt.replace(/\-/g, "");
-            this.rsvInput.ed_dt = rept_rsv.ed_dt.replace(/\-/g, "");
-            this.rsvInput.rsv_type = rept_rsv.rsv_type;
-            if (this.rsvInput.rsv_type == "1"){
+          this.rsvInput.st_dt = rept_rsv.st_dt.replace(/\-/g, "");
+          this.rsvInput.ed_dt = rept_rsv.ed_dt.replace(/\-/g, "");
+          this.rsvInput.rsv_type = rept_rsv.rsv_type;
+          if (this.rsvInput.rsv_type == "1") {
             this.rsvInput.rsv_typedtl = rept_rsv.rsv_typedtl;
-            } else {
-              this.rsvInput.rsv_typedtl = [];
-            }
+          } else {
+            this.rsvInput.rsv_typedtl = [];
           }
+        }
 
         RsvDataApi({
           tel_num: this.$store.state.user.tel_num,
@@ -983,7 +981,7 @@ export default {
         },
         httpMethod: "SELECT"
       }).then(response => {
-                console.log("예약 정보 로딩", response);
+        console.log("예약 정보 로딩", response);
         this.drawRooms(response);
       });
     },
@@ -999,7 +997,7 @@ export default {
         var rsv_id = rsv_data[6];
         var user_name = rsv_data[8];
         var telNum = rsv_data[9];
-  
+
         // console.log("예약건:", rsv_data);
 
         //if (rsv_date === this.date) {
@@ -1053,29 +1051,28 @@ export default {
     },
 
     formatDate(date) {
-      if (date){        
+      if (date) {
         let d = new Date(date);
-        let month = '' + (d.getMonth() + 1);
-        let day = '' + d.getDate();
+        let month = "" + (d.getMonth() + 1);
+        let day = "" + d.getDate();
         let year = d.getFullYear();
-        
-        if (month.length < 2) month = '0' + month;
-        if (day.length < 2) day = '0' + day; 
-        
-        return([year, month, day].join('-'));}
-      else {
+
+        if (month.length < 2) month = "0" + month;
+        if (day.length < 2) day = "0" + day;
+
+        return [year, month, day].join("-");
+      } else {
         let d = new Date();
-        let month = '' + (d.getMonth() + 1);
-        let day = '' + d.getDate();
+        let month = "" + (d.getMonth() + 1);
+        let day = "" + d.getDate();
         let year = d.getFullYear();
-        
-        if (month.length < 2) month = '0' + month;
-        if (day.length < 2) day = '0' + day; 
-        
-        return([year, month, day].join('-'));
+
+        if (month.length < 2) month = "0" + month;
+        if (day.length < 2) day = "0" + day;
+
+        return [year, month, day].join("-");
       }
     }
-
   },
   async created() {
     // console.log("created");
@@ -1178,7 +1175,7 @@ export default {
 }
 
 .btn-emptyCell {
-    outline: none;
+  outline: none;
   transition-duration: 0.4s;
   -webkit-transition-duration: 0.4s;
   padding: 0px;
@@ -1229,6 +1226,7 @@ export default {
   transition-duration: 0.4s;
   -webkit-transition-duration: 0.4s;
 }
+
 // 마우스 오버 했을 때
 .btn-clickedCell:hover {
   padding: 0px;
@@ -1238,6 +1236,7 @@ export default {
   background-color: #F3F781;
   border-color: #AEB404;
 }
+
 // 클릭 후 활성화 상태일 때
 .btn-clickedCell:focus {
   padding: 0px;
@@ -1247,6 +1246,7 @@ export default {
   background-color: #F5DA81;
   border-color: #FE9A2E;
 }
+
 // 클릭 시 잠깐 동작할 때
 .btn-clickedCell:active {
   padding: 0px;

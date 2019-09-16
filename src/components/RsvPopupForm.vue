@@ -14,9 +14,9 @@
         >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
         <!-- <span class="grey--text subtitle-1">{{this.date}}</span> -->
         <!-- <span class="grey--text subtitle-1">{{this.rsvInput}}</span> -->
-        <!-- <span class="grey--text subtitle-1">{{this.rept_rsv}}</span> -->
-        <!-- <span class="grey--text subtitle-1">{{this.converted_typedtl}}</span> -->
-        <v-btn @click="convertRept">click</v-btn>
+        <span class="grey--text subtitle-1">{{this.rept_rsv}}</span>
+        <span class="grey--text subtitle-1">{{this.converted_typedtl}}</span>
+        <!-- <v-btn @click="convertRept">click</v-btn> -->
       </v-card-title>
 
       <v-divider style="margin:0px;"></v-divider>
@@ -486,7 +486,7 @@ export default {
       ],
       rept_rsv: {
         rsv_type: this.rsvInput.rsv_type || "0",
-        rsv_typedtl: this.rsvInput.rsv_typedtl || [0, 0, 0, 0, 0],
+        rsv_typedtl: this.rsvInput.rsv_typedtl || [],
         st_dt: null,
         ed_dt: null
       },
@@ -514,9 +514,14 @@ export default {
 
   methods: {
     makeReservation() {
+      var dtl_check = this.rept_rsv.rsv_typedtl.reduce(function(a, b) {
+        if (a.indexOf(b) < 0) a.push(b);
+        return a;
+      }, []);
       if (
-        this.rept_rsv.rsv_type == 1 &&
-        this.rept_rsv.rsv_typedtl.length == 0
+        (this.rept_rsv.rsv_type == 1 &&
+          this.rept_rsv.rsv_typedtl.length == 0) ||
+        (dtl_check[0] == 0 && this.rept_rsv.rsv_typedtl.length == 1)
       ) {
         this.unavailable_reservation = true;
         this.alert_detail = {
@@ -530,9 +535,14 @@ export default {
     },
 
     updateReservation() {
+      var dtl_check = this.rept_rsv.rsv_typedtl.reduce(function(a, b) {
+        if (a.indexOf(b) < 0) a.push(b);
+        return a;
+      }, []);
       if (
-        this.rept_rsv.rsv_type == 1 &&
-        this.rept_rsv.rsv_typedtl.length == 0
+        (this.rept_rsv.rsv_type == 1 &&
+          this.rept_rsv.rsv_typedtl.length == 0) ||
+        (dtl_check[0] == 0 && this.rept_rsv.rsv_typedtl.length == 1)
       ) {
         this.unavailable_reservation = true;
         this.alert_detail = {
@@ -693,6 +703,7 @@ export default {
       }
       // console.log(this.converted_typedtl);
       Object.assign(this.rept_rsv.rsv_typedtl, this.converted_typedtl);
+      this.converted_typedtl = [0, 0, 0, 0, 0];
     }
   },
   beforeUpdate() {
