@@ -14,7 +14,7 @@
         >&nbsp;&nbsp;{{this.currCell[0].name}}&nbsp;&nbsp;</span>
         <!-- <span class="grey--text subtitle-1">{{this.date}}</span> -->
         <!-- <span class="grey--text subtitle-1">{{this.rsvInput}}</span> -->
-        <span class="grey--text subtitle-1">{{this.rept_rsv}}</span>
+        <!-- <span class="grey--text subtitle-1">{{this.rept_rsv}}</span> -->
         <!-- <v-btn @click="convertRept">click</v-btn> -->
       </v-card-title>
 
@@ -521,7 +521,9 @@ export default {
       if (
         (this.rept_rsv.rsv_type == 1 &&
           this.rept_rsv.rsv_typedtl.length == 0) ||
-        (dtl_check[0] == 0 && dtl_check.length == 1)
+        (this.rept_rsv.rsv_type == 1 &&
+          dtl_check[0] == 0 &&
+          dtl_check.length == 1)
       ) {
         this.unavailable_reservation = true;
         this.alert_detail = {
@@ -540,13 +542,12 @@ export default {
         if (a.indexOf(b) < 0) a.push(b);
         return a;
       }, []);
-      console.log(this.rept_rsv.rsv_typedtl.length);
-      console.log(this.rept_rsv.rsv_typedtl);
-      console.log(this.rept_rsv.rsv_type);
       if (
         (this.rept_rsv.rsv_type == 1 &&
           this.rept_rsv.rsv_typedtl.length == 0) ||
-        (dtl_check[0] == 0 && dtl_check.length == 1)
+        (this.rept_rsv.rsv_type == 1 &&
+          dtl_check[0] == 0 &&
+          dtl_check.length == 1)
       ) {
         this.unavailable_reservation = true;
         this.alert_detail = {
