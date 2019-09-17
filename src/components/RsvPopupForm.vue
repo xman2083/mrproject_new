@@ -112,7 +112,6 @@
                 item-text="name"
                 item-value="name"
                 chips
-                @change="SearchName"
                 >
               
               </v-autocomplete>
@@ -513,7 +512,7 @@ export default {
       checkbox: false,
       attend:[
           { header: 'Group 1' },
-          { name: 'Sandra Adams', group: 'Group 1' },
+          { name: 'Sandra', group: 'Group 1' },
           { name: 'Ali Connors', group: 'Group 1' },
           { name: 'Trevor Hansen', group: 'Group 1' },
           { name: 'Tucker Smith', group: 'Group 1' },
@@ -522,7 +521,7 @@ export default {
           { name: 'Britta Holt', group: 'Group 2' },
           { name: 'Jane Smith ', group: 'Group 2' },
           { name: 'John Smith', group: 'Group 2'},
-          { name: 'Sandra Williams', group: 'Group 2' },
+          { name: 'Sandra', group: 'Group 2' },
         ],
     };
   },
@@ -719,19 +718,7 @@ export default {
       }
     },
 
-    SearchName(){
-      getInfo({
-        tel_num: this.$store.state.user.tel_num,
-        token: this.$store.state.token})
-        .then(response => {
-          console.log("info",response);
-          
-        })
-        .catch(error => {
-            console.log(error);
-          });;
 
-    }
   },
 
   beforeUpdate() {
@@ -773,6 +760,24 @@ export default {
         this.open_picker = false;
       }
     });
+
+    getInfo({
+        tel_num: this.$store.state.user.tel_num,
+        token: this.$store.state.token})
+        .then(response => {
+          console.log("info request");
+          if (response.data.statusCode == 200) {
+            this.attend = response.data.data.map(e => {
+              return {
+                name: e[0] + '-' + e[2]
+              };
+            });
+          }  
+          
+        })
+        .catch(error => {
+            console.log(error);
+          });;
   },
   watch: {
     dialog() {
