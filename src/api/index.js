@@ -141,6 +141,16 @@ function getMyRsvData(data) {
   }
 }
 
+function getInfo(data) {
+  try {
+    return rsv.post("getempinfo", JSON.stringify(data));
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+
 export {
   loginUser,
   sendOtp,
@@ -151,4 +161,5 @@ export {
   getHolidayData,
   getUserData,
   getMyRsvData,
+  getInfo
 };

@@ -100,6 +100,20 @@
             <v-flex xs12 sm12 md12>
               <v-text-field color="#fc5185" label="회의 내용" v-model="rsvInput.content" clearable></v-text-field>
             </v-flex>
+            <v-flex xs12 sm12 md12>
+              <v-autocomplete
+                v-if="dialog"
+                color="#fc5185"
+                autofocus
+                label="참석자"
+                v-model="rsvInput.attendees"
+                :items="attend"
+                multiple
+                item-text="name"
+                item-value="name"
+                chips
+              ></v-autocomplete>
+            </v-flex>
             <v-checkbox v-model="checkbox" @change="onRept" label="반복 예약" color="#3fc1c9"></v-checkbox>
             <v-expansion-panels v-if="checkbox" accordion v-model="panel">
               <v-expansion-panel>
@@ -326,7 +340,7 @@
                       :value="i.value"
                       :key="i.text"
                       color="#3fc1c9"
-                      class="ml-2 mt-0 mb-0 pb-0"
+                      class="ml-5 mt-0 mb-0 pb-0"
                       style="font-size:10px; !important"
                       :disabled="!owner"
                     ></v-checkbox>
@@ -456,6 +470,7 @@ import VueTimepicker from "vue2-timepicker";
 import { mapGetters } from "vuex";
 import { mask } from "vue-the-mask";
 import Modal from "./Modal.vue";
+import { getInfo } from "../api";
 
 export default {
   data() {
@@ -491,7 +506,20 @@ export default {
         ed_dt: null
       },
       // rept_gbn: 0,
-      checkbox: false
+      checkbox: false,
+      attend: [
+        { header: "Group 1" },
+        { name: "Sandra", group: "Group 1" },
+        { name: "Ali Connors", group: "Group 1" },
+        { name: "Trevor Hansen", group: "Group 1" },
+        { name: "Tucker Smith", group: "Group 1" },
+        { divider: true },
+        { header: "Group 2" },
+        { name: "Britta Holt", group: "Group 2" },
+        { name: "Jane Smith ", group: "Group 2" },
+        { name: "John Smith", group: "Group 2" },
+        { name: "Sandra", group: "Group 2" }
+      ]
     };
   },
   props: [
@@ -716,6 +744,7 @@ export default {
       this.rept_rsv.rsv_typedtl = converted_typedtl.join("");
     }
   },
+
   beforeUpdate() {
     this.owner = false;
     // console.log(this.currCell);
@@ -755,6 +784,24 @@ export default {
         this.open_picker = false;
       }
     });
+
+    getInfo({
+      tel_num: this.$store.state.user.tel_num,
+      token: this.$store.state.token
+    })
+      .then(response => {
+        console.log("info request");
+        if (response.data.statusCode == 200) {
+          this.attend = response.data.data.map(e => {
+            return {
+              name: e[0] + "-" + e[2]
+            };
+          });
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
   },
   watch: {
     dialog() {

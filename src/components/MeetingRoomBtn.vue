@@ -311,7 +311,8 @@ export default {
         rsv_type: "",
         rsv_typedtl: "",
         st_dt: "",
-        ed_dt: ""
+        ed_dt: "",
+        attendees: []
       },
 
       rsvorg: {
@@ -331,7 +332,8 @@ export default {
         rsv_type: "",
         rsv_typedtl: "",
         st_dt: "",
-        ed_dt: ""
+        ed_dt: "",
+        attendees: []
       },
 
       // 회의실 색상 코드
@@ -724,7 +726,8 @@ export default {
         rsv_type: "",
         rsv_typedtl: "",
         st_dt: "",
-        ed_dt: ""
+        ed_dt: "",
+        attendees: []
       };
     },
     //셀을 초기화 (예약 정보 및 테두리 css 값 초기화)
