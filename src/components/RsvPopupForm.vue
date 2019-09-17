@@ -624,8 +624,11 @@ export default {
     // 반복 예약 정보를 불러오는 메소드
     getRept() {
       this.rept_rsv.rsv_type = this.rsvInput.rsv_type || "0";
-      if (this.rsvInput.rsv_typedtl) {
-        this.rept_rsv.rsv_typedtl = JSON.parse(this.rsvInput.rsv_typedtl);
+      if (this.rsvInput.rsv_typedtl && this.rsvInput.rsv_type == "1") {
+        this.rept_rsv.rsv_typedtl = this.rsvInput.rsv_typedtl;
+      } else {
+        this.rept_rsv.rsv_typedtl = [];
+        this.rept_rsv.rsv_type = "0";
       }
 
       var st_dt = "";
@@ -709,8 +712,8 @@ export default {
           converted_typedtl[4] = 6;
         }
       }
-      this.rept_rsv.rsv_typedtl = [];
-      Object.assign(this.rept_rsv.rsv_typedtl, converted_typedtl);
+      this.rept_rsv.rsv_typedtl = "";
+      this.rept_rsv.rsv_typedtl = converted_typedtl.join("");
     }
   },
   beforeUpdate() {

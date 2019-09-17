@@ -419,7 +419,14 @@ export default {
         this.rsvInput.telNum = rsv[9];
         this.rsvInput.rsv_created = rsv[10];
         this.rsvInput.rsv_type = rsv[12];
-        this.rsvInput.rsv_typedtl = rsv[13];
+        if (this.rsvInput.rsv_type == "1") {
+          var rsv_temp_org = rsv[13].split("");
+          var rsv_temp = [];
+          for (var x = 0; x < 5; x++) {
+            rsv_temp[x] = Number(rsv_temp_org[x]);
+          }
+        }
+        this.rsvInput.rsv_typedtl = rsv_temp;
         this.rsvInput.st_dt = rsv[15];
         this.rsvInput.ed_dt = rsv[16];
 

@@ -542,6 +542,16 @@ export default {
           this.completeSnackBar = false;
         }, 300);
     }
+  },
+  mounted() {
+    history.pushState(null, null, location.href);
+    window.onpopstate = function() {
+      // console.log("tag Name:", document.getElementById("modal").tagName);
+      let modal_check = document.getElementById("modal").tagName;
+      if (modal_check != "") {
+        history.go(1);
+      }
+    };
   }
 };
 </script>

@@ -52,11 +52,16 @@
                     <v-icon>fa fa-utensils</v-icon>
                   </h4>
                 </v-card-title>
-                                  <v-divider></v-divider>
+                <v-divider></v-divider>
                 <v-list dense style="padding:20;">
-                  <v-list-item v-for="(food,index) in item" v-if="!(index==='name'||index==='menu8')" :key="index">
-                    <v-list-item-content class="align-center" ><span style="text-align:center">{{ food }}</span>
-                  </v-list-item-content>
+                  <v-list-item
+                    v-for="(food,index) in item"
+                    v-if="!(index==='name'||index==='menu8')"
+                    :key="index"
+                  >
+                    <v-list-item-content class="align-center">
+                      <span style="text-align:center">{{ food }}</span>
+                    </v-list-item-content>
                   </v-list-item>
                 </v-list>
               </v-card>
@@ -106,7 +111,7 @@ export default {
         .then(response => {
           console.log(response);
           if (response.data.success) {
-            console.log("success");
+            console.log("success", response);
             vm.sktl_menu = response.data.data;
             vm.date_index = dayLabel;
           }
