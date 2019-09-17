@@ -1059,7 +1059,7 @@ export default {
       }
       return rsrt;
     },
-
+    // 날짜 양식 변경
     formatDate(date) {
       if (date) {
         let d = new Date(date);
